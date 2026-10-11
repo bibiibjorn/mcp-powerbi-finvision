@@ -1,0 +1,55 @@
+name: tests
+
+on:
+  push:
+    branches: [main, "feature/**"]
+    paths:
+      - "core/**"
+      - "server/**"
+      - "src/**"
+      - "tests/**"
+      - "requirements.txt"
+      - "python/**"
+      - "pytest.ini"
+      - "run_tests.py"
+      - ".github/workflows/test.yml"
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    # Windows runner: the suite mocks all CLR/AMO/ADOMD/WMI boundaries, so it
+    # runs without Power BI Desktop or pythonnet's native deps, but the repo is
+    # Windows-targeted so we keep the platform aligned.
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov black flake8
+
+      - name: Lint (black --check)
+        # Non-blocking for now: the repo is not yet fully black-clean. Surfaces
+        # drift without failing the build. Flip to a hard gate once formatted.
+        continue-on-error: true
+        run: black --check --line-length 100 core server src
+
+      - name: Lint (flake8 — undefined names / syntax only)
+        run: flake8 --select=E9,F63,F7,F82 core server src
+
+      - name: Run tests
+        run: python run_tests.py --fast

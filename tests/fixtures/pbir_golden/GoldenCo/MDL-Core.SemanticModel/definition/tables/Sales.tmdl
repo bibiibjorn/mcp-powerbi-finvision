@@ -1,0 +1,74 @@
+/// Synthetic fact table: one row per sales line.
+table Sales
+	lineageTag: 5a0c6f3e-0000-4000-8000-000000000001
+
+	/// Sum of the line amounts.
+	measure 'Total Amount' = SUM(Sales[Amount])
+		formatString: #,0.00
+		displayFolder: Base
+		lineageTag: 5a0c6f3e-0000-4000-8000-000000000101
+
+	/// Helper hidden AFTER a multi-line expression (the isHidden-after-body shape).
+	measure 'Amount Guarded' =
+			VAR _base = [Total Amount]
+			RETURN
+			    IF(_base > 0, _base, BLANK())
+		isHidden
+		lineageTag: 5a0c6f3e-0000-4000-8000-000000000102
+
+	/// Same number with a dynamic format string driven by a UDF.
+	measure 'Amount Dynamic' = [Total Amount]
+		lineageTag: 5a0c6f3e-0000-4000-8000-000000000103
+
+		formatStringDefinition = ScaleFormat ("K")
+
+		changedProperty = IsHidden
+
+	column Amount
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 5a0c6f3e-0000-4000-8000-000000000201
+		summarizeBy: sum
+		sourceColumn: Amount
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Product Key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 5a0c6f3e-0000-4000-8000-000000000202
+		summarizeBy: none
+		sourceColumn: Product Key
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Owner Key'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 5a0c6f3e-0000-4000-8000-000000000203
+		summarizeBy: none
+		sourceColumn: Owner Key
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Order Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 5a0c6f3e-0000-4000-8000-000000000204
+		summarizeBy: none
+		sourceColumn: Order Date
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Sales = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(p_SourceFolder & "\sales.csv"), [Delimiter=","]),
+				    Promoted = Table.PromoteHeaders(Source)
+				in
+				    Promoted
+
+	annotation PBI_ResultType = Table

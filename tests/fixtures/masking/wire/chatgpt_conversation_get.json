@@ -1,0 +1,304 @@
+{
+ "name": "chatgpt_conversation_get",
+ "note": "stored conversation reloaded after the stream (br JSON)",
+ "request": {
+  "method": "GET",
+  "host": "chatgpt.com",
+  "path": "/backend-api/conversations/00000000-0000-4000-8000-000000000027",
+  "content_type": "",
+  "body": null
+ },
+ "response": {
+  "status": 200,
+  "content_type": "application/json",
+  "content_encoding": "br",
+  "body": {
+   "title": "Spell Customer Name",
+   "create_time": 1791371194.166854,
+   "update_time": 1791371215.735272,
+   "moderation_results": [],
+   "plugin_ids": null,
+   "conversation_id": "00000000-0000-4000-8000-000000000027",
+   "conversation_template_id": null,
+   "gizmo_id": null,
+   "gizmo_type": null,
+   "is_archived": false,
+   "is_starred": null,
+   "safe_urls": [],
+   "blocked_urls": [],
+   "default_model_slug": "gpt-5-6",
+   "atlas_mode_enabled": null,
+   "conversation_origin": null,
+   "is_read_only": null,
+   "voice": null,
+   "async_status": null,
+   "disabled_tool_ids": [],
+   "is_temporary_chat": false,
+   "is_do_not_remember": false,
+   "memory_scope": "global_enabled",
+   "context_scopes": [],
+   "sugar_item_id": null,
+   "sugar_item_visible": false,
+   "pinned_time": null,
+   "is_study_mode": false,
+   "owner": null,
+   "sectioned_conversation": null,
+   "messages": [
+    {
+     "id": "00000000-0000-4000-8000-000000000028",
+     "author": {
+      "role": "system",
+      "name": null,
+      "metadata": {}
+     },
+     "create_time": 1791371194.490718,
+     "update_time": null,
+     "content": {
+      "content_type": "text",
+      "parts": [
+       ""
+      ]
+     },
+     "status": "finished_successfully",
+     "end_turn": null,
+     "weight": 0.0,
+     "metadata": {
+      "request_id": "00000000-0000-4000-8000-000000000029",
+      "message_source": null,
+      "turn_exchange_id": "00000000-0000-4000-8000-000000000030",
+      "working_turn_id": "00000000-0000-4000-8000-000000000030",
+      "is_visually_hidden_from_conversation": true,
+      "can_save": false
+     },
+     "recipient": "all",
+     "channel": null
+    },
+    {
+     "id": "00000000-0000-4000-8000-000000000031",
+     "author": {
+      "role": "user",
+      "name": null,
+      "metadata": {}
+     },
+     "create_time": 1791371194.014,
+     "update_time": 1791371197.855474,
+     "content": {
+      "content_type": "text",
+      "parts": [
+       "Our customer Zorblax Holdings NV had revenue of 1,200. Repeat the customer name once, then spell it with dashes."
+      ]
+     },
+     "status": "finished_successfully",
+     "end_turn": null,
+     "weight": 1.0,
+     "metadata": {
+      "request_id": "00000000-0000-4000-8000-000000000029",
+      "message_source": null,
+      "turn_exchange_id": "00000000-0000-4000-8000-000000000030",
+      "working_turn_id": "00000000-0000-4000-8000-000000000030",
+      "can_save": false
+     },
+     "recipient": "all",
+     "channel": null
+    },
+    {
+     "id": "00000000-0000-4000-8000-000000000032",
+     "author": {
+      "role": "system",
+      "name": null,
+      "metadata": {}
+     },
+     "create_time": 1791371196.108579,
+     "update_time": 1791371196.108579,
+     "content": {
+      "content_type": "text",
+      "parts": [
+       ""
+      ]
+     },
+     "status": "finished_successfully",
+     "end_turn": true,
+     "weight": 0.0,
+     "metadata": {
+      "exclusive_key": "plugin_upsell",
+      "rebase_developer_message": false,
+      "parent_id": "00000000-0000-4000-8000-000000000033",
+      "resolved_model_slug": "gpt-5-6",
+      "cot_version": "v5",
+      "request_id": "00000000-0000-4000-8000-000000000029",
+      "message_type": "next",
+      "turn_exchange_id": "00000000-0000-4000-8000-000000000030",
+      "working_turn_id": "00000000-0000-4000-8000-000000000030",
+      "model_slug": "gpt-5-6",
+      "default_model_slug": "gpt-5-6",
+      "is_visually_hidden_from_conversation": true,
+      "can_save": false
+     },
+     "recipient": "all",
+     "channel": null
+    },
+    {
+     "id": "00000000-0000-4000-8000-000000000034",
+     "author": {
+      "role": "assistant",
+      "name": null,
+      "metadata": {}
+     },
+     "create_time": 1791371196.126917,
+     "update_time": 1791371197.731549,
+     "content": {
+      "content_type": "text",
+      "parts": [
+       "Zorblax Holdings NV\n\nZ-o-r-b-l-a-x H-o-l-d-i-n-g-s N-V"
+      ]
+     },
+     "status": "finished_successfully",
+     "end_turn": true,
+     "weight": 1.0,
+     "metadata": {
+      "finish_details": {
+       "type": "stop",
+       "stop_tokens": [
+        200002
+       ]
+      },
+      "is_complete": true,
+      "citations": [],
+      "story_events": [],
+      "resolved_model_slug": "gpt-5-6",
+      "search_result_groups": [],
+      "cot_version": "v5",
+      "conversation_followup_suggestions_eligible": true,
+      "request_id": "00000000-0000-4000-8000-000000000029",
+      "message_type": "next",
+      "turn_exchange_id": "00000000-0000-4000-8000-000000000030",
+      "working_turn_id": "00000000-0000-4000-8000-000000000030",
+      "model_slug": "gpt-5-6",
+      "default_model_slug": "gpt-5-6",
+      "can_save": true,
+      "parent_id": "00000000-0000-4000-8000-000000000035",
+      "model_switcher_deny": []
+     },
+     "recipient": "all",
+     "channel": "final"
+    },
+    {
+     "id": "00000000-0000-4000-8000-000000000036",
+     "author": {
+      "role": "user",
+      "name": null,
+      "metadata": {}
+     },
+     "create_time": 1791371212.099,
+     "update_time": 1791371215.565811,
+     "content": {
+      "content_type": "multimodal_text",
+      "parts": [
+       {
+        "content_type": "image_asset_pointer",
+        "asset_pointer": "sediment://file_00000000000000000000000000000003",
+        "size_bytes": 18979,
+        "width": 900,
+        "height": 260,
+        "fovea": null,
+        "metadata": {
+         "dalle": null,
+         "gizmo": null,
+         "generation": null,
+         "segmentation": null,
+         "container_pixel_height": null,
+         "container_pixel_width": null,
+         "emu_omit_glimpse_image": null,
+         "emu_patches_override": null,
+         "lpe_keep_patch_ijhw": null,
+         "lpe_delta_encoding_channel": null,
+         "sanitized": true,
+         "asset_pointer_link": null,
+         "watermarked_asset_pointer": null,
+         "is_no_auth_placeholder": null
+        }
+       },
+       "what does this image say"
+      ]
+     },
+     "status": "finished_successfully",
+     "end_turn": null,
+     "weight": 1.0,
+     "metadata": {
+      "attachments": [
+       {
+        "height": 260,
+        "id": "file_00000000000000000000000000000003",
+        "library_file_id": "libfile_00000000000000000000000000000004",
+        "mime_type": "image/png",
+        "name": "image.png",
+        "size": 18979,
+        "width": 900
+       }
+      ],
+      "request_id": "00000000-0000-4000-8000-000000000037",
+      "message_source": null,
+      "turn_exchange_id": "00000000-0000-4000-8000-000000000038",
+      "working_turn_id": "00000000-0000-4000-8000-000000000038",
+      "can_save": false
+     },
+     "recipient": "all",
+     "channel": null
+    },
+    {
+     "id": "00000000-0000-4000-8000-000000000039",
+     "author": {
+      "role": "assistant",
+      "name": null,
+      "metadata": {}
+     },
+     "create_time": 1791371214.393309,
+     "update_time": 1791371215.49453,
+     "content": {
+      "content_type": "text",
+      "parts": [
+       "The image says:\n\n**Customer: Zorblax Holdings NV**\n\n**Revenue: 1,200**"
+      ]
+     },
+     "status": "finished_successfully",
+     "end_turn": true,
+     "weight": 1.0,
+     "metadata": {
+      "finish_details": {
+       "type": "stop",
+       "stop_tokens": [
+        200002
+       ]
+      },
+      "is_complete": true,
+      "citations": [],
+      "story_events": [],
+      "resolved_model_slug": "gpt-5-6",
+      "search_result_groups": [],
+      "cot_version": "v5",
+      "conversation_followup_suggestions_eligible": true,
+      "request_id": "00000000-0000-4000-8000-000000000037",
+      "message_type": "next",
+      "turn_exchange_id": "00000000-0000-4000-8000-000000000038",
+      "working_turn_id": "00000000-0000-4000-8000-000000000038",
+      "model_slug": "gpt-5-6",
+      "default_model_slug": "gpt-5-6",
+      "can_save": true,
+      "parent_id": "00000000-0000-4000-8000-000000000040",
+      "model_switcher_deny": []
+     },
+     "recipient": "all",
+     "channel": "final"
+    }
+   ],
+   "current_node": "00000000-0000-4000-8000-000000000039",
+   "page_info": {
+    "start_cursor": "00000000-0000-4000-8000-000000000028",
+    "end_cursor": "00000000-0000-4000-8000-000000000039",
+    "has_previous_page": false,
+    "has_next_page": false
+   },
+   "context_truncation_continuation": null
+  }
+ }
+}

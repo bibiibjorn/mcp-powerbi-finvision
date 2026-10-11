@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>__MODEL_NAME__ - PBIP Dependency Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --accent-glow: rgba(99, 102, 241, 0.4);
+            --visual-color: #FF9800;
+            --measure-color: #2196F3;
+            --column-color: #9C27B0;
+            --fieldparam-color: #4CAF50;
+            --filter-color: #FF5722;
+            --bg-dark: #0a0a0f;
+            --bg-sidebar: #0d0d14;
+            --bg-card: rgba(24, 24, 27, 0.8);
+            --bg-elevated: rgba(39, 39, 42, 0.6);
+            --bg-hover: rgba(99, 102, 241, 0.1);
+            --border: rgba(63, 63, 70, 0.5);
+            --border-light: rgba(82, 82, 91, 0.3);
+            --text: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --error: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Left Sidebar - Model Browser */
+        .sidebar {
+            width: 320px;
+            min-width: 320px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(180deg, rgba(99, 102, 241, 0.08) 0%, transparent 100%);
+        }
+
+        .sidebar-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .sidebar-search {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.8125rem;
+            font-family: inherit;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+        }
+
+        .sidebar-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-content::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        /* Category Panels */
+        .category-panel {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.875rem 1rem;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .category-header:hover {
+            background: var(--bg-hover);
+        }
+
+        .category-title {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+        }
+
+        .category-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+        }
+
+        .category-icon.measure {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+        }
+
+        .category-icon.column {
+            background: linear-gradient(135deg, #9C27B0, #7B1FA2);
+        }
+
+        .category-icon.fieldparam {
+            background: linear-gradient(135deg, #4CAF50, #388E3C);
+        }
+
+        .category-icon.filter {
+            background: linear-gradient(135deg, #FF5722, #E64A19);
+        }
+
+        .category-name {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .category-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .category-count {
+            background: var(--accent);
+            color: white;
+            font-size: 0.6875rem;
+            padding: 0.125rem 0.5rem;
+            border-radius: 999px;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .category-chevron {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            transition: transform 0.2s;
+        }
+
+        .category-panel.collapsed .category-chevron {
+            transform: rotate(-90deg);
+        }
+
+        .category-content {
+            display: block;
+        }
+
+        .category-panel.collapsed .category-content {
+            display: none;
+        }
+
+        /* Table Groups */
+        .table-group {
+            border-top: 1px solid var(--border-light);
+        }
+
+        .table-group-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 1rem 0.5rem 1.25rem;
+            cursor: pointer;
+            background: rgba(99, 102, 241, 0.03);
+            transition: background 0.2s;
+        }
+
+        .table-group-header:hover {
+            background: rgba(99, 102, 241, 0.08);
+        }
+
+        .table-group-name {
+            font-size: 0.75rem;
+            color: var(--accent-light);
+            font-weight: 500;
+        }
+
+        .table-group-count {
+            font-size: 0.625rem;
+            color: var(--text-muted);
+            background: var(--bg-elevated);
+            padding: 0.125rem 0.375rem;
+            border-radius: 999px;
+        }
+
+        .table-group-items {
+            padding: 0.25rem 0;
+        }
+
+        .table-group.collapsed .table-group-items {
+            display: none;
+        }
+
+        /* Items */
+        .item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 1rem 0.375rem 2rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .item:hover {
+            background: var(--bg-hover);
+        }
+
+        .item.selected {
+            background: var(--accent);
+            color: white;
+        }
+
+        .item.selected .item-name {
+            color: white;
+        }
+
+        .item-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .item.measure .item-dot {
+            background: var(--measure-color);
+        }
+
+        .item.column .item-dot {
+            background: var(--column-color);
+        }
+
+        .item.fieldparam .item-dot {
+            background: var(--fieldparam-color);
+        }
+
+        .item.filter .item-dot {
+            background: var(--filter-color);
+        }
+
+        .item.selected .item-dot {
+            background: white;
+        }
+
+        .item-name {
+            font-size: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--bg-dark);
+        }
+
+        .main-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-card);
+        }
+
+        .main-title {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .main-title h1 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #a1a1aa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .main-title span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Analysis Content */
+        .analysis-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        .analysis-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .analysis-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .analysis-content::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        /* Selected Item Header */
+        .selected-item-header {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .selected-item-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .selected-item-type {
+            font-size: 0.6875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.25rem 0.625rem;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .selected-item-type.measure {
+            background: var(--measure-color);
+            color: white;
+        }
+
+        .selected-item-type.column {
+            background: var(--column-color);
+            color: white;
+        }
+
+        .selected-item-type.field_parameter {
+            background: var(--fieldparam-color);
+            color: white;
+        }
+
+        .selected-item-type.filter {
+            background: var(--filter-color);
+            color: white;
+        }
+
+        /* Filter level badges */
+        .filter-level-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.25rem 0.625rem;
+            border-radius: 6px;
+            font-size: 0.6875rem;
+            font-weight: 500;
+        }
+
+        .filter-level-badge.report {
+            background: rgba(233, 30, 99, 0.15);
+            color: #E91E63;
+        }
+
+        .filter-level-badge.page {
+            background: rgba(0, 188, 212, 0.15);
+            color: #00BCD4;
+        }
+
+        .filter-level-badge.visual {
+            background: rgba(255, 152, 0, 0.15);
+            color: #FF9800;
+        }
+
+        /* Filter values display */
+        .filter-values-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.375rem;
+            padding: 0.5rem 0;
+        }
+
+        .filter-value-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.625rem;
+            background: rgba(var(--accent-rgb), 0.15);
+            color: var(--accent);
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid rgba(var(--accent-rgb), 0.25);
+        }
+
+        .filter-value-chip.exclusion {
+            background: rgba(244, 67, 54, 0.15);
+            color: #F44336;
+            border-color: rgba(244, 67, 54, 0.25);
+        }
+
+        .filter-no-values {
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 0.8125rem;
+        }
+
+        .filter-condition-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.125rem 0.5rem;
+            background: rgba(156, 39, 176, 0.15);
+            color: #9C27B0;
+            border-radius: 4px;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-left: 0.5rem;
+        }
+
+        /* Filter sub-header in sidebar */
+        .filter-sub-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .filter-sub-header-icon {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.625rem;
+        }
+
+        .filter-sub-header-icon.report {
+            background: linear-gradient(135deg, #E91E63, #C2185B);
+            color: white;
+        }
+
+        .filter-sub-header-icon.page {
+            background: linear-gradient(135deg, #00BCD4, #0097A7);
+            color: white;
+        }
+
+        .filter-sub-header-icon.visual {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+            color: white;
+        }
+
+        .selected-item-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .selected-item-table {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .dependency-summary {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .summary-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .summary-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .summary-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-light);
+        }
+
+        /* Dependency Sections */
+        .dependency-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+            background: var(--bg-elevated);
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+        }
+
+        .section-header:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .section-icon {
+            font-size: 1rem;
+        }
+
+        .section-count {
+            background: var(--accent);
+            color: white;
+            font-size: 0.6875rem;
+            padding: 0.125rem 0.5rem;
+            border-radius: 999px;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .section-chevron {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            transition: transform 0.2s;
+        }
+
+        .dependency-section.collapsed .section-chevron {
+            transform: rotate(-90deg);
+        }
+
+        .section-content {
+            padding: 0;
+        }
+
+        .dependency-section.collapsed .section-content {
+            display: none;
+        }
+
+        /* Dependency Tables */
+        .dependency-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .dependency-table th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .dependency-table td {
+            padding: 0.625rem 1rem;
+            font-size: 0.8125rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .dependency-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .dependency-table tr:hover td {
+            background: var(--bg-hover);
+        }
+
+        .dep-item-name {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .dep-item-name:hover {
+            color: var(--accent-light);
+            text-decoration: underline;
+        }
+
+        .dep-item-table {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .dep-type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.6875rem;
+            font-weight: 500;
+        }
+
+        .dep-type-badge.measure {
+            background: rgba(33, 150, 243, 0.15);
+            color: var(--measure-color);
+        }
+
+        .dep-type-badge.column {
+            background: rgba(156, 39, 176, 0.15);
+            color: var(--column-color);
+        }
+
+        .dep-type-badge.visual {
+            background: rgba(255, 152, 0, 0.15);
+            color: var(--visual-color);
+        }
+
+        .dep-type-badge.fieldparam {
+            background: rgba(76, 175, 80, 0.15);
+            color: var(--fieldparam-color);
+        }
+
+        .dep-type-badge.filter {
+            background: rgba(255, 87, 34, 0.15);
+            color: var(--filter-color);
+        }
+
+        /* Empty State */
+        .empty-state {
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+            opacity: 0.5;
+        }
+
+        .empty-text {
+            font-size: 0.875rem;
+        }
+
+        /* Model Summary Card */
+        .model-summary {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(99, 102, 241, 0.02));
+            border: 1px solid var(--accent);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .model-summary-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--accent-light);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .model-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+
+        .model-stat {
+            text-align: center;
+            padding: 0.75rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .model-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text);
+        }
+
+        .model-stat-label {
+            font-size: 0.6875rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 0.25rem;
+        }
+
+        .model-stat.warning .model-stat-value {
+            color: var(--warning);
+        }
+
+        .model-stat.success .model-stat-value {
+            color: var(--success);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 280px;
+                min-width: 280px;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .app-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                max-height: 40vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">
+                    <span>__MODEL_NAME__</span>
+                </div>
+                <div class="sidebar-subtitle">Click any item to view its dependencies</div>
+            </div>
+
+            <div class="sidebar-search">
+                <input type="text" class="search-input" id="search-input" placeholder="Search measures, columns...">
+            </div>
+
+            <div class="sidebar-content" id="sidebar-content">
+                <!-- Measures Panel -->
+                <div class="category-panel" id="panel-measures">
+                    <div class="category-header" onclick="toggleCategory('measures')">
+                        <div class="category-title">
+                            <div class="category-icon measure">M</div>
+                            <span class="category-name">Measures</span>
+                        </div>
+                        <div class="category-badge">
+                            <span class="category-count" id="count-measures">__LEN_MEASURES__</span>
+                            <span class="category-chevron">&#9660;</span>
+                        </div>
+                    </div>
+                    <div class="category-content" id="content-measures">
+                    </div>
+                </div>
+
+                <!-- Columns Panel -->
+                <div class="category-panel collapsed" id="panel-columns">
+                    <div class="category-header" onclick="toggleCategory('columns')">
+                        <div class="category-title">
+                            <div class="category-icon column">C</div>
+                            <span class="category-name">Columns</span>
+                        </div>
+                        <div class="category-badge">
+                            <span class="category-count" id="count-columns">__LEN_COLUMNS__</span>
+                            <span class="category-chevron">&#9660;</span>
+                        </div>
+                    </div>
+                    <div class="category-content" id="content-columns">
+                    </div>
+                </div>
+
+                <!-- Field Parameters Panel -->
+                <div class="category-panel" id="panel-fieldparams">
+                    <div class="category-header" onclick="toggleCategory('fieldparams')">
+                        <div class="category-title">
+                            <div class="category-icon fieldparam">FP</div>
+                            <span class="category-name">Field Parameters</span>
+                        </div>
+                        <div class="category-badge">
+                            <span class="category-count" id="count-fieldparams">__LEN_FIELD_PARAMS__</span>
+                            <span class="category-chevron">&#9660;</span>
+                        </div>
+                    </div>
+                    <div class="category-content" id="content-fieldparams">
+                    </div>
+                </div>
+
+                <!-- Filter Pane Panel -->
+                <div class="category-panel collapsed" id="panel-filters">
+                    <div class="category-header" onclick="toggleCategory('filters')">
+                        <div class="category-title">
+                            <div class="category-icon filter">&#9783;</div>
+                            <span class="category-name">Filter Pane</span>
+                        </div>
+                        <div class="category-badge">
+                            <span class="category-count" id="count-filters">0</span>
+                            <span class="category-chevron">&#9660;</span>
+                        </div>
+                    </div>
+                    <div class="category-content" id="content-filters">
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="main-header">
+                <div class="main-title">
+                    <h1>PBIP Dependency Analysis</h1>
+                    <span>Generated: __TIMESTAMP__</span>
+                </div>
+            </header>
+
+            <div class="analysis-content" id="analysis-content">
+                <!-- Model Summary -->
+                <div class="model-summary">
+                    <div class="model-summary-title">
+                        Model Overview
+                    </div>
+                    <div class="model-stats-grid" id="model-stats">
+                    </div>
+                </div>
+
+                <!-- Selected Item Analysis -->
+                <div id="selected-analysis">
+                    <div class="empty-state">
+                        <div class="empty-icon">&#128202;</div>
+                        <div class="empty-text">Select an item from the sidebar to view its dependencies</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Data from Python
+        const itemDependencies = __ITEM_DEPENDENCIES_JSON__;
+        const measuresByTable = __MEASURES_BY_TABLE_JSON__;
+        const columnsByTable = __COLUMNS_BY_TABLE_JSON__;
+        const fieldParamsList = __FIELD_PARAMS_JSON__;
+        const filterPaneData = __FILTER_PANE_JSON__;
+        const initialItem = __INITIAL_ITEM_JSON__;
+        const modelSummary = __SUMMARY_JSON__;
+
+        // State
+        let currentSelectedItem = null;
+        let currentSelectedFilter = null;
+
+        // Escape HTML
+        // 2026-09-22 (I-19): escape quotes too - the result is used inside
+        // attribute values (data-key / title), where textContent->innerHTML
+        // leaves " untouched.
+        function escapeHtml(text) {
+            return String(text === undefined || text === null ? '' : text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // Toggle category panel
+        function toggleCategory(category) {
+            const panel = document.getElementById('panel-' + category);
+            if (panel) {
+                panel.classList.toggle('collapsed');
+            }
+        }
+
+        // Toggle table group
+        function toggleTableGroup(element) {
+            const group = element.closest('.table-group');
+            if (group) {
+                group.classList.toggle('collapsed');
+            }
+        }
+
+        // Toggle section
+        function toggleSection(element) {
+            const section = element.closest('.dependency-section');
+            if (section) {
+                section.classList.toggle('collapsed');
+            }
+        }
+
+        // Render model stats
+        function renderModelStats() {
+            const statsGrid = document.getElementById('model-stats');
+            const stats = [
+                { label: 'Measures', value: modelSummary.total_measures || 0, type: '' },
+                { label: 'Columns', value: modelSummary.total_columns || 0, type: '' },
+                { label: 'Visuals', value: modelSummary.total_visuals || 0, type: '' },
+                { label: 'Pages', value: modelSummary.total_pages || 0, type: '' },
+                { label: 'Unused Measures', value: modelSummary.unused_measures || 0, type: modelSummary.unused_measures > 0 ? 'warning' : 'success' },
+                { label: 'Unused Columns', value: modelSummary.unused_columns || 0, type: modelSummary.unused_columns > 0 ? 'warning' : 'success' }
+            ];
+
+            statsGrid.innerHTML = stats.map(stat => `
+                <div class="model-stat ${stat.type}">
+                    <div class="model-stat-value">${stat.value}</div>
+                    <div class="model-stat-label">${stat.label}</div>
+                </div>
+            `).join('');
+        }
+
+        // Select an item and render its analysis
+        function selectItem(itemKey) {
+            currentSelectedItem = itemKey;
+
+            // Update sidebar selection
+            document.querySelectorAll('.item.selected').forEach(el => el.classList.remove('selected'));
+            const itemEl = document.querySelector(`.item[data-key="${CSS.escape(itemKey)}"]`);
+            if (itemEl) {
+                itemEl.classList.add('selected');
+            }
+
+            // Get item data
+            const item = itemDependencies[itemKey];
+            if (!item) {
+                console.error('Item not found:', itemKey);
+                return;
+            }
+
+            renderItemAnalysis(item);
+        }
+
+        // Render item analysis
+        function renderItemAnalysis(item) {
+            const container = document.getElementById('selected-analysis');
+            const upstream = item.upstream || {};
+            const downstream = item.downstream || {};
+
+            const upstreamMeasures = upstream.measures || [];
+            const upstreamColumns = upstream.columns || [];
+            const downstreamMeasures = downstream.measures || [];
+            const downstreamVisuals = downstream.visuals || [];
+            const downstreamFieldParams = downstream.fieldParams || [];
+
+            const totalUpstream = upstreamMeasures.length + upstreamColumns.length;
+            const totalDownstream = downstreamMeasures.length + downstreamVisuals.length + downstreamFieldParams.length;
+
+            let html = `
+                <div class="selected-item-header">
+                    <div class="selected-item-badge">
+                        <span class="selected-item-type ${item.type}">${item.type.replace('_', ' ').toUpperCase()}</span>
+                    </div>
+                    <div class="selected-item-name">${escapeHtml(item.name)}</div>
+                    <div class="selected-item-table">Table: ${escapeHtml(item.table)}</div>
+                    <div class="dependency-summary">
+                        <div class="summary-stat">
+                            <div class="summary-stat-label">Upstream Dependencies</div>
+                            <div class="summary-stat-value">${totalUpstream}</div>
+                        </div>
+                        <div class="summary-stat">
+                            <div class="summary-stat-label">Downstream Dependencies</div>
+                            <div class="summary-stat-value">${totalDownstream}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Upstream Measures Section
+            if (upstreamMeasures.length > 0) {
+                html += `
+                    <div class="dependency-section">
+                        <div class="section-header" onclick="toggleSection(this)">
+                            <div class="section-title">
+                                <span class="section-icon">&#8593;</span>
+                                <span>Upstream Measures (Dependencies)</span>
+                                <span class="section-count">${upstreamMeasures.length}</span>
+                            </div>
+                            <span class="section-chevron">&#9660;</span>
+                        </div>
+                        <div class="section-content">
+                            <table class="dependency-table">
+                                <thead>
+                                    <tr>
+                                        <th>Measure Name</th>
+                                        <th>Table</th>
+                                        <th>Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${upstreamMeasures.map(mKey => {
+                                        const m = itemDependencies[mKey];
+                                        return `<tr>
+                                            <td><span class="dep-item-name" data-select-key="${escapeHtml(mKey)}">${escapeHtml(m ? m.name : mKey)}</span></td>
+                                            <td class="dep-item-table">${escapeHtml(m ? m.table : '')}</td>
+                                            <td><span class="dep-type-badge measure">Measure</span></td>
+                                        </tr>`;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Upstream Columns Section
+            if (upstreamColumns.length > 0) {
+                html += `
+                    <div class="dependency-section">
+                        <div class="section-header" onclick="toggleSection(this)">
+                            <div class="section-title">
+                                <span class="section-icon">&#8593;</span>
+                                <span>Upstream Columns (Data Sources)</span>
+                                <span class="section-count">${upstreamColumns.length}</span>
+                            </div>
+                            <span class="section-chevron">&#9660;</span>
+                        </div>
+                        <div class="section-content">
+                            <table class="dependency-table">
+                                <thead>
+                                    <tr>
+                                        <th>Column Name</th>
+                                        <th>Table</th>
+                                        <th>Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${upstreamColumns.map(cKey => {
+                                        const c = itemDependencies[cKey];
+                                        return `<tr>
+                                            <td><span class="dep-item-name" data-select-key="${escapeHtml(cKey)}">${escapeHtml(c ? c.name : cKey)}</span></td>
+                                            <td class="dep-item-table">${escapeHtml(c ? c.table : '')}</td>
+                                            <td><span class="dep-type-badge column">Column</span></td>
+                                        </tr>`;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Downstream Measures Section
+            if (downstreamMeasures.length > 0) {
+                html += `
+                    <div class="dependency-section">
+                        <div class="section-header" onclick="toggleSection(this)">
+                            <div class="section-title">
+                                <span class="section-icon">&#8595;</span>
+                                <span>Downstream Measures (Used By)</span>
+                                <span class="section-count">${downstreamMeasures.length}</span>
+                            </div>
+                            <span class="section-chevron">&#9660;</span>
+                        </div>
+                        <div class="section-content">
+                            <table class="dependency-table">
+                                <thead>
+                                    <tr>
+                                        <th>Measure Name</th>
+                                        <th>Table</th>
+                                        <th>Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${downstreamMeasures.map(mKey => {
+                                        const m = itemDependencies[mKey];
+                                        return `<tr>
+                                            <td><span class="dep-item-name" data-select-key="${escapeHtml(mKey)}">${escapeHtml(m ? m.name : mKey)}</span></td>
+                                            <td class="dep-item-table">${escapeHtml(m ? m.table : '')}</td>
+                                            <td><span class="dep-type-badge measure">Measure</span></td>
+                                        </tr>`;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Downstream Visuals Section
+            if (downstreamVisuals.length > 0) {
+                html += `
+                    <div class="dependency-section">
+                        <div class="section-header" onclick="toggleSection(this)">
+                            <div class="section-title">
+                                <span class="section-icon">&#8595;</span>
+                                <span>Visuals Using This</span>
+                                <span class="section-count">${downstreamVisuals.length}</span>
+                            </div>
+                            <span class="section-chevron">&#9660;</span>
+                        </div>
+                        <div class="section-content">
+                            <table class="dependency-table">
+                                <thead>
+                                    <tr>
+                                        <th>Visual Type</th>
+                                        <th>Page</th>
+                                        <th>Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${downstreamVisuals.map(v => `
+                                        <tr>
+                                            <td>${escapeHtml(v.visual_type || 'Unknown')}</td>
+                                            <td class="dep-item-table">${escapeHtml(v.page || 'Unknown')}</td>
+                                            <td><span class="dep-type-badge visual">Visual</span></td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Downstream Field Parameters Section
+            if (downstreamFieldParams.length > 0) {
+                html += `
+                    <div class="dependency-section">
+                        <div class="section-header" onclick="toggleSection(this)">
+                            <div class="section-title">
+                                <span class="section-icon">&#8595;</span>
+                                <span>Field Parameters Using This</span>
+                                <span class="section-count">${downstreamFieldParams.length}</span>
+                            </div>
+                            <span class="section-chevron">&#9660;</span>
+                        </div>
+                        <div class="section-content">
+                            <table class="dependency-table">
+                                <thead>
+                                    <tr>
+                                        <th>Field Parameter</th>
+                                        <th>Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${downstreamFieldParams.map(fp => `
+                                        <tr>
+                                            <td><span class="dep-item-name" data-select-key="${escapeHtml(fp)}">${escapeHtml(fp)}</span></td>
+                                            <td><span class="dep-type-badge fieldparam">Field Param</span></td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // No dependencies message
+            if (totalUpstream === 0 && totalDownstream === 0) {
+                html += `
+                    <div class="dependency-section">
+                        <div class="empty-state">
+                            <div class="empty-icon">&#128269;</div>
+                            <div class="empty-text">No dependencies found for this item</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        // Populate sidebar
+        function populateSidebar() {
+            // Measures
+            const measuresContent = document.getElementById('content-measures');
+            let measuresHtml = '';
+            for (const [table, measures] of Object.entries(measuresByTable).sort()) {
+                measuresHtml += `
+                    <div class="table-group">
+                        <div class="table-group-header" onclick="toggleTableGroup(this)">
+                            <span class="table-group-name">${escapeHtml(table)}</span>
+                            <span class="table-group-count">${measures.length}</span>
+                        </div>
+                        <div class="table-group-items">
+                            ${measures.map(m => `
+                                <div class="item measure" data-key="${escapeHtml(m.key)}" data-select-key="${escapeHtml(m.key)}" title="${escapeHtml(m.key)}">
+                                    <span class="item-dot"></span>
+                                    <span class="item-name">${escapeHtml(m.name)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            measuresContent.innerHTML = measuresHtml || '<div class="empty-state"><div class="empty-text">No measures found</div></div>';
+
+            // Columns
+            const columnsContent = document.getElementById('content-columns');
+            let columnsHtml = '';
+            for (const [table, columns] of Object.entries(columnsByTable).sort()) {
+                columnsHtml += `
+                    <div class="table-group collapsed">
+                        <div class="table-group-header" onclick="toggleTableGroup(this)">
+                            <span class="table-group-name">${escapeHtml(table)}</span>
+                            <span class="table-group-count">${columns.length}</span>
+                        </div>
+                        <div class="table-group-items">
+                            ${columns.map(c => `
+                                <div class="item column" data-key="${escapeHtml(c.key)}" data-select-key="${escapeHtml(c.key)}" title="${escapeHtml(c.key)}">
+                                    <span class="item-dot"></span>
+                                    <span class="item-name">${escapeHtml(c.name)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            columnsContent.innerHTML = columnsHtml || '<div class="empty-state"><div class="empty-text">No columns found</div></div>';
+
+            // Field Parameters
+            const fpContent = document.getElementById('content-fieldparams');
+            if (fieldParamsList.length > 0) {
+                fpContent.innerHTML = `
+                    <div class="table-group-items">
+                        ${fieldParamsList.map(fp => `
+                            <div class="item fieldparam" data-key="${escapeHtml(fp.key)}" data-select-key="${escapeHtml(fp.key)}" title="${escapeHtml(fp.key)}">
+                                <span class="item-dot"></span>
+                                <span class="item-name">${escapeHtml(fp.name)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else {
+                fpContent.innerHTML = '<div class="empty-state"><div class="empty-text">No field parameters found</div></div>';
+            }
+
+            // Filter Pane
+            populateFilterPane();
+        }
+
+        // Populate Filter Pane sidebar section
+        function populateFilterPane() {
+            const filterContent = document.getElementById('content-filters');
+            const filterCountEl = document.getElementById('count-filters');
+
+            if (!filterPaneData || !filterPaneData.summary) {
+                filterContent.innerHTML = '<div class="empty-state"><div class="empty-text">No filters found</div></div>';
+                return;
+            }
+
+            const summary = filterPaneData.summary || {};
+            const totalFilters = (summary.total_report_filters || 0) +
+                                (summary.total_page_filters || 0) +
+                                (summary.total_visual_filters || 0);
+
+            filterCountEl.textContent = totalFilters;
+
+            if (totalFilters === 0) {
+                filterContent.innerHTML = '<div class="empty-state"><div class="empty-text">No filters found in this report</div></div>';
+                return;
+            }
+
+            let html = '';
+
+            // Report Filters (Filters on All Pages)
+            const reportFilters = filterPaneData.report_filters || [];
+            if (reportFilters.length > 0) {
+                html += `
+                    <div class="filter-sub-header">
+                        <div class="filter-sub-header-icon report">R</div>
+                        <span>Filters on All Pages (${reportFilters.length})</span>
+                    </div>
+                    <div class="table-group-items">
+                        ${reportFilters.map((f, idx) => `
+                            <div class="item filter" data-filter-type="report" data-filter-index="${idx}" title="${escapeHtml(f.field_key || f.field_name || 'Unknown')}">
+                                <span class="item-dot"></span>
+                                <span class="item-name">${escapeHtml(f.field_name || f.name || 'Unknown')}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // Page Filters (grouped by page)
+            const pageFilters = filterPaneData.page_filters || {};
+            const pageNames = Object.keys(pageFilters).sort();
+            if (pageNames.length > 0) {
+                html += `
+                    <div class="filter-sub-header">
+                        <div class="filter-sub-header-icon page">P</div>
+                        <span>Page Filters (${summary.total_page_filters || 0})</span>
+                    </div>
+                `;
+                for (const pageName of pageNames) {
+                    const pageData = pageFilters[pageName];
+                    const filters = pageData.filters || [];
+                    html += `
+                        <div class="table-group">
+                            <div class="table-group-header" onclick="toggleTableGroup(this)">
+                                <span class="table-group-name">${escapeHtml(pageName)}</span>
+                                <span class="table-group-count">${filters.length}</span>
+                            </div>
+                            <div class="table-group-items">
+                                ${filters.map((f, idx) => `
+                                    <div class="item filter" data-filter-type="page" data-page="${escapeHtml(pageName)}" data-filter-index="${idx}" title="${escapeHtml(f.field_key || f.field_name || 'Unknown')}">
+                                        <span class="item-dot"></span>
+                                        <span class="item-name">${escapeHtml(f.field_name || f.name || 'Unknown')}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            // Visual Filters (grouped by visual)
+            const visualFilters = filterPaneData.visual_filters || {};
+            const visualKeys = Object.keys(visualFilters).sort();
+            if (visualKeys.length > 0) {
+                html += `
+                    <div class="filter-sub-header">
+                        <div class="filter-sub-header-icon visual">V</div>
+                        <span>Visual Filters (${summary.total_visual_filters || 0})</span>
+                    </div>
+                `;
+                for (const visualKey of visualKeys) {
+                    const visualData = visualFilters[visualKey];
+                    const filters = visualData.filters || [];
+                    const displayName = visualData.visual_name || visualData.visual_type || visualData.visual_id || 'Unknown Visual';
+                    html += `
+                        <div class="table-group collapsed">
+                            <div class="table-group-header" onclick="toggleTableGroup(this)">
+                                <span class="table-group-name">${escapeHtml(displayName)}</span>
+                                <span class="table-group-count">${filters.length}</span>
+                            </div>
+                            <div class="table-group-items">
+                                ${filters.map((f, idx) => `
+                                    <div class="item filter" data-filter-type="visual" data-visual="${escapeHtml(visualKey)}" data-filter-index="${idx}" title="${escapeHtml(f.field_key || f.field_name || 'Unknown')}">
+                                        <span class="item-dot"></span>
+                                        <span class="item-name">${escapeHtml(f.field_name || f.name || 'Unknown')}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            filterContent.innerHTML = html || '<div class="empty-state"><div class="empty-text">No filters found</div></div>';
+        }
+
+        // Select a filter and display its details
+        function selectFilter(filterType, filterIndex, context = null) {
+            currentSelectedItem = null;  // Clear item selection
+            currentSelectedFilter = { type: filterType, index: filterIndex, context: context };
+
+            // Update sidebar selection
+            document.querySelectorAll('.item.selected').forEach(el => el.classList.remove('selected'));
+
+            let selector;
+            if (filterType === 'report') {
+                selector = `.item.filter[data-filter-type="report"][data-filter-index="${filterIndex}"]`;
+            } else if (filterType === 'page') {
+                selector = `.item.filter[data-filter-type="page"][data-page="${CSS.escape(context)}"][data-filter-index="${filterIndex}"]`;
+            } else if (filterType === 'visual') {
+                selector = `.item.filter[data-filter-type="visual"][data-visual="${CSS.escape(context)}"][data-filter-index="${filterIndex}"]`;
+            }
+
+            const itemEl = document.querySelector(selector);
+            if (itemEl) {
+                itemEl.classList.add('selected');
+            }
+
+            // Get filter data
+            let filter = null;
+            if (filterType === 'report') {
+                filter = (filterPaneData.report_filters || [])[filterIndex];
+            } else if (filterType === 'page' && context) {
+                const pageData = (filterPaneData.page_filters || {})[context];
+                filter = (pageData?.filters || [])[filterIndex];
+            } else if (filterType === 'visual' && context) {
+                const visualData = (filterPaneData.visual_filters || {})[context];
+                filter = (visualData?.filters || [])[filterIndex];
+            }
+
+            if (filter) {
+                renderFilterAnalysis(filter, filterType, context);
+            }
+        }
+
+        // Render filter analysis view
+        function renderFilterAnalysis(filter, filterType, context) {
+            const container = document.getElementById('selected-analysis');
+
+            const levelLabels = {
+                'report': 'Filters on All Pages',
+                'page': 'Page Filter',
+                'visual': 'Visual Filter'
+            };
+
+            const fieldKey = filter.field_key || `${filter.table}[${filter.field_name}]`;
+            const displayName = filter.field_name || filter.name || 'Unknown Filter';
+
+            let contextInfo = '';
+            if (filterType === 'page') {
+                contextInfo = `<div class="selected-item-table">Page: ${escapeHtml(context)}</div>`;
+            } else if (filterType === 'visual') {
+                const visualData = (filterPaneData.visual_filters || {})[context];
+                const visualName = visualData?.visual_name || visualData?.visual_type || 'Unknown';
+                const pageName = visualData?.page_name || '';
+                contextInfo = `
+                    <div class="selected-item-table">Visual: ${escapeHtml(visualName)}</div>
+                    <div class="selected-item-table">Page: ${escapeHtml(pageName)}</div>
+                `;
+            }
+
+            let html = `
+                <div class="selected-item-header">
+                    <div class="selected-item-badge">
+                        <span class="selected-item-type filter">FILTER</span>
+                        <span class="filter-level-badge ${filterType}">${levelLabels[filterType] || filterType}</span>
+                    </div>
+                    <div class="selected-item-name">${escapeHtml(displayName)}</div>
+                    <div class="selected-item-table">Table: ${escapeHtml(filter.table || 'Unknown')}</div>
+                    ${contextInfo}
+                </div>
+
+                <div class="dependency-section">
+                    <div class="section-header" onclick="toggleSection(this)">
+                        <div class="section-title">
+                            <span class="section-icon">&#128269;</span>
+                            <span>Filter Details</span>
+                        </div>
+                        <span class="section-chevron">&#9660;</span>
+                    </div>
+                    <div class="section-content">
+                        <table class="dependency-table">
+                            <thead>
+                                <tr>
+                                    <th>Property</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Field Key</td>
+                                    <td><span class="dep-item-name" ${fieldKey && itemDependencies[fieldKey] ? `data-select-key="${escapeHtml(fieldKey)}"` : ''}>${escapeHtml(fieldKey || 'N/A')}</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Field Type</td>
+                                    <td><span class="dep-type-badge ${(filter.field_type || '').toLowerCase()}">${escapeHtml(filter.field_type || 'Unknown')}</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Filter Level</td>
+                                    <td><span class="filter-level-badge ${filterType}">${escapeHtml(filter.level || filterType)}</span></td>
+                                </tr>
+                                ${filter.how_created ? `<tr><td>How Created</td><td>${escapeHtml(filter.how_created)}</td></tr>` : ''}
+                                ${filter.filter_type ? `<tr><td>Filter Type</td><td>${escapeHtml(filter.filter_type)}</td></tr>` : ''}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            // Add Filter Values section
+            const filterValues = filter.filter_values || [];
+            const conditionType = filter.condition_type;
+            const hasValues = filter.has_values;
+
+            html += `
+                <div class="dependency-section">
+                    <div class="section-header" onclick="toggleSection(this)">
+                        <div class="section-title">
+                            <span class="section-icon">&#127991;</span>
+                            <span>Filter Values</span>
+                            ${conditionType ? `<span class="filter-condition-badge">${escapeHtml(conditionType)}</span>` : ''}
+                        </div>
+                        <span class="section-count">${filterValues.length}</span>
+                        <span class="section-chevron">&#9660;</span>
+                    </div>
+                    <div class="section-content">
+                        ${hasValues && filterValues.length > 0 ? `
+                            <div class="filter-values-container">
+                                ${filterValues.map(val => {
+                                    const isExclusion = val.startsWith('NOT:');
+                                    const displayVal = isExclusion ? val.substring(5).trim() : val;
+                                    return `<span class="filter-value-chip ${isExclusion ? 'exclusion' : ''}">${isExclusion ? '✕ ' : ''}${escapeHtml(displayVal)}</span>`;
+                                }).join('')}
+                            </div>
+                        ` : `
+                            <div class="filter-no-values">No specific values defined (All values selected)</div>
+                        `}
+                    </div>
+                </div>
+            `;
+
+            // If the field exists in itemDependencies, show a link to its dependencies
+            if (fieldKey && itemDependencies[fieldKey]) {
+                html += `
+                    <div class="dependency-section">
+                        <div class="section-header" onclick="toggleSection(this)">
+                            <div class="section-title">
+                                <span class="section-icon">&#128279;</span>
+                                <span>Related Field</span>
+                            </div>
+                            <span class="section-chevron">&#9660;</span>
+                        </div>
+                        <div class="section-content">
+                            <table class="dependency-table">
+                                <thead>
+                                    <tr>
+                                        <th>Field</th>
+                                        <th>Type</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span class="dep-item-name" data-select-key="${escapeHtml(fieldKey)}">${escapeHtml(fieldKey)}</span></td>
+                                        <td><span class="dep-type-badge ${(itemDependencies[fieldKey].type || '').toLowerCase()}">${escapeHtml(itemDependencies[fieldKey].type || 'Unknown')}</span></td>
+                                        <td><button data-select-key="${escapeHtml(fieldKey)}" style="background: var(--accent); color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.75rem;">View Dependencies</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        // Search functionality
+        function setupSearch() {
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                document.querySelectorAll('.item').forEach(item => {
+                    const name = item.querySelector('.item-name')?.textContent?.toLowerCase() || '';
+                    const key = item.dataset.key?.toLowerCase() || '';
+                    const matches = name.includes(query) || key.includes(query);
+                    item.style.display = matches ? '' : 'none';
+                });
+
+                // Expand all table groups when searching
+                if (query) {
+                    document.querySelectorAll('.table-group').forEach(g => g.classList.remove('collapsed'));
+                    document.querySelectorAll('.category-panel').forEach(p => p.classList.remove('collapsed'));
+                }
+            });
+        }
+
+        // Initialize
+        // Delegated click handling (I-19): keys travel in escaped data-*
+        // attributes, never inside an inline JS string.
+        document.addEventListener('click', (ev) => {
+            const sel = ev.target.closest('[data-select-key]');
+            if (sel) {
+                selectItem(sel.getAttribute('data-select-key'));
+                return;
+            }
+            const flt = ev.target.closest('.item.filter[data-filter-type]');
+            if (flt) {
+                const type = flt.getAttribute('data-filter-type');
+                const idx = parseInt(flt.getAttribute('data-filter-index'), 10);
+                const ctx = type === 'page' ? flt.getAttribute('data-page')
+                    : (type === 'visual' ? flt.getAttribute('data-visual') : null);
+                selectFilter(type, idx, ctx);
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderModelStats();
+            populateSidebar();
+            setupSearch();
+
+            // Select initial item
+            if (initialItem) {
+                selectItem(initialItem);
+            }
+        });
+    </script>
+</body>
+</html>

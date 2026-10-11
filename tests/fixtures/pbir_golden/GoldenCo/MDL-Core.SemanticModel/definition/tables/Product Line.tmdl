@@ -1,0 +1,44 @@
+/// Product dimension (table name with a SPACE).
+table 'Product Line'
+	lineageTag: 5a0c6f3e-0000-4000-8000-000000000002
+
+	column 'Product Key'
+		dataType: int64
+		formatString: 0
+		lineageTag: 5a0c6f3e-0000-4000-8000-000000000301
+		summarizeBy: none
+		sourceColumn: Product Key
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category
+		dataType: string
+		lineageTag: 5a0c6f3e-0000-4000-8000-000000000302
+		summarizeBy: none
+		sourceColumn: Category
+
+		annotation SummarizationSetBy = Automatic
+
+	column Region
+		dataType: string
+		lineageTag: 5a0c6f3e-0000-4000-8000-000000000303
+		summarizeBy: none
+		sourceColumn: Region
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Unused Code'
+		dataType: string
+		lineageTag: 5a0c6f3e-0000-4000-8000-000000000304
+		summarizeBy: none
+		sourceColumn: Unused Code
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Product Line' = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(p_SourceFolder & "\products.csv"), [Delimiter=","])
+				in
+				    Table.PromoteHeaders(Source)

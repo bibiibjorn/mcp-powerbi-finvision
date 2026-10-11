@@ -1,0 +1,4 @@
+# Operations of MCP tools that the end-user guide (docs/GUIDE.md) deliberately does not document.
+# One line each: <tool> <op>  # reason.  For 02_Model_Operations use <object_type>/<op>.
+# Keep this file tiny (tests/test_user_guide_drift.py fails above 5 entries or on a stale line);
+# the default answer to a drift failure is to document the op, not to list it here.

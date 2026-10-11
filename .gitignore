@@ -1,0 +1,151 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Keep lib/dotnet/ directory and DLLs
+!lib/
+!lib/dotnet/
+!lib/dotnet/*.dll
+!lib/dotnet/amo-*/
+!lib/dotnet/amo-*/*.dll
+!lib/dotnet/amo-*/*.md
+!lib/dotnet/*.xml
+!lib/dotnet/*.ps1
+!lib/dotnet/*.md
+!lib/dotnet/*.txt
+
+# Keep build/ directory for packaging scripts
+!build/
+!build/*.bat
+
+# C# trace runner (core/infrastructure/dax_executor): MSBuild intermediates and debug symbols are
+# build output, not source. The Release runtime set under bin/ (DaxExecutor.exe + deps) stays tracked
+# because dll_paths.get_trace_runner_path() launches it as the fallback trace runner.
+core/infrastructure/dax_executor/obj/
+core/infrastructure/dax_executor/**/*.pdb
+core/infrastructure/dax_executor/bin/Release/*/win-x64/*/
+
+# Keep python/ directory for packaging metadata
+!python/
+!python/*.toml
+!python/*.txt
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Logs
+logs/
+*.log
+
+# Claude goblin
+claude-goblin/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Test files (tests/ directory should be included)
+scripts/dev/
+dev/
+
+# Temporary
+*.tmp
+*.temp
+*.bak
+
+# Project specific
+*.pbix
+*.pbit
+config/local_config.json
+
+# Exports directory (user-generated files)
+exports/*
+!exports/.gitkeep
+core/exports/
+
+# Output directory (tool execution results)
+output/
+
+# Distribution packages
+*.zip
+*.mcpb
+
+# Local agent config, plans and working notes (never published)
+.claude/
+tasks/
+backups/
+*.bak-*
+
+# Generated docs artefacts: the visual-catalog build harvests real report JSON/PNGs into _extracts
+# (local only), and the PDF is built from docs/GUIDE.md by build/md_to_pdf.py
+docs/visual-catalog/_extracts/
+docs/*.pdf
+
+# PowerShell module-analysis cache written into the cwd by a child PowerShell started without LOCALAPPDATA
+/Microsoft/

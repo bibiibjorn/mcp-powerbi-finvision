@@ -1,0 +1,18 @@
+{
+  "type": "cardVisual",
+  "container": "background",
+  "properties": {
+    "color": {
+      "type": "object",
+      "description": "Background fill color for the visual container."
+    },
+    "show": {
+      "type": "boolean",
+      "description": "Show"
+    },
+    "transparency": {
+      "type": "number",
+      "description": "Background color transparency"
+    }
+  }
+}

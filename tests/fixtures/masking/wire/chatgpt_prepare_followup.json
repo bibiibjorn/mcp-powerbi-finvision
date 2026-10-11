@@ -1,0 +1,40 @@
+{
+ "name": "chatgpt_prepare_followup",
+ "note": "half-typed follow-up with conversation_id and attachment_mime_types",
+ "request": {
+  "method": "POST",
+  "host": "chatgpt.com",
+  "path": "/backend-api/f/conversation/prepare",
+  "content_type": "application/json",
+  "body": {
+   "attachment_mime_types": [
+    "image/png"
+   ],
+   "client_prepare_state": "sent",
+   "conversation_id": "00000000-0000-4000-8000-000000000004",
+   "action": "next",
+   "is_do_not_remember": false,
+   "model": "gpt-5-6",
+   "parent_message_id": "00000000-0000-4000-8000-000000000016",
+   "timezone": "Europe/Brussels",
+   "timezone_offset_min": -120,
+   "local_function_names": [
+    "local.continue_in_work"
+   ],
+   "partial_query": {
+    "author": {
+     "role": "user"
+    },
+    "content": {
+     "content_type": "text",
+     "parts": [
+      "What does this screenshot say?"
+     ]
+    },
+    "id": "00000000-0000-4000-8000-000000000025"
+   },
+   "client_prepare_dispatch": "debounced",
+   "client_prepare_source": "composer_editor_state"
+  }
+ }
+}

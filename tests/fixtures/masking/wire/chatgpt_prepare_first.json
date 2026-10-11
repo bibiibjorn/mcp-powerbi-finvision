@@ -1,0 +1,36 @@
+{
+ "name": "chatgpt_prepare_first",
+ "note": "half-typed first message (partial_query is a message object)",
+ "request": {
+  "method": "POST",
+  "host": "chatgpt.com",
+  "path": "/backend-api/f/conversation/prepare",
+  "content_type": "application/json",
+  "body": {
+   "client_prepare_state": "sent",
+   "action": "next",
+   "is_do_not_remember": false,
+   "model": "gpt-5-6",
+   "parent_message_id": "client-created-root",
+   "timezone": "Europe/Brussels",
+   "timezone_offset_min": -120,
+   "local_function_names": [
+    "local.continue_in_work"
+   ],
+   "partial_query": {
+    "author": {
+     "role": "user"
+    },
+    "content": {
+     "content_type": "text",
+     "parts": [
+      "Our customer Zorblax Holdings NV had revenue of 1,200. Repeat the customer name once, then spell it with dashes."
+     ]
+    },
+    "id": "00000000-0000-4000-8000-000000000024"
+   },
+   "client_prepare_dispatch": "debounced",
+   "client_prepare_source": "composer_editor_state"
+  }
+ }
+}

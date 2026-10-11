@@ -1,0 +1,6 @@
+GroupSemiJoin: RelLogOp DependOnCols()() 0-0 RequiredCols(0)('Sales'[Year])
+ Scan_Vertipaq: RelLogOp DependOnCols()() 0-0 RequiredCols(0)('Sales'[Year])
+  Lookup: ScaLogOp DependOnCols(0) LookupCols(0)('Sales'[Year])
+SumX: RelLogOp DependOnCols()() 0-0 RequiredCols()
+ CallbackDataID: ScaLogOp Class=Aggregate Boolean
+  Scan_Vertipaq: RelLogOp DependOnCols()() 0-0

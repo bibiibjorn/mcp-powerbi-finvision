@@ -1,0 +1,42 @@
+# Set default behavior to automatically normalize line endings
+* text=auto
+
+# Force LF for Python files
+*.py text eol=lf
+
+# Force LF for JSON files
+*.json text eol=lf
+
+# Force LF for Markdown files
+*.md text eol=lf
+
+# Force LF for YAML files
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Force LF for shell scripts
+*.sh text eol=lf
+
+# Force CRLF for batch files: cmd.exe misreads labels/goto in an LF-only .bat (a clone with
+# core.autocrlf=false, or a GitHub "Download ZIP", would otherwise get LF)
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Force LF for PowerShell scripts
+*.ps1 text eol=lf
+
+# Force LF for config files
+*.txt text eol=lf
+*.ini text eol=lf
+*.cfg text eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.dll binary
+*.exe binary
+*.mcpb binary

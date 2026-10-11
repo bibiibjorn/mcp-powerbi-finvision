@@ -1,0 +1,171 @@
+{
+ "name": "copilot_tool_call_stream",
+ "note": "reasoning_text deltas, a reasoning_opaque blob, and a tool call whose JSON arguments stream in small pieces",
+ "request": {
+  "method": "POST",
+  "host": "api.individual.githubcopilot.com",
+  "path": "/chat/completions",
+  "content_type": "application/json",
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are an expert AI programming assistant, working with a user in the VS Code editor.\nWhen asked for your name, you must respond with \"GitHub Copilot\". When asked about the model you are using, you m [trimmed]"
+    },
+    {
+     "role": "user",
+     "content": "<environment_info>\nThe user's current OS is: Windows\n</environment_info>\n<workspace_info>\nThere is no workspace currently open.\n</workspace_info>",
+     "copilot_cache_control": {
+      "type": "ephemeral"
+     }
+    },
+    {
+     "role": "user",
+     "content": "<context>\nThe current date is October 7, 2026.\n</context>\n<reminderInstructions>\n[trimmed]\n</reminderInstructions>\n<userRequest>\nOur customer Zorblax Holdings NV had revenue of 1,200. Repeat the customer name once, then spell it with dashes.\n</userRequest>"
+    },
+    {
+     "role": "assistant",
+     "content": "Zorblax Holdings NV\n\nZ-o-r-b-l-a-x- -H-o-l-d-i-n-g-s- -N-V"
+    },
+    {
+     "role": "user",
+     "content": [
+      {
+       "type": "text",
+       "text": "<attachments>"
+      },
+      {
+       "image_url": {
+        "url": "https://github.com/github-copilot/chat/attachments/00000000-0000-4000-8000-000000000001",
+        "detail": "high",
+        "media_type": "image/png"
+       },
+       "type": "image_url"
+      },
+      {
+       "image_url": {
+        "url": "https://github.com/github-copilot/chat/attachments/00000000-0000-4000-8000-000000000002",
+        "detail": "high",
+        "media_type": "image/png"
+       },
+       "type": "image_url"
+      },
+      {
+       "type": "text",
+       "text": "\n</attachments>\n<context>\nThe current date is October 7, 2026.\n</context>\n<reminderInstructions>\n[trimmed]\n</reminderInstructions>\n<userRequest>\nWhat does this screenshot say?\n</userRequest>"
+      }
+     ],
+     "copilot_cache_control": {
+      "type": "ephemeral"
+     }
+    },
+    {
+     "role": "assistant",
+     "content": "The screenshot shows:\n\n**Customer: Zorblax Holdings NV**\n\n**Revenue: 1,200**",
+     "copilot_cache_control": {
+      "type": "ephemeral"
+     }
+    },
+    {
+     "role": "user",
+     "content": "<context>\nThe current date is October 7, 2026.\n</context>\n<reminderInstructions>\n[trimmed]\n</reminderInstructions>\n<userRequest>\nWhat do you know about Quillfeather Logistics BV?\n</userRequest>",
+     "copilot_cache_control": {
+      "type": "ephemeral"
+     }
+    }
+   ],
+   "model": "claude-haiku-4.5",
+   "temperature": 0,
+   "top_p": 1,
+   "max_tokens": 32000,
+   "tools": [
+    {
+     "function": {
+      "name": "mcp_masking-lab_lab_customer_revenue",
+      "description": "Synthetic lab data: revenue per customer. Pass a customer name to get one customer, or no argument for all customers.",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "customer": {
+         "type": "string"
+        }
+       }
+      }
+     },
+     "type": "function"
+    },
+    {
+     "function": {
+      "name": "create_directory",
+      "description": "Create a new directory structure in the workspace. Will recursively create all directories in the path, like mkdir -p. Y [trimmed]",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "dirPath": {
+         "type": "string",
+         "description": "The absolute path to the directory to create."
+        }
+       },
+       "required": [
+        "dirPath"
+       ]
+      }
+     },
+     "type": "function"
+    }
+   ],
+   "n": 1,
+   "stream": true,
+   "thinking_budget": 4000
+  }
+ },
+ "response": {
+  "status": 200,
+  "content_type": "text/event-stream",
+  "content_encoding": "",
+  "chunks": [
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\"The user is asking\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\" me\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\" what\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\" I know about \\\"\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\"Quillfe\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\"ather Logistics B\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\"V\\\". This sounds\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\" like it might\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\" be a customer\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\" name\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\", and\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\" I notice\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\" there's a tool\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\" available\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\ndata: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\" called `\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\ndata: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\"m\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\ndata: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\"cp\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\ndata: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\"_mas\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\"king-\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\ndata: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\"lab\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\ndata: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\"_\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\"lab\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\"_\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\"customer\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\"_revenue\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\"`\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\" that can\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\" retrieve\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\" customer revenue\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\" data\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\".\\n\\nLet\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\" me use\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\" that\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\" tool to look up\"}}],\"created\":1791370980,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\" information about Qu\"}}],\"created\":1791370981,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\"illfeather\"}}],\"created\":1791370981,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"role\":\"assistant\",\"reasoning_text\":\" Logistics BV.\"}}],\"created\":1791370981,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":\"\",\"role\":\"assistant\",\"reasoning_opaque\":\"ZmFrZS1vcGFxdWUtcmVhc29uaW5nLWJsb2I=\"}}],\"created\":1791370981,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"tool_calls\":[{\"function\":{\"name\":\"mcp_masking-lab_lab_customer_revenue\"},\"id\":\"toolu_fake000003\",\"index\":1,\"type\":\"function\"}]}}],\"created\":1791370981,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"tool_calls\":[{\"function\":{\"arguments\":\"\"},\"index\":1}]}}],\"created\":1791370981,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"tool_calls\":[{\"function\":{\"arguments\":\"{\\\"custo\"},\"index\":1}]}}],\"created\":1791370981,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"tool_calls\":[{\"function\":{\"arguments\":\"mer\\\": \\\"\"},\"index\":1}]}}],\"created\":1791370981,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"tool_calls\":[{\"function\":{\"arguments\":\"Quillfe\"},\"index\":1}]}}],\"created\":1791370981,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"tool_calls\":[{\"function\":{\"arguments\":\"ather L\"},\"index\":1}]}}],\"created\":1791370981,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"tool_calls\":[{\"function\":{\"arguments\":\"ogistic\"},\"index\":1}]}}],\"created\":1791370981,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":null,\"tool_calls\":[{\"function\":{\"arguments\":\"s BV\\\"}\"},\"index\":1}]}}],\"created\":1791370981,\"id\":\"msg_fake000002\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"delta\":{\"content\":null}}],\"created\":1791370981,\"id\":\"msg_fake000002\",\"usage\":{\"completion_tokens\":161,\"prompt_tokens\":13304,\"prompt_tokens_details\":{\"cached_tokens\":13046},\"total_tokens\":13465},\"model\":\"claude-haiku-4.5\",\"copilot_usage\":{\"token_details\":[{\"batch_size\":1000000,\"cost_per_batch\":100000000000,\"model\":\"claude-haiku-4.5\",\"token_count\":10,\"token_type\":\"input\"},{\"batch_size\":1000000,\"cost_per_batch\":10000000000,\"model\":\"claude-haiku-4.5\",\"token_count\":13046,\"token_type\":\"cache_read\"},{\"batch_size\":1000000,\"cost_per_batch\":125000000000,\"model\":\"claude-haiku-4.5\",\"token_count\":248,\"token_type\":\"cache_write\"},{\"batch_size\":1000000,\"cost_per_batch\":500000000000,\"model\":\"claude-haiku-4.5\",\"token_count\":161,\"token_type\":\"output\"}],\"total_nano_aiu\":242960000}}\n\n",
+   "data: [DONE]\n\n"
+  ]
+ }
+}

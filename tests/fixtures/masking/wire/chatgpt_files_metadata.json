@@ -1,0 +1,24 @@
+{
+ "name": "chatgpt_files_metadata",
+ "note": "upload metadata (file_name)",
+ "request": {
+  "method": "POST",
+  "host": "chatgpt.com",
+  "path": "/backend-api/files",
+  "content_type": "application/json",
+  "body": {
+   "entry_surface": "chat_composer",
+   "file_name": "zorblax_customer.png",
+   "file_size": 13685,
+   "client_resolved_mime_type": "image/png",
+   "mime_resolution_source": "filename_extension",
+   "mime_type": "image/png",
+   "reset_rate_limits": false,
+   "supports_direct_azure_multipart": true,
+   "timezone_offset_min": -120,
+   "use_case": "multimodal",
+   "store_in_library": true,
+   "library_persistence_mode": "opportunistic"
+  }
+ }
+}

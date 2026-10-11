@@ -1,0 +1,355 @@
+# textSlicer
+
+## Overview
+
+<!-- MANUAL: overview -->
+TODO: fill in during enrichment.
+<!-- /MANUAL -->
+
+<!-- MANUAL: when-to-use -->
+TODO: fill in during enrichment.
+<!-- /MANUAL -->
+
+## Roles
+
+| Role | Required | Multiple | Accepts |
+|------|----------|----------|---------|
+| `Values` | yes | yes | Column |
+
+## Containers
+
+- **background** (3 properties) — see [./_shared/containers-background.md](./_shared/containers-background.md)
+- **border** (4 properties) — see [./_shared/containers-border.md](./_shared/containers-border.md)
+- **divider** (5 properties) — documented inline below
+- **dropShadow** (9 properties) — documented inline below
+- **general** (1 properties) — see [./_shared/containers-general.md](./_shared/containers-general.md)
+- **lockAspect** (1 properties) — documented inline below
+- **padding** (4 properties) — see [./_shared/containers-padding.md](./_shared/containers-padding.md)
+- **spacing** (5 properties) — documented inline below
+- **stylePreset** (1 properties) — documented inline below
+- **subTitle** (11 properties) — documented inline below
+- **title** (12 properties) — see [./_shared/containers-title.md](./_shared/containers-title.md)
+- **visualHeader** (25 properties) — see [./_shared/containers-visualHeader.md](./_shared/containers-visualHeader.md)
+- **visualHeaderTooltip** (13 properties) — documented inline below
+- **visualLink** (13 properties) — documented inline below
+- **visualTooltip** (17 properties) — documented inline below
+- **applyButton** (15 properties) — documented inline below
+- **dropdown** (1 properties) — documented inline below
+- **filterOperator** (24 properties) — documented inline below
+- **inputText** (31 properties) — documented inline below
+- **inputTextBox** (30 properties) — documented inline below
+- **slicerSettings** (1 properties) — documented inline below
+
+## Properties
+
+### background
+
+See [./_shared/containers-background.md](./_shared/containers-background.md).
+
+### border
+
+See [./_shared/containers-border.md](./_shared/containers-border.md).
+
+### divider
+
+| Property | Type | Default | Range / Allowed values | Selector-aware? | Notes |
+|----------|------|---------|------------------------|-----------------|-------|
+| `color` | `object` | — | — | no | Color of the divider line between header and content areas. |
+| `ignorePadding` | `boolean` | — | — | no | Ignore padding |
+| `show` | `boolean` | — | — | no | Show |
+| `style` | `string` | — | — | no | Line style |
+| `width` | `number` | — | — | no | Width |
+
+### dropShadow
+
+| Property | Type | Default | Range / Allowed values | Selector-aware? | Notes |
+|----------|------|---------|------------------------|-----------------|-------|
+| `angle` | `number` | — | — | no | Angle |
+| `color` | `object` | — | — | no | Color of the drop shadow. Note: drop shadows create accessibility issues for users with vestibular disabilities -- prefer flat layout with background contrast. |
+| `position` | `string` | — | — | no | Shadow position |
+| `preset` | `string` | — | — | no | Preset |
+| `shadowBlur` | `number` | — | — | no | Blur |
+| `shadowDistance` | `number` | — | — | no | Distance |
+| `shadowSpread` | `number` | — | — | no | Size |
+| `show` | `boolean` | — | — | no | Show |
+| `transparency` | `number` | — | — | no | Transparency |
+
+### general
+
+See [./_shared/containers-general.md](./_shared/containers-general.md).
+
+### lockAspect
+
+| Property | Type | Default | Range / Allowed values | Selector-aware? | Notes |
+|----------|------|---------|------------------------|-----------------|-------|
+| `show` | `boolean` | — | — | no | Show |
+
+### padding
+
+See [./_shared/containers-padding.md](./_shared/containers-padding.md).
+
+### spacing
+
+| Property | Type | Default | Range / Allowed values | Selector-aware? | Notes |
+|----------|------|---------|------------------------|-----------------|-------|
+| `customizeSpacing` | `boolean` | — | — | no | Customize spacing |
+| `spaceBelowSubTitle` | `number` | — | — | no | Space below subtitle |
+| `spaceBelowTitle` | `number` | — | — | no | Space below title |
+| `spaceBelowTitleArea` | `number` | — | — | no | Space below title area |
+| `verticalSpacing` | `number` | — | — | no | Space between label and value |
+
+### stylePreset
+
+| Property | Type | Default | Range / Allowed values | Selector-aware? | Notes |
+|----------|------|---------|------------------------|-----------------|-------|
+| `name` | `string` | — | — | no | Style |
+
+### subTitle
+
+| Property | Type | Default | Range / Allowed values | Selector-aware? | Notes |
+|----------|------|---------|------------------------|-----------------|-------|
+| `alignment` | `string` | — | — | no | Horizontal alignment of the subtitle text. |
+| `bold` | `boolean` | — | — | no | Bold |
+| `fontColor` | `object` | — | — | no | Font color for the subtitle. |
+| `fontFamily` | `string` | — | — | no | Font family |
+| `fontSize` | `number` | — | — | no | Font size for the subtitle text (6-45pt). |
+| `heading` | `string` | — | — | no | Set the heading tag for your visual titles to help with screen reader accessibility. This won't impact the visual styling of your titles. |
+| `italic` | `boolean` | — | — | no | Italic |
+| `show` | `boolean` | — | — | no | Show |
+| `text` | `string` | — | — | no | The name of the visual |
+| `titleWrap` | `boolean` | — | — | no | Word wrap |
+| `underline` | `boolean` | — | — | no | Underline |
+
+### title
+
+See [./_shared/containers-title.md](./_shared/containers-title.md).
+
+### visualHeader
+
+See [./_shared/containers-visualHeader.md](./_shared/containers-visualHeader.md).
+
+### visualHeaderTooltip
+
+| Property | Type | Default | Range / Allowed values | Selector-aware? | Notes |
+|----------|------|---------|------------------------|-----------------|-------|
+| `background` | `object` | — | — | no | Background color for the visual header tooltip popup. |
+| `bold` | `boolean` | — | — | no | Bold |
+| `fontFamily` | `string` | — | — | no | Font family for the tooltip |
+| `fontSize` | `number` | — | — | no | Font size for visual header tooltip text. |
+| `italic` | `boolean` | — | — | no | Italic |
+| `section` | `string` | — | — | no | Choose the page you want to use for your tooltip |
+| `text` | `string` | — | — | no | Write the custom tooltip that will show up when a report page tooltip hasn't been chosen or isn't supported |
+| `themedBackground` | `object` | — | — | no | Theme-aware background color for header tooltips. |
+| `themedTitleFontColor` | `object` | — | — | no | Theme-aware font color for header tooltip title. |
+| `titleFontColor` | `object` | — | — | no | Font color for header tooltip title text. |
+| `transparency` | `number` | — | — | no | Set transparency for the tooltip background |
+| `type` | `string` | — | — | no | Type |
+| `underline` | `boolean` | — | — | no | Underline |
+
+### visualLink
+
+| Property | Type | Default | Range / Allowed values | Selector-aware? | Notes |
+|----------|------|---------|------------------------|-----------------|-------|
+| `bookmark` | `string` | — | — | no | Choose which bookmark will open when this element is selected. |
+| `dataFunction` | `object` | — | — | no |  |
+| `disabledTooltip` | `string` | — | — | no | Disabled tooltip |
+| `drillthroughSection` | `string` | — | — | no | Select a single destination or use conditional formatting for custom destination logic, such as multi-destination support. |
+| `enabledTooltip` | `string` | — | — | no | Enabled tooltip |
+| `navigationSection` | `string` | — | — | no | Select a single destination or use conditional formatting for custom destination logic, such as multi-destination support. |
+| `show` | `boolean` | — | — | no | Show |
+| `showDefaultTooltip` | `boolean` | — | — | no | Show tooltips |
+| `suppressDefaultTooltip` | `boolean` | — | — | no | No tooltips |
+| `tooltip` | `string` | — | — | no | Write the custom tooltip that will show when users hover over this element. |
+| `tooltipPlaceholderText` | `string` | — | — | no | Placeholder for tooltip |
+| `type` | `string` | — | — | no | Choose what action will occur when this element is selected. |
+| `webUrl` | `string` | — | — | no | Web URL |
+
+### visualTooltip
+
+| Property | Type | Default | Range / Allowed values | Selector-aware? | Notes |
+|----------|------|---------|------------------------|-----------------|-------|
+| `actionFontColor` | `object` | — | — | no | Font color for tooltip action text (e.g., drill-through links). |
+| `background` | `object` | — | — | no | Background color for the tooltip popup. |
+| `bold` | `boolean` | — | — | no | Bold |
+| `fontFamily` | `string` | — | — | no | Font family for the tooltip |
+| `fontSize` | `number` | — | — | no | Font size for tooltip text. |
+| `italic` | `boolean` | — | — | no | Italic |
+| `section` | `string` | — | — | no | Choose the page you want to use for your tooltip |
+| `show` | `boolean` | — | — | no | Show |
+| `showActionsInTooltips` | `boolean` | — | — | no | Add drill options within tooltips |
+| `themedBackground` | `object` | — | — | no | Theme-aware background color for tooltips. |
+| `themedTitleFontColor` | `object` | — | — | no | Theme-aware font color for tooltip title. |
+| `themedValueFontColor` | `object` | — | — | no | Theme-aware font color for tooltip values. |
+| `titleFontColor` | `object` | — | — | no | Font color for tooltip title text. |
+| `transparency` | `number` | — | — | no | Set transparency for the tooltip background |
+| `type` | `string` | — | — | no | Allows report pages to be used as tooltips for this visual |
+| `underline` | `boolean` | — | — | no | Underline |
+| `valueFontColor` | `object` | — | — | no | Font color for tooltip value text. |
+
+### applyButton
+
+| Property | Type | Default | Range / Allowed values | Selector-aware? | Notes |
+|----------|------|---------|------------------------|-----------------|-------|
+| `backColor` | `object` | — | — | no |  |
+| `backShow` | `boolean` | — | — | no | Show |
+| `backTransparency` | `number` | — | — | no | Transparency |
+| `borderColor` | `object` | — | — | no |  |
+| `borderShow` | `boolean` | — | — | no | Show |
+| `borderTransparency` | `number` | — | — | no | Transparency |
+| `borderWidth` | `number` | — | — | no | Width |
+| `iconColor` | `object` | — | — | no |  |
+| `iconSize` | `number` | — | — | no |  |
+| `iconTransparency` | `number` | — | — | no | Transparency |
+| `paddingBottom` | `integer` | — | — | no | Bottom margin |
+| `paddingLeft` | `integer` | — | — | no | Left margin |
+| `paddingRight` | `integer` | — | — | no | Right margin |
+| `paddingTop` | `integer` | — | — | no | Top margin |
+| `spacing` | `integer` | — | — | no | Spacing |
+
+### dropdown
+
+| Property | Type | Default | Range / Allowed values | Selector-aware? | Notes |
+|----------|------|---------|------------------------|-----------------|-------|
+| `filterMode` | `string` | — | — | no |  |
+
+### filterOperator
+
+| Property | Type | Default | Range / Allowed values | Selector-aware? | Notes |
+|----------|------|---------|------------------------|-----------------|-------|
+| `backColor` | `object` | — | — | no |  |
+| `backShow` | `boolean` | — | — | no | Show |
+| `backTransparency` | `number` | — | — | no | Transparency |
+| `bold` | `boolean` | — | — | no | Bold |
+| `borderColor` | `object` | — | — | no |  |
+| `borderShow` | `boolean` | — | — | no | Show |
+| `borderTransparency` | `number` | — | — | no | Transparency |
+| `borderWidth` | `number` | — | — | no | Width |
+| `cornerBottomLeft` | `integer` | — | — | no | Bottom left corner |
+| `cornerBottomRight` | `integer` | — | — | no | Bottom right corner |
+| `cornerRadius` | `integer` | — | — | no | Rounded corners |
+| `cornerTopLeft` | `integer` | — | — | no | Top left corner |
+| `cornerTopRight` | `integer` | — | — | no | Top right corner |
+| `fontColor` | `object` | — | — | no |  |
+| `fontFamily` | `string` | — | — | no | Font family |
+| `fontSize` | `number` | — | — | no |  |
+| `fontTransparency` | `number` | — | — | no | Transparency |
+| `iconColor` | `object` | — | — | no |  |
+| `iconSize` | `number` | — | — | no |  |
+| `iconTransparency` | `number` | — | — | no | Transparency |
+| `individualCorners` | `boolean` | — | — | no | Individual corners |
+| `italic` | `boolean` | — | — | no | Italic |
+| `showText` | `boolean` | — | — | no | Show |
+| `underline` | `boolean` | — | — | no | Underline |
+
+### inputText
+
+| Property | Type | Default | Range / Allowed values | Selector-aware? | Notes |
+|----------|------|---------|------------------------|-----------------|-------|
+| `backColor` | `object` | — | — | no |  |
+| `backShow` | `boolean` | — | — | no | Show |
+| `backTransparency` | `number` | — | — | no | Transparency |
+| `bold` | `boolean` | — | — | no | Bold |
+| `borderColor` | `object` | — | — | no |  |
+| `borderShow` | `boolean` | — | — | no | Show |
+| `borderTransparency` | `number` | — | — | no | Transparency |
+| `borderWidth` | `number` | — | — | no | Width |
+| `dismissColor` | `object` | — | — | no |  |
+| `dismissPosition` | `string` | — | — | no | Set the horizontal position for the reference line data label |
+| `dismissSize` | `number` | — | — | no |  |
+| `dismissSpacing` | `integer` | — | — | no | Spacing |
+| `dismissTransparency` | `number` | — | — | no | Transparency |
+| `fontColor` | `object` | — | — | no |  |
+| `fontFamily` | `string` | — | — | no | Font family |
+| `fontSize` | `number` | — | — | no |  |
+| `fontTransparency` | `number` | — | — | no | Transparency |
+| `italic` | `boolean` | — | — | no | Italic |
+| `paddingBottom` | `integer` | — | — | no | Bottom margin |
+| `paddingLeft` | `integer` | — | — | no | Left margin |
+| `paddingRight` | `integer` | — | — | no | Right margin |
+| `paddingTop` | `integer` | — | — | no | Top margin |
+| `pillCornerBottomLeft` | `integer` | — | — | no | Bottom left corner |
+| `pillCornerBottomRight` | `integer` | — | — | no | Bottom right corner |
+| `pillCornerRadius` | `integer` | — | — | no | Rounded corners |
+| `pillCornerTopLeft` | `integer` | — | — | no | Top left corner |
+| `pillCornerTopRight` | `integer` | — | — | no | Top right corner |
+| `pillHorizontalPosition` | `string` | — | — | no | Set the horizontal position for the reference line data label |
+| `pillIndividualCorners` | `boolean` | — | — | no | Individual corners |
+| `placeholder` | `string` | — | — | no | Placeholder |
+| `underline` | `boolean` | — | — | no | Underline |
+
+### inputTextBox
+
+| Property | Type | Default | Range / Allowed values | Selector-aware? | Notes |
+|----------|------|---------|------------------------|-----------------|-------|
+| `accentBarColor` | `object` | — | — | no |  |
+| `accentBarPosition` | `string` | — | — | no | Position |
+| `accentBarShow` | `boolean` | — | — | no | Show |
+| `accentBarTransparency` | `number` | — | — | no | Transparency |
+| `accentBarWidth` | `number` | — | — | no | Width |
+| `backColor` | `object` | — | — | no |  |
+| `backShow` | `boolean` | — | — | no | Show |
+| `backTransparency` | `number` | — | — | no | Transparency |
+| `borderColor` | `object` | — | — | no |  |
+| `borderShow` | `boolean` | — | — | no | Show |
+| `borderTransparency` | `number` | — | — | no | Transparency |
+| `borderWidth` | `number` | — | — | no | Width |
+| `containerCornerBottomLeft` | `integer` | — | — | no | Bottom left corner |
+| `containerCornerBottomRight` | `integer` | — | — | no | Bottom right corner |
+| `containerCornerRadius` | `integer` | — | — | no | Rounded corners |
+| `containerCornerTopLeft` | `integer` | — | — | no | Top left corner |
+| `containerCornerTopRight` | `integer` | — | — | no | Top right corner |
+| `containerIndividualCorners` | `boolean` | — | — | no | Individual corners |
+| `paddingBottom` | `integer` | — | — | no | Bottom margin |
+| `paddingLeft` | `integer` | — | — | no | Left margin |
+| `paddingRight` | `integer` | — | — | no | Right margin |
+| `paddingTop` | `integer` | — | — | no | Top margin |
+| `placeholder` | `string` | — | — | no | Placeholder |
+| `placeholderBold` | `boolean` | — | — | no | Bold |
+| `placeholderFontColor` | `object` | — | — | no |  |
+| `placeholderFontFamily` | `string` | — | — | no | Font family |
+| `placeholderFontSize` | `number` | — | — | no |  |
+| `placeholderFontTransparency` | `number` | — | — | no | Transparency |
+| `placeholderItalic` | `boolean` | — | — | no | Italic |
+| `placeholderUnderline` | `boolean` | — | — | no | Underline |
+
+### slicerSettings
+
+| Property | Type | Default | Range / Allowed values | Selector-aware? | Notes |
+|----------|------|---------|------------------------|-----------------|-------|
+| `multiselect` | `boolean` | — | — | no | Accept multiple values |
+
+## Conditional formatting
+
+See [./_shared/conditional-formatting.md](./_shared/conditional-formatting.md).
+
+## Templates
+
+### Minimal
+
+```json
+{
+  "visual": {
+    "visualType": "textSlicer",
+    "query": {
+      "queryState": {}
+    }
+  }
+}
+```
+
+## Gotchas
+
+<!-- MANUAL: gotchas -->
+TODO: fill in during enrichment.
+<!-- /MANUAL -->
+
+## Related
+
+- MCP op: `11_PBIP_Authoring:pbir_add_visuals` — canonical authoring path
+- pbir CLI: [../GUIDE.md#cli-textslicer](../GUIDE.md#cli-textslicer)
+- JSON format: [../GUIDE.md#json-textslicer](../GUIDE.md#json-textslicer)
+- skill: reports:pbir-cli, skill: pbir-page-builder
+
+<!-- MANUAL: related-extras -->
+TODO: fill in during enrichment.
+<!-- /MANUAL -->

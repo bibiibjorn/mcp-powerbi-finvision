@@ -1,0 +1,4210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>__MEASURE_NAME__ - Dependency Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* ═══════════════════════════════════════════════════════════════════════
+           QUANTUM FLUX - 2025 DESIGN SYSTEM
+           Art Deco Geometry meets Holographic Cyberpunk
+           ═══════════════════════════════════════════════════════════════════════ */
+        :root {
+            /* Core Palette - Electric Dreams */
+            --cyan: #00F0FF;
+            --cyan-dim: #00B8C5;
+            --magenta: #FF00F5;
+            --magenta-dim: #C500BF;
+            --gold: #FFD93D;
+            --gold-dim: #C9A927;
+            --emerald: #00FF94;
+            --coral: #FF6B6B;
+
+            /* Backgrounds - Deep Void */
+            --void: #030308;
+            --obsidian: #0A0A12;
+            --slate: #12121C;
+            --carbon: #1A1A28;
+            --steel: #252536;
+
+            /* Glass Effects */
+            --glass-dark: rgba(10, 10, 18, 0.85);
+            --glass-medium: rgba(18, 18, 28, 0.75);
+            --glass-light: rgba(26, 26, 40, 0.65);
+            --glass-border: rgba(0, 240, 255, 0.12);
+            --glass-border-hover: rgba(0, 240, 255, 0.25);
+
+            /* Text Hierarchy */
+            --text-primary: #F0F4FF;
+            --text-secondary: #9BA3BF;
+            --text-tertiary: #5D6580;
+            --text-accent: var(--cyan);
+
+            /* Gradients - Holographic */
+            --holo-1: linear-gradient(135deg, var(--cyan) 0%, var(--magenta) 100%);
+            --holo-2: linear-gradient(135deg, var(--magenta) 0%, var(--gold) 100%);
+            --holo-3: linear-gradient(135deg, var(--emerald) 0%, var(--cyan) 100%);
+            --holo-shimmer: linear-gradient(90deg, var(--cyan), var(--magenta), var(--gold), var(--emerald), var(--cyan));
+
+            /* Shadows - Neon Glow */
+            --glow-cyan: 0 0 30px rgba(0, 240, 255, 0.3);
+            --glow-magenta: 0 0 30px rgba(255, 0, 245, 0.3);
+            --glow-gold: 0 0 30px rgba(255, 217, 61, 0.3);
+
+            /* Spacing */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+            --space-2xl: 3rem;
+
+            /* Border Radius */
+            --radius-sm: 6px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+
+            /* Legacy compatibility */
+            --accent: var(--cyan);
+            --accent-light: var(--cyan-dim);
+            --accent-glow: rgba(0, 240, 255, 0.4);
+            --bg-dark: var(--void);
+            --bg-card: var(--glass-dark);
+            --bg-elevated: var(--glass-medium);
+            --border: var(--glass-border);
+            --border-light: rgba(0, 240, 255, 0.06);
+            --border-glow: var(--glass-border-hover);
+            --text: var(--text-primary);
+            --text-muted: var(--text-tertiary);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--void);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           QUANTUM FLUX BACKGROUND - Art Deco Grid with Aurora
+           ═══════════════════════════════════════════════════════════════════════ */
+        .bg-pattern {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: var(--void);
+            overflow: hidden;
+        }
+
+        /* Art Deco diagonal lines */
+        .bg-pattern::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 80px,
+                    rgba(0, 240, 255, 0.015) 80px,
+                    rgba(0, 240, 255, 0.015) 81px
+                ),
+                repeating-linear-gradient(
+                    -45deg,
+                    transparent,
+                    transparent 80px,
+                    rgba(255, 0, 245, 0.01) 80px,
+                    rgba(255, 0, 245, 0.01) 81px
+                );
+            mask-image: radial-gradient(ellipse 100% 80% at 50% 20%, black 30%, transparent 70%);
+        }
+
+        /* Aurora gradient orbs */
+        .bg-pattern::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 60% 40% at 15% 10%, rgba(0, 240, 255, 0.12), transparent 50%),
+                radial-gradient(ellipse 50% 35% at 85% 15%, rgba(255, 0, 245, 0.08), transparent 50%),
+                radial-gradient(ellipse 70% 50% at 70% 90%, rgba(0, 255, 148, 0.06), transparent 50%),
+                radial-gradient(ellipse 40% 30% at 20% 80%, rgba(255, 217, 61, 0.05), transparent 50%);
+            animation: auroraShift 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes auroraShift {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        /* Noise texture overlay for depth */
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1700px;
+            margin: 0 auto;
+            padding: var(--space-xl);
+            position: relative;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           HEADER - Minimal Top Bar
+           ═══════════════════════════════════════════════════════════════════════ */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xl);
+            padding-bottom: var(--space-lg);
+            border-bottom: 1px solid var(--glass-border);
+            position: relative;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 120px;
+            height: 2px;
+            background: var(--holo-1);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--glass-dark);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brand-icon::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--holo-1);
+            opacity: 0.1;
+        }
+
+        .brand-text h1 {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 1.125rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            color: var(--text-primary);
+        }
+
+        .brand-text span {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+
+        .timestamp {
+            padding: var(--space-sm) var(--space-md);
+            background: var(--glass-dark);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            font-family: 'Space Mono', monospace;
+            backdrop-filter: blur(12px);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           HERO CARD - Bold Art Deco Inspired
+           ═══════════════════════════════════════════════════════════════════════ */
+        .hero-card {
+            background: var(--glass-dark);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: var(--space-2xl);
+            margin-bottom: var(--space-xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Decorative corner accents - Art Deco style */
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100px;
+            height: 100px;
+            background:
+                linear-gradient(135deg, var(--cyan) 0%, transparent 50%),
+                linear-gradient(45deg, transparent 50%, var(--glass-border) 50%);
+            opacity: 0.15;
+            clip-path: polygon(0 0, 100% 0, 0 100%);
+        }
+
+        .hero-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle at bottom right, var(--magenta), transparent 70%);
+            opacity: 0.08;
+        }
+
+        /* Animated top border */
+        .hero-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--holo-shimmer);
+            background-size: 400% 100%;
+            animation: shimmerFlow 8s linear infinite;
+        }
+
+        @keyframes shimmerFlow {
+            0% { background-position: 100% 0; }
+            100% { background-position: -100% 0; }
+        }
+
+        .hero-label {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--cyan);
+            margin-bottom: var(--space-md);
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-label::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--cyan), 0 0 20px var(--cyan);
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; box-shadow: 0 0 10px var(--cyan), 0 0 20px var(--cyan); }
+            50% { opacity: 0.6; box-shadow: 0 0 5px var(--cyan), 0 0 10px var(--cyan); }
+        }
+
+        .hero-title {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: clamp(1.5rem, 3vw, 2.25rem);
+            font-weight: 700;
+            margin-bottom: var(--space-sm);
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title .table-name {
+            background: var(--holo-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-title .measure-name {
+            color: var(--text-primary);
+        }
+
+        .hero-subtitle {
+            color: var(--text-tertiary);
+            font-size: 0.9375rem;
+            font-weight: 400;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           STATS ROW - Geometric Cards
+           ═══════════════════════════════════════════════════════════════════════ */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+
+        .stat-card {
+            background: var(--glass-dark);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg) var(--space-md);
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Diagonal accent stripe */
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, transparent 50%, var(--cyan) 50%);
+            opacity: 0.08;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .stat-card:hover {
+            border-color: var(--glass-border-hover);
+            transform: translateY(-4px);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .stat-card:hover::before {
+            opacity: 0.15;
+            transform: scale(1.2);
+        }
+
+        .stat-value {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--cyan);
+            line-height: 1;
+            margin-bottom: var(--space-xs);
+            position: relative;
+        }
+
+        .stat-card:nth-child(1) .stat-value { color: var(--cyan); }
+        .stat-card:nth-child(1)::before { background: linear-gradient(135deg, transparent 50%, var(--cyan) 50%); }
+
+        .stat-card:nth-child(2) .stat-value { color: var(--gold); }
+        .stat-card:nth-child(2)::before { background: linear-gradient(135deg, transparent 50%, var(--gold) 50%); }
+        .stat-card:nth-child(2):hover { box-shadow: var(--glow-gold); }
+
+        .stat-card:nth-child(3) .stat-value { color: var(--emerald); }
+        .stat-card:nth-child(3)::before { background: linear-gradient(135deg, transparent 50%, var(--emerald) 50%); }
+        .stat-card:nth-child(3):hover { box-shadow: 0 0 30px rgba(0, 255, 148, 0.3); }
+
+        .stat-card:nth-child(4) .stat-value { color: var(--magenta); }
+        .stat-card:nth-child(4)::before { background: linear-gradient(135deg, transparent 50%, var(--magenta) 50%); }
+        .stat-card:nth-child(4):hover { box-shadow: var(--glow-magenta); }
+
+        .stat-label {
+            font-size: 0.8125rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 500;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           DIAGRAM CONTAINER - Main Visualization Area
+           ═══════════════════════════════════════════════════════════════════════ */
+        .diagram-wrapper {
+            background: var(--glass-dark);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .diagram-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-md) var(--space-lg);
+            border-bottom: 1px solid var(--glass-border);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .diagram-title {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-weight: 600;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+        }
+
+        .diagram-title-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--glass-medium);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           TOOLBAR & BUTTONS - Sleek Control Strip
+           ═══════════════════════════════════════════════════════════════════════ */
+        .toolbar {
+            display: flex;
+            gap: var(--space-sm);
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-sm) var(--space-md);
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            letter-spacing: 0.02em;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-ghost:hover {
+            background: var(--glass-light);
+            color: var(--text-primary);
+            border-color: var(--glass-border-hover);
+        }
+
+        .btn-primary {
+            background: var(--cyan);
+            color: var(--void);
+            font-weight: 600;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #33F3FF;
+            transform: translateY(-1px);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 2px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 3px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-filter {
+            background: transparent;
+            color: var(--text-tertiary);
+            border: none;
+            padding: var(--space-sm) var(--space-md);
+            font-size: 0.6875rem;
+            font-weight: 600;
+            border-radius: 4px;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-filter:hover {
+            color: var(--text-primary);
+            background: var(--glass-light);
+        }
+
+        .btn-filter.active {
+            background: var(--cyan);
+            color: var(--void);
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+        }
+
+        .toolbar-divider {
+            width: 1px;
+            height: 24px;
+            background: var(--glass-border);
+            margin: 0 var(--space-xs);
+        }
+
+        .diagram-content {
+            padding: var(--space-xl);
+            min-height: 700px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            background:
+                radial-gradient(ellipse 80% 60% at 50% 30%, rgba(0, 240, 255, 0.02), transparent),
+                radial-gradient(ellipse 60% 50% at 80% 80%, rgba(255, 0, 245, 0.015), transparent),
+                linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.15));
+            overflow: auto;
+            position: relative;
+        }
+
+        /* Subtle grid overlay */
+        .diagram-content::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(var(--glass-border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--glass-border) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .mermaid {
+            width: 100%;
+            min-width: 1200px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .mermaid svg {
+            width: 100% !important;
+            min-width: 1200px;
+            height: auto !important;
+            min-height: 600px;
+            transition: transform 0.3s ease;
+        }
+
+        /* Node click highlight styles */
+        .mermaid svg g.node {
+            cursor: pointer;
+            transition: opacity 0.3s ease, filter 0.3s ease, transform 0.2s ease, visibility 0.3s ease;
+        }
+
+        .mermaid svg g.node:hover {
+            filter: brightness(1.2);
+        }
+
+        /* When flow highlight is active, hide non-highlighted items via JS-added class */
+        .mermaid svg g.node.flow-hidden {
+            opacity: 0.1 !important;
+            pointer-events: none !important;
+            filter: grayscale(1) brightness(0.3);
+        }
+
+        .mermaid svg g.node.flow-highlighted {
+            opacity: 1 !important;
+            visibility: visible !important;
+            pointer-events: auto !important;
+            filter: drop-shadow(0 0 12px rgba(0, 240, 255, 0.8)) brightness(1.1);
+        }
+
+        .mermaid svg g.node.flow-selected {
+            opacity: 1 !important;
+            visibility: visible !important;
+            pointer-events: auto !important;
+            filter: drop-shadow(0 0 20px rgba(0, 240, 255, 1)) drop-shadow(0 0 8px rgba(255, 255, 255, 0.8)) brightness(1.25);
+        }
+
+        .mermaid svg g.edgePath.flow-hidden {
+            opacity: 0.05 !important;
+            pointer-events: none !important;
+        }
+
+        .mermaid svg g.edgePath.flow-highlighted path {
+            stroke: var(--cyan) !important;
+            stroke-width: 3px !important;
+            filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.6));
+        }
+
+        .mermaid svg g.cluster.flow-hidden {
+            opacity: 0.15 !important;
+        }
+
+        .mermaid svg g.cluster.flow-highlighted {
+            opacity: 1 !important;
+        }
+
+        .mermaid svg g.node.flow-selected rect,
+        .mermaid svg g.node.flow-selected polygon {
+            stroke: var(--cyan) !important;
+            stroke-width: 3px !important;
+        }
+
+        .mermaid svg g.edgePath.flow-highlighted {
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+
+        .mermaid svg g.edgePath.flow-highlighted marker path {
+            fill: var(--cyan) !important;
+        }
+
+        /* Override Mermaid's default subgraph/cluster styling */
+        .mermaid svg g.cluster rect {
+            fill: rgba(0, 240, 255, 0.03) !important;
+            stroke: rgba(0, 240, 255, 0.2) !important;
+            stroke-width: 1px !important;
+            rx: 12px !important;
+            ry: 12px !important;
+        }
+
+        .mermaid svg g.cluster text {
+            fill: var(--text-secondary) !important;
+            font-weight: 600 !important;
+        }
+
+        /* Filter-based visibility - completely hide filtered items */
+        .mermaid svg g.node.filter-hidden {
+            display: none !important;
+        }
+
+        .mermaid svg g.edgePath.filter-hidden {
+            display: none !important;
+        }
+
+        .mermaid svg g.cluster.filter-hidden {
+            display: none !important;
+        }
+
+        /* Click hint tooltip */
+        .click-hint {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(99, 102, 241, 0.9);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+
+        .click-hint.visible {
+            opacity: 1;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           LEGEND - Color Key Bar
+           ═══════════════════════════════════════════════════════════════════════ */
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-xl);
+            padding: var(--space-md) var(--space-lg);
+            border-top: 1px solid var(--glass-border);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-size: 0.6875rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            position: relative;
+        }
+
+        .legend-dot::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 5px;
+            opacity: 0.3;
+        }
+
+        .legend-measure { background: var(--cyan); box-shadow: 0 0 8px rgba(0, 240, 255, 0.5); }
+        .legend-column { background: var(--magenta); box-shadow: 0 0 8px rgba(255, 0, 245, 0.5); }
+        .legend-table { background: var(--gold); box-shadow: 0 0 8px rgba(255, 217, 61, 0.5); }
+        .legend-upstream { background: var(--emerald); box-shadow: 0 0 8px rgba(0, 255, 148, 0.5); }
+        .legend-downstream { background: var(--gold); box-shadow: 0 0 8px rgba(255, 217, 61, 0.5); }
+        .legend-root { background: var(--cyan); box-shadow: 0 0 8px rgba(0, 240, 255, 0.5); }
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           NODE INFO ICON & TOOLTIP - Quantum Flux Style
+           ═══════════════════════════════════════════════════════════════════════ */
+        .node-info-btn {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--cyan);
+            border: 2px solid var(--void);
+            color: var(--void);
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.6);
+            z-index: 100;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            pointer-events: all;
+        }
+
+        .node-info-btn:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.8);
+            background: #33F3FF;
+        }
+
+        .node-info-btn::before {
+            content: 'i';
+            font-style: italic;
+        }
+
+        /* Tooltip - Holographic Glass Effect */
+        .node-tooltip {
+            position: fixed;
+            z-index: 10000;
+            max-width: 480px;
+            min-width: 320px;
+            padding: 0;
+            background: var(--glass-dark);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid var(--glass-border-hover);
+            border-radius: var(--radius-lg);
+            box-shadow:
+                0 25px 50px -12px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(0, 240, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                var(--glow-cyan);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(8px) scale(0.96);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .node-tooltip.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .node-tooltip::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--holo-shimmer);
+            background-size: 400% 100%;
+            animation: shimmerFlow 8s linear infinite;
+        }
+
+        .tooltip-header {
+            padding: var(--space-md) var(--space-lg) var(--space-sm);
+            background: linear-gradient(180deg, rgba(0, 240, 255, 0.08) 0%, transparent 100%);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .tooltip-type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
+            font-size: 0.625rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: var(--space-sm);
+        }
+
+        .tooltip-type-badge.measure {
+            background: rgba(0, 240, 255, 0.15);
+            color: var(--cyan);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+        }
+
+        .tooltip-type-badge.column {
+            background: rgba(255, 0, 245, 0.15);
+            color: var(--magenta);
+            border: 1px solid rgba(255, 0, 245, 0.3);
+        }
+
+        .tooltip-type-badge svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .tooltip-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9375rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            word-break: break-word;
+        }
+
+        .tooltip-table {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-top: 2px;
+        }
+
+        .tooltip-body {
+            padding: var(--space-md) var(--space-lg);
+        }
+
+        .tooltip-section {
+            margin-bottom: var(--space-md);
+        }
+
+        .tooltip-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .tooltip-section-label {
+            font-size: 0.5625rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-tertiary);
+            margin-bottom: var(--space-sm);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tooltip-section-label::before {
+            content: '';
+            width: 4px;
+            height: 4px;
+            background: var(--cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 6px var(--cyan);
+        }
+
+        .tooltip-expression {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.6875rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            padding: var(--space-sm) var(--space-md);
+            max-height: 180px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            scrollbar-width: thin;
+            scrollbar-color: var(--cyan) transparent;
+        }
+
+        .tooltip-expression::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .tooltip-expression::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .tooltip-expression::-webkit-scrollbar-thumb {
+            background: var(--cyan);
+            border-radius: 2px;
+        }
+
+        .tooltip-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-sm);
+        }
+
+        .tooltip-meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding: var(--space-sm);
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+        }
+
+        .tooltip-meta-label {
+            font-size: 0.5625rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-tertiary);
+        }
+
+        .tooltip-meta-value {
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .tooltip-meta-value.data-type {
+            color: var(--cyan);
+        }
+
+        .tooltip-meta-value.hidden-yes {
+            color: var(--gold);
+        }
+
+        .tooltip-meta-value.key-yes {
+            color: var(--emerald);
+        }
+
+        .tooltip-footer {
+            padding: var(--space-sm) var(--space-md);
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid var(--glass-border);
+            font-size: 0.625rem;
+            color: var(--text-tertiary);
+            text-align: center;
+            letter-spacing: 0.05em;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           DEPENDENCY PANELS - Dual Column Layout
+           ═══════════════════════════════════════════════════════════════════════ */
+        .panels-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+
+        .panel {
+            background: var(--glass-dark);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-md) var(--space-lg);
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+
+        .panel-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .panel-icon.upstream {
+            background: rgba(0, 255, 148, 0.15);
+            border: 1px solid rgba(0, 255, 148, 0.3);
+        }
+
+        .panel-icon.downstream {
+            background: rgba(255, 217, 61, 0.15);
+            border: 1px solid rgba(255, 217, 61, 0.3);
+        }
+
+        .panel-count {
+            background: var(--cyan);
+            color: var(--void);
+            font-size: 0.6875rem;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .panel-search {
+            padding: var(--space-sm) var(--space-md);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: var(--space-sm) var(--space-md);
+            padding-left: 2.25rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 0.75rem;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: 0 0 0 2px rgba(0, 240, 255, 0.15);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-wrapper::before {
+            content: '⌕';
+            position: absolute;
+            left: var(--space-sm);
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            pointer-events: none;
+        }
+
+        .panel-content {
+            max-height: 350px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--glass-border) transparent;
+        }
+
+        .panel-content::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .panel-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .panel-content::-webkit-scrollbar-thumb {
+            background: var(--glass-border-hover);
+            border-radius: 2px;
+        }
+
+        .panel-content::-webkit-scrollbar-thumb:hover {
+            background: var(--cyan);
+        }
+
+        .table-group {
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .table-group:last-child {
+            border-bottom: none;
+        }
+
+        .table-group-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-sm) var(--space-md);
+            background: rgba(0, 240, 255, 0.03);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .table-group-header:hover {
+            background: rgba(0, 240, 255, 0.06);
+        }
+
+        .table-group-name {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-weight: 500;
+            font-size: 0.75rem;
+            color: var(--cyan);
+        }
+
+        .table-group-name::before {
+            content: '◆';
+            font-size: 0.5rem;
+            opacity: 0.7;
+        }
+
+        .table-group-count {
+            font-size: 0.625rem;
+            color: var(--text-tertiary);
+            background: var(--glass-light);
+            padding: 2px 8px;
+            border-radius: 999px;
+        }
+
+        .table-group-items {
+            padding: var(--space-xs) 0;
+        }
+
+        .table-group.collapsed .table-group-items {
+            display: none;
+        }
+
+        .table-group-header .chevron {
+            transition: transform 0.2s;
+            font-size: 0.625rem;
+            color: var(--text-tertiary);
+        }
+
+        .table-group.collapsed .chevron {
+            transform: rotate(-90deg);
+        }
+
+        .item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-xs) var(--space-md) var(--space-xs) var(--space-xl);
+            font-size: 0.6875rem;
+            color: var(--text-secondary);
+            transition: all 0.15s;
+        }
+
+        .item:hover {
+            background: rgba(0, 240, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .item-icon {
+            font-size: 0.5rem;
+            color: var(--cyan);
+        }
+
+        .item-name {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.6875rem;
+        }
+
+        .item.measure .item-icon { color: var(--cyan); }
+        .item.column .item-icon { color: var(--magenta); }
+
+        .empty-state {
+            padding: var(--space-xl);
+            text-align: center;
+            color: var(--text-tertiary);
+            font-size: 0.75rem;
+        }
+
+        .empty-state-icon {
+            font-size: 1.5rem;
+            margin-bottom: var(--space-sm);
+            opacity: 0.4;
+        }
+
+        .no-results {
+            padding: var(--space-lg);
+            text-align: center;
+            color: var(--text-tertiary);
+            font-size: 0.75rem;
+            display: none;
+        }
+
+        /* Responsive panels */
+        @media (max-width: 1100px) {
+            .panels-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           FOOTER - Minimal Signature
+           ═══════════════════════════════════════════════════════════════════════ */
+        .footer {
+            text-align: center;
+            padding: var(--space-2xl) var(--space-xl);
+            color: var(--text-tertiary);
+            font-size: 0.75rem;
+            position: relative;
+            margin-top: var(--space-xl);
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 20%;
+            right: 20%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--glass-border), transparent);
+        }
+
+        .footer strong {
+            background: var(--holo-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           RESPONSIVE BREAKPOINTS
+           ═══════════════════════════════════════════════════════════════════════ */
+        @media (max-width: 900px) {
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .header { flex-direction: column; gap: var(--space-md); align-items: flex-start; }
+            .hero-title { font-size: 1.5rem; }
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: var(--space-md); }
+            .stats-row { grid-template-columns: 1fr; }
+            .toolbar { flex-wrap: wrap; }
+            .legend { flex-direction: column; align-items: center; gap: var(--space-md); }
+            .filter-group { width: 100%; justify-content: center; }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           SIDEBAR - Model Browser
+           ═══════════════════════════════════════════════════════════════════════ */
+        .app-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 320px;
+            min-width: 320px;
+            background: var(--obsidian);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 100;
+            transform: translateX(-100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar.visible {
+            transform: translateX(0);
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            top: var(--space-md);
+            left: var(--space-md);
+            z-index: 101;
+            background: var(--cyan);
+            color: var(--void);
+            border: none;
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            box-shadow: var(--glow-cyan);
+            transition: all 0.2s;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .sidebar-toggle:hover {
+            background: #33F3FF;
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
+        }
+
+        .sidebar-toggle.sidebar-open {
+            left: 330px;
+        }
+
+        .main-content {
+            flex: 1;
+            transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .main-content.sidebar-open {
+            margin-left: 320px;
+        }
+
+        .sidebar-header {
+            padding: var(--space-lg);
+            border-bottom: 1px solid var(--glass-border);
+            background: linear-gradient(180deg, rgba(0, 240, 255, 0.05) 0%, transparent 100%);
+        }
+
+        .sidebar-title {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        .sidebar-search {
+            padding: var(--space-sm) var(--space-md);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .sidebar-search-input {
+            width: 100%;
+            padding: var(--space-sm) var(--space-md);
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 0.75rem;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .sidebar-search-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .sidebar-search-input:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: 0 0 0 2px rgba(0, 240, 255, 0.15);
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--glass-border) transparent;
+        }
+
+        .sidebar-category {
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .sidebar-category-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-md);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .sidebar-category-header:hover {
+            background: rgba(0, 240, 255, 0.05);
+        }
+
+        .sidebar-category-title {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .sidebar-category-icon {
+            width: 26px;
+            height: 26px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .sidebar-category-icon.measures {
+            background: rgba(0, 240, 255, 0.15);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+        }
+
+        .sidebar-category-icon.columns {
+            background: rgba(255, 0, 245, 0.15);
+            border: 1px solid rgba(255, 0, 245, 0.3);
+        }
+
+        .sidebar-category-name {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .sidebar-category-count {
+            background: var(--cyan);
+            color: var(--void);
+            font-size: 0.6875rem;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .sidebar-category-chevron {
+            color: var(--text-tertiary);
+            font-size: 0.625rem;
+            transition: transform 0.2s;
+        }
+
+        .sidebar-category.collapsed .sidebar-category-chevron {
+            transform: rotate(-90deg);
+        }
+
+        .sidebar-category-content {
+            display: block;
+        }
+
+        .sidebar-category.collapsed .sidebar-category-content {
+            display: none;
+        }
+
+        .sidebar-table-group {
+            border-top: 1px solid rgba(0, 240, 255, 0.05);
+        }
+
+        .sidebar-table-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-sm) var(--space-md) var(--space-sm) var(--space-lg);
+            cursor: pointer;
+            background: rgba(0, 240, 255, 0.02);
+            transition: background 0.2s;
+        }
+
+        .sidebar-table-header:hover {
+            background: rgba(0, 240, 255, 0.05);
+        }
+
+        .sidebar-table-name {
+            font-size: 0.6875rem;
+            color: var(--cyan);
+            font-weight: 500;
+        }
+
+        .sidebar-table-count {
+            font-size: 0.5625rem;
+            color: var(--text-tertiary);
+            background: var(--glass-light);
+            padding: 2px 6px;
+            border-radius: 999px;
+        }
+
+        .sidebar-table-items {
+            padding: var(--space-xs) 0;
+        }
+
+        .sidebar-table-group.collapsed .sidebar-table-items {
+            display: none;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-xs) var(--space-md) var(--space-xs) var(--space-xl);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(0, 240, 255, 0.08);
+        }
+
+        .sidebar-item.selected {
+            background: var(--cyan);
+            color: var(--void);
+        }
+
+        .sidebar-item.selected .sidebar-item-name {
+            color: var(--void);
+        }
+
+        .sidebar-item-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .sidebar-item.measure .sidebar-item-dot {
+            background: var(--cyan);
+            box-shadow: 0 0 6px var(--cyan);
+        }
+
+        .sidebar-item.column .sidebar-item-dot {
+            background: var(--magenta);
+            box-shadow: 0 0 6px var(--magenta);
+        }
+
+        .sidebar-item.selected .sidebar-item-dot {
+            background: var(--void);
+            box-shadow: none;
+        }
+
+        .sidebar-item-name {
+            font-size: 0.6875rem;
+            font-family: 'Space Mono', monospace;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar { width: 300px; min-width: 300px; }
+            .main-content.sidebar-open { margin-left: 300px; }
+            .sidebar-toggle.sidebar-open { left: 310px; }
+        }
+
+        @media (max-width: 700px) {
+            .sidebar { width: 100%; }
+            .main-content.sidebar-open { margin-left: 0; }
+            .sidebar-toggle.sidebar-open { left: auto; right: var(--space-md); }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════════════
+           PAGE LOAD ANIMATIONS - Staggered Reveal
+           ═══════════════════════════════════════════════════════════════════════ */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header { animation: fadeInUp 0.6s ease-out 0.1s both; }
+        .hero-card { animation: fadeInUp 0.6s ease-out 0.2s both; }
+        .stats-row { animation: fadeInUp 0.6s ease-out 0.3s both; }
+        .panels-container { animation: fadeInUp 0.6s ease-out 0.4s both; }
+        .diagram-wrapper { animation: fadeInUp 0.6s ease-out 0.5s both; }
+        .footer { animation: fadeInUp 0.6s ease-out 0.6s both; }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    <div class="noise-overlay"></div>
+
+    <!-- Info Tooltip (positioned globally) -->
+    <div class="node-tooltip" id="node-tooltip">
+        <div class="tooltip-header">
+            <div class="tooltip-type-badge" id="tooltip-type-badge">
+                <span id="tooltip-type-icon">⬡</span>
+                <span id="tooltip-type-text">Measure</span>
+            </div>
+            <div class="tooltip-title" id="tooltip-title"></div>
+            <div class="tooltip-table" id="tooltip-table"></div>
+        </div>
+        <div class="tooltip-body" id="tooltip-body"></div>
+        <div class="tooltip-footer">ESC to close</div>
+    </div>
+
+    <!-- Sidebar Toggle Button (only if sidebar data available) -->
+    <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()" style="display: __SIDEBAR_DISPLAY__;">
+        <span id="sidebar-toggle-icon">◧</span>
+        <span id="sidebar-toggle-text">Model Browser</span>
+    </button>
+
+    <!-- Sidebar (only if sidebar data available) -->
+    <aside class="sidebar" id="sidebar" style="display: __SIDEBAR_DISPLAY__;">
+        <div class="sidebar-header">
+            <div class="sidebar-title">
+                <span>◈</span>
+                <span>Model Browser</span>
+            </div>
+            <div class="sidebar-subtitle">__TOTAL_SIDEBAR_MEASURES__ measures · __TOTAL_SIDEBAR_COLUMNS__ columns</div>
+        </div>
+        <div class="sidebar-search">
+            <input type="text" class="sidebar-search-input" id="sidebar-search" placeholder="Search...">
+        </div>
+        <div class="sidebar-content" id="sidebar-content">
+            <!-- Measures Category -->
+            <div class="sidebar-category" id="sidebar-measures">
+                <div class="sidebar-category-header" onclick="toggleSidebarCategory('measures')">
+                    <div class="sidebar-category-title">
+                        <div class="sidebar-category-icon measures">⬡</div>
+                        <span class="sidebar-category-name">Measures</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span class="sidebar-category-count">__TOTAL_SIDEBAR_MEASURES__</span>
+                        <span class="sidebar-category-chevron">▾</span>
+                    </div>
+                </div>
+                <div class="sidebar-category-content" id="sidebar-measures-content">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+            <!-- Columns Category -->
+            <div class="sidebar-category collapsed" id="sidebar-columns">
+                <div class="sidebar-category-header" onclick="toggleSidebarCategory('columns')">
+                    <div class="sidebar-category-title">
+                        <div class="sidebar-category-icon columns">◇</div>
+                        <span class="sidebar-category-name">Columns</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span class="sidebar-category-count">__TOTAL_SIDEBAR_COLUMNS__</span>
+                        <span class="sidebar-category-chevron">▾</span>
+                    </div>
+                </div>
+                <div class="sidebar-category-content" id="sidebar-columns-content">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content" id="main-content">
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="brand">
+                <div class="brand-icon">◈</div>
+                <div class="brand-text">
+                    <h1>Dependency Analysis</h1>
+                    <span>Power BI Model Explorer</span>
+                </div>
+            </div>
+            <div class="timestamp">__TIMESTAMP__</div>
+        </header>
+
+        <!-- Hero Card -->
+        <div class="hero-card">
+            <div class="hero-glow"></div>
+            <div class="hero-label">Analyzing Measure</div>
+            <h2 class="hero-title">
+                <span class="table-name">__MEASURE_TABLE__</span><span class="measure-name">[__MEASURE_NAME__]</span>
+            </h2>
+            <p class="hero-subtitle">Visualizing __DIRECTION__ dependencies up to __DEPTH__ levels</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-value">__UPSTREAM_LEN__</div>
+                <div class="stat-label">Dependencies (Upstream)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">__DOWNSTREAM_LEN__</div>
+                <div class="stat-label">Used By (Downstream)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">__NODE_COUNT__</div>
+                <div class="stat-label">Diagram Elements</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">__EDGE_COUNT__</div>
+                <div class="stat-label">Relationships</div>
+            </div>
+        </div>
+
+        <!-- Dependency Panels -->
+        <div class="panels-container">
+            <!-- Dependencies Panel (Upstream - what this measure uses) -->
+            <div class="panel" id="dependencies-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <div class="panel-icon upstream">↑</div>
+                        <span>Dependencies</span>
+                    </div>
+                    <div class="panel-count" id="deps-count">__UPSTREAM_LEN__</div>
+                </div>
+                <div class="panel-search">
+                    <div class="search-wrapper">
+                        <input type="text" class="search-input" id="deps-search" placeholder="Filter..." oninput="filterPanel('deps')">
+                    </div>
+                </div>
+                <div class="panel-content" id="deps-content">
+                    <!-- Content populated by JavaScript -->
+                </div>
+                <div class="no-results" id="deps-no-results">No matching items</div>
+            </div>
+
+            <!-- Used By Panel (Downstream - what uses this measure) -->
+            <div class="panel" id="used-by-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <div class="panel-icon downstream">↓</div>
+                        <span>Used By</span>
+                    </div>
+                    <div class="panel-count" id="used-by-count">__DOWNSTREAM_LEN__</div>
+                </div>
+                <div class="panel-search">
+                    <div class="search-wrapper">
+                        <input type="text" class="search-input" id="used-by-search" placeholder="Filter..." oninput="filterPanel('used-by')">
+                    </div>
+                </div>
+                <div class="panel-content" id="used-by-content">
+                    <!-- Content populated by JavaScript -->
+                </div>
+                <div class="no-results" id="used-by-no-results">No matching items</div>
+            </div>
+        </div>
+
+        <!-- Diagram -->
+        <div class="diagram-wrapper">
+            <div class="diagram-header">
+                <div class="diagram-title">
+                    <div class="diagram-title-icon">◎</div>
+                    <span>Dependency Flow</span>
+                </div>
+                <div class="toolbar">
+                    <div class="filter-group">
+                        <button class="btn btn-filter active" id="filter-all" onclick="setFilter('all')">All</button>
+                        <button class="btn btn-filter" id="filter-upstream" onclick="setFilter('upstream')">↑ Upstream</button>
+                        <button class="btn btn-filter" id="filter-downstream" onclick="setFilter('downstream')">↓ Downstream</button>
+                    </div>
+                    <div class="toolbar-divider"></div>
+                    <button class="btn btn-ghost" id="clear-selection-btn" onclick="clearFlowHighlight()" style="display: none;">× Clear</button>
+                    <button class="btn btn-ghost" onclick="zoomIn()">+ Zoom</button>
+                    <button class="btn btn-ghost" onclick="zoomOut()">− Zoom</button>
+                    <button class="btn btn-ghost" onclick="resetAll()">⟲ Reset</button>
+                    <button class="btn btn-primary" onclick="downloadSVG()">↓ Export SVG</button>
+                </div>
+            </div>
+            <div class="diagram-content" id="diagram-content">
+                <pre class="mermaid" id="mermaid-diagram">
+__MERMAID_CODE__
+                </pre>
+                <div class="click-hint" id="click-hint">Click any node to highlight flow · ESC to clear</div>
+            </div>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-dot legend-root"></div>
+                    <span>Target</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot legend-upstream"></div>
+                    <span>Upstream</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot legend-downstream"></div>
+                    <span>Downstream</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot legend-column"></div>
+                    <span>Columns</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            Generated by <strong>MCP-PowerBi-Finvision</strong> · Quantum Flux Design System
+        </footer>
+    </div>
+    </div><!-- End main-content -->
+
+    <script>
+        console.log('=== MCP-PowerBi-Finvision Dependency Diagram v3.0 - Quantum Flux ===');
+        console.log('Script loaded at:', new Date().toLocaleTimeString());
+
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#00F0FF',
+                primaryTextColor: '#F0F4FF',
+                primaryBorderColor: '#00B8C5',
+                lineColor: '#5D6580',
+                secondaryColor: '#0A0A12',
+                tertiaryColor: '#12121C',
+                background: '#030308',
+                mainBkg: '#0A0A12',
+                nodeBorder: '#00F0FF',
+                clusterBkg: 'rgba(0, 240, 255, 0.08)',
+                clusterBorder: '#00F0FF',
+                titleColor: '#F0F4FF',
+                edgeLabelBackground: '#0A0A12',
+                nodeTextColor: '#F0F4FF',
+                fontSize: '14px',
+                fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif'
+            },
+            flowchart: {
+                htmlLabels: true,
+                curve: 'basis',
+                nodeSpacing: 80,
+                rankSpacing: 120,
+                padding: 30,
+                useMaxWidth: false,
+                defaultRenderer: 'dagre-wrapper',
+                wrappingWidth: 200
+            },
+            securityLevel: 'loose'
+        });
+
+        // Force re-render with larger size after initial load
+        setTimeout(() => {
+            const svg = document.querySelector('.mermaid svg');
+            if (svg) {
+                svg.style.minWidth = '1200px';
+                svg.style.minHeight = '600px';
+            }
+        }, 500);
+
+        let currentZoom = 1;
+        const zoomStep = 0.15;
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // GLOBAL HELPER FUNCTIONS (must be at top level for all functions to access)
+        // ═══════════════════════════════════════════════════════════════════════
+
+        // Extract sanitized ID from Mermaid's internal ID format
+        function getSanitizedId(mermaidId) {
+            if (!mermaidId) return '';
+            const match = mermaidId.match(/flowchart-(.+)-\d+$/);
+            return match ? match[1] : mermaidId;
+        }
+
+        // Check if sanitized ID matches any in a list
+        function idMatchesList(sanitizedId, idList) {
+            if (!sanitizedId || !idList || !idList.length) return false;
+            return idList.includes(sanitizedId);
+        }
+
+        function zoomIn() {
+            currentZoom = Math.min(3, currentZoom + zoomStep);
+            applyZoom();
+        }
+
+        function zoomOut() {
+            currentZoom = Math.max(0.3, currentZoom - zoomStep);
+            applyZoom();
+        }
+
+        function resetZoom() {
+            currentZoom = 1;
+            applyZoom();
+        }
+
+        // Complete reset - zoom, highlighting, filter, and viewBox
+        function resetAll() {
+            // Reset zoom
+            currentZoom = 1;
+            applyZoom();
+
+            // Clear any flow highlighting first
+            clearFlowHighlight();
+
+            // Reset filter to "All"
+            setFilter('all');
+
+            // Restore original viewBox
+            const svg = document.querySelector('.mermaid svg');
+            if (svg && svg.dataset.originalViewBox) {
+                svg.setAttribute('viewBox', svg.dataset.originalViewBox);
+                console.log('Restored viewBox to:', svg.dataset.originalViewBox);
+            }
+
+            // Reset ALL node/edge/cluster visibility and inline styles
+            if (svg) {
+                // Reset nodes
+                svg.querySelectorAll('g.node').forEach(el => {
+                    el.classList.remove('flow-highlighted', 'flow-selected', 'flow-hidden', 'filter-hidden');
+                    el.style.display = '';
+                    el.style.opacity = '';
+                    el.style.visibility = '';
+                    el.style.filter = '';
+                });
+
+                // Reset edges with full style clear
+                svg.querySelectorAll('g.edgePath').forEach(el => {
+                    el.classList.remove('flow-highlighted', 'flow-hidden', 'filter-hidden');
+                    el.style.display = '';
+                    el.style.opacity = '';
+                    el.style.visibility = '';
+                    const path = el.querySelector('path');
+                    if (path) {
+                        path.style.display = '';
+                        path.style.opacity = '';
+                        path.style.visibility = '';
+                        path.style.strokeWidth = '';
+                        path.style.stroke = '';
+                    }
+                });
+
+                // Reset clusters
+                svg.querySelectorAll('g.cluster').forEach(el => {
+                    el.classList.remove('flow-highlighted', 'flow-hidden', 'filter-hidden');
+                    el.style.display = '';
+                    el.style.opacity = '';
+                    el.style.visibility = '';
+                });
+
+                // Reset standalone paths and edge labels
+                svg.querySelectorAll('path[marker-end], path[marker-start]').forEach(path => {
+                    path.style.opacity = '';
+                    path.style.visibility = '';
+                });
+                svg.querySelectorAll('g.edgeLabel').forEach(label => {
+                    label.style.opacity = '';
+                    label.style.visibility = '';
+                });
+            }
+
+            // Scroll to top
+            const diagramContent = document.getElementById('diagram-content');
+            if (diagramContent) {
+                diagramContent.scrollTop = 0;
+                diagramContent.scrollLeft = 0;
+            }
+
+            console.log('Reset all: zoom, highlighting, filters, and viewBox cleared');
+        }
+
+        function applyZoom() {
+            const svg = document.querySelector('.mermaid svg');
+            if (svg) {
+                svg.style.transform = `scale(${currentZoom})`;
+                svg.style.transformOrigin = 'center center';
+            }
+        }
+
+        function downloadSVG() {
+            const svg = document.querySelector('.mermaid svg');
+            if (svg) {
+                const svgData = new XMLSerializer().serializeToString(svg);
+                const blob = new Blob([svgData], { type: 'image/svg+xml' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = __DOWNLOAD_NAME_JSON__;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        // Node ID lists for filtering (can be updated when switching items)
+        let upstreamNodeIds = __UPSTREAM_IDS_JSON__;
+        let downstreamNodeIds = __DOWNSTREAM_IDS_JSON__;
+        let rootNodeId = __ROOT_ID_JSON__;
+        const currentMainItem = __MAIN_ITEM_JSON__;  // The initially selected item
+        let currentItemKey = currentMainItem;  // Track current item
+
+        console.log('Initial node IDs:');
+        console.log('  Upstream:', upstreamNodeIds);
+        console.log('  Downstream:', downstreamNodeIds);
+        console.log('  Root:', rootNodeId);
+
+        // Sanitize names for Mermaid node IDs (defined early for use by other functions)
+        function sanitizeForMermaid(name) {
+            let result = name.replace(/\[/g, '_').replace(/\]/g, '').replace(/ /g, '_');
+            result = result.replace(/-/g, '_').replace(/\//g, '_').replace(/\\\\/g, '_');
+            result = result.replace(/\(/g, '_').replace(/\)/g, '_').replace(/%/g, 'pct');
+            result = result.replace(/&/g, 'and').replace(/'/g, '').replace(/"/g, '');
+            result = result.replace(/\./g, '_').replace(/,/g, '_').replace(/:/g, '_');
+            result = result.replace(/\+/g, 'plus').replace(/\*/g, 'x').replace(/=/g, 'eq');
+            result = result.replace(/</, 'lt').replace(/>/, 'gt').replace(/!/g, 'not');
+            result = result.replace(/#/g, 'num').replace(/@/g, 'at').replace(/\$/g, 'dollar');
+            result = result.replace(/[^a-zA-Z0-9_]/g, '');
+            result = result.replace(/_+/g, '_');
+            if (result && !/^[a-zA-Z]/.test(result)) result = 'n_' + result;
+            return result.replace(/^_+|_+$/g, '') || 'node';
+        }
+
+        // Auto-size the viewBox to fit all content with padding (defined early)
+        function autoSizeViewBox() {
+            const svg = document.querySelector('.mermaid svg');
+            if (!svg) return;
+
+            try {
+                const bbox = svg.getBBox();
+                if (bbox.width > 0 && bbox.height > 0) {
+                    const padding = 50;
+                    const viewBox = `${bbox.x - padding} ${bbox.y - padding} ${bbox.width + padding * 2} ${bbox.height + padding * 2}`;
+
+                    svg.setAttribute('viewBox', viewBox);
+                    svg.dataset.originalViewBox = viewBox;
+
+                    svg.style.width = '100%';
+                    svg.style.height = 'auto';
+                    svg.style.minHeight = '400px';
+                    svg.style.maxHeight = '800px';
+
+                    console.log('Auto-sized viewBox:', viewBox);
+                }
+            } catch (e) {
+                console.warn('Could not auto-size viewBox:', e);
+            }
+        }
+
+        // Update node ID lists when switching items (called after regenerateDiagram)
+        function updateNodeIdLists(itemKey, deps) {
+            const upMeasures = deps.upstream?.measures || [];
+            const upColumns = deps.upstream?.columns || [];
+            const downMeasures = deps.downstream?.measures || [];
+
+            // Update root
+            rootNodeId = sanitizeForMermaid(itemKey);
+            currentItemKey = itemKey;
+
+            // Update upstream list
+            upstreamNodeIds = [];
+            upMeasures.forEach(key => {
+                upstreamNodeIds.push(sanitizeForMermaid(key));
+            });
+            upColumns.forEach(key => {
+                upstreamNodeIds.push(sanitizeForMermaid(key));
+            });
+
+            // Update downstream list
+            downstreamNodeIds = [];
+            downMeasures.forEach(key => {
+                downstreamNodeIds.push(sanitizeForMermaid(key));
+            });
+
+            console.log('Updated node IDs for', itemKey);
+            console.log('  Root:', rootNodeId);
+            console.log('  Upstream:', upstreamNodeIds);
+            console.log('  Downstream:', downstreamNodeIds);
+        }
+
+        // Filter functionality for upstream/downstream view
+        let currentFilter = 'all';
+
+        // Track which nodes are visible after filtering
+        let visibleSanitizedIds = new Set();
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            console.log('Setting filter to:', filter);
+
+            // Update button states
+            document.querySelectorAll('.btn-filter').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`filter-${filter}`).classList.add('active');
+
+            // Get SVG elements
+            const svg = document.querySelector('.mermaid svg');
+            if (!svg) {
+                console.error('SVG not found!');
+                return;
+            }
+
+            // For "all" filter, restore original viewBox immediately
+            if (filter === 'all' && svg.dataset.originalViewBox) {
+                svg.setAttribute('viewBox', svg.dataset.originalViewBox);
+                console.log('Restored original viewBox for "all" filter');
+            }
+
+            const allNodes = svg.querySelectorAll('g.node');
+            const allEdges = svg.querySelectorAll('g.edgePath');
+            const allClusters = svg.querySelectorAll('g.cluster');
+
+            console.log('Found elements:', allNodes.length, 'nodes,', allEdges.length, 'edges,', allClusters.length, 'clusters');
+
+            // Reset visibility tracking
+            visibleSanitizedIds = new Set();
+
+            // Using global helper functions getSanitizedId and idMatchesList
+
+            // Apply visibility to nodes
+            allNodes.forEach(node => {
+                const mermaidId = node.id || '';
+                const sanitizedId = getSanitizedId(mermaidId);
+                const isUpstream = idMatchesList(sanitizedId, upstreamNodeIds);
+                const isDownstream = idMatchesList(sanitizedId, downstreamNodeIds);
+                const isRoot = sanitizedId === rootNodeId;
+
+                let shouldShow = false;
+                if (filter === 'all') {
+                    shouldShow = true;
+                } else if (filter === 'upstream') {
+                    shouldShow = isUpstream || isRoot;
+                } else if (filter === 'downstream') {
+                    shouldShow = isDownstream || isRoot;
+                }
+
+                node.style.display = shouldShow ? '' : 'none';
+                node.style.opacity = shouldShow ? '1' : '0';
+
+                if (shouldShow) {
+                    visibleSanitizedIds.add(sanitizedId);
+                }
+            });
+
+            console.log('Visible nodes after filter:', [...visibleSanitizedIds]);
+
+            // Apply visibility to clusters (subgraph boxes)
+            allClusters.forEach(cluster => {
+                const texts = cluster.querySelectorAll('text, .nodeLabel, span');
+                let clusterLabel = '';
+                texts.forEach(t => { clusterLabel += ' ' + (t.textContent || ''); });
+                clusterLabel = clusterLabel.toLowerCase();
+
+                // Check cluster ID as well as label text
+                const clusterId = (cluster.id || '').toLowerCase();
+
+                // Upstream clusters have "dependencies" in label/id but NOT "dependents"/"used by"
+                const isUpstreamCluster = (clusterLabel.includes('dependencies') || clusterId.includes('dependencies')) &&
+                                          !clusterLabel.includes('dependents') && !clusterLabel.includes('used by');
+                // Downstream clusters have "dependents" or "used by" in label/id
+                const isDownstreamCluster = clusterLabel.includes('dependents') || clusterLabel.includes('used by') ||
+                                            clusterId.includes('dependents') || clusterId.includes('usedby');
+
+                console.log('Cluster:', clusterId, 'label:', clusterLabel, 'isUpstream:', isUpstreamCluster, 'isDownstream:', isDownstreamCluster);
+
+                let shouldShow = false;
+                if (filter === 'all') {
+                    shouldShow = true;
+                } else if (filter === 'upstream') {
+                    shouldShow = isUpstreamCluster || (!isUpstreamCluster && !isDownstreamCluster);
+                } else if (filter === 'downstream') {
+                    shouldShow = isDownstreamCluster || (!isUpstreamCluster && !isDownstreamCluster);
+                }
+
+                cluster.style.display = shouldShow ? '' : 'none';
+                cluster.style.opacity = shouldShow ? '1' : '0';
+            });
+
+            // Apply visibility to edges based on visible nodes
+            allEdges.forEach(edge => {
+                const classList = Array.from(edge.classList || []);
+                let startNodeId = '';
+                let endNodeId = '';
+
+                classList.forEach(cls => {
+                    if (cls.startsWith('LS-')) startNodeId = cls.substring(3);
+                    if (cls.startsWith('LE-')) endNodeId = cls.substring(3);
+                });
+
+                // Edge is visible if both endpoints are visible
+                const shouldShow = filter === 'all' ||
+                    (visibleSanitizedIds.has(startNodeId) && visibleSanitizedIds.has(endNodeId));
+
+                edge.style.display = shouldShow ? '' : 'none';
+                edge.style.opacity = shouldShow ? '1' : '0';
+
+                const path = edge.querySelector('path');
+                if (path) {
+                    path.style.display = shouldShow ? '' : 'none';
+                    path.style.opacity = shouldShow ? '1' : '0';
+                }
+            });
+
+            // Hide all edge-related elements based on the full element markup
+            const hiddenNodeIds = filter === 'upstream' ? downstreamNodeIds :
+                                  filter === 'downstream' ? upstreamNodeIds : [];
+
+            // Helper to check if an element references any hidden node
+            function referencesHiddenNode(element) {
+                if (hiddenNodeIds.length === 0) return false;
+                const html = element.outerHTML || '';
+                return hiddenNodeIds.some(id => html.includes(id));
+            }
+
+            // Hide standalone paths
+            svg.querySelectorAll('path').forEach(path => {
+                if (path.closest('g.edgePath')) return; // Already handled above
+
+                if (filter === 'all') {
+                    path.style.display = '';
+                    path.style.opacity = '1';
+                } else {
+                    const shouldHide = referencesHiddenNode(path);
+                    path.style.display = shouldHide ? 'none' : '';
+                    path.style.opacity = shouldHide ? '0' : '1';
+                }
+            });
+
+            // Hide edge labels
+            svg.querySelectorAll('g.edgeLabel').forEach(label => {
+                if (filter === 'all') {
+                    label.style.display = '';
+                    label.style.opacity = '1';
+                } else {
+                    const shouldHide = referencesHiddenNode(label);
+                    label.style.display = shouldHide ? 'none' : '';
+                    label.style.opacity = shouldHide ? '0' : '1';
+                }
+            });
+
+            // Alternative: hide edges by checking marker references
+            svg.querySelectorAll('[marker-end], [marker-start]').forEach(el => {
+                if (el.closest('g.edgePath')) return; // Already handled
+
+                if (filter === 'all') {
+                    el.style.display = '';
+                    el.style.opacity = '1';
+                } else {
+                    const shouldHide = referencesHiddenNode(el);
+                    el.style.display = shouldHide ? 'none' : '';
+                    el.style.opacity = shouldHide ? '0' : '1';
+                }
+            });
+
+            // Update panel visibility
+            const depsPanel = document.getElementById('dependencies-panel');
+            const usedByPanel = document.getElementById('used-by-panel');
+
+            if (depsPanel && usedByPanel) {
+                if (filter === 'upstream') {
+                    depsPanel.style.display = '';
+                    usedByPanel.style.display = 'none';
+                } else if (filter === 'downstream') {
+                    depsPanel.style.display = 'none';
+                    usedByPanel.style.display = '';
+                } else {
+                    depsPanel.style.display = '';
+                    usedByPanel.style.display = '';
+                }
+            }
+
+            // Fit SVG to visible content and scroll to top
+            // Use multiple attempts with increasing delays to ensure elements are properly hidden/shown
+            setTimeout(() => {
+                fitViewToFilter(filter);
+            }, 300);
+            setTimeout(() => {
+                fitViewToFilter(filter);
+            }, 600);
+            setTimeout(() => {
+                fitViewToFilter(filter);
+            }, 1000);
+        }
+
+        // Function to fit view to filtered content (can be called multiple times)
+        function fitViewToFilter(filter) {
+            const diagramContent = document.getElementById('diagram-content');
+            const svg = document.querySelector('.mermaid svg');
+            if (!diagramContent || !svg) return;
+
+            // Force a reflow to ensure getBBox returns accurate values
+            void svg.offsetHeight;
+
+            // Store original viewBox BEFORE making any changes (if not already stored)
+            if (!svg.dataset.originalViewBox) {
+                const currentViewBox = svg.getAttribute('viewBox');
+                if (currentViewBox) {
+                    svg.dataset.originalViewBox = currentViewBox;
+                    console.log('Stored original viewBox:', currentViewBox);
+                }
+            }
+
+            // For "all" filter, don't modify viewBox - already restored above
+            if (filter === 'all') {
+                diagramContent.scrollTop = 0;
+                diagramContent.scrollLeft = 0;
+                return;
+            }
+
+            // Calculate bounding box of visible elements using getBBox() directly
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+            let hasVisibleElements = false;
+            let visibleNodeCount = 0;
+
+            // Get visible nodes
+            svg.querySelectorAll('g.node').forEach(node => {
+                if (node.style.display !== 'none' && node.style.visibility !== 'hidden' && node.style.opacity !== '0') {
+                    try {
+                        const bbox = node.getBBox();
+                        if (bbox.width > 0 && bbox.height > 0) {
+                            minX = Math.min(minX, bbox.x);
+                            minY = Math.min(minY, bbox.y);
+                            maxX = Math.max(maxX, bbox.x + bbox.width);
+                            maxY = Math.max(maxY, bbox.y + bbox.height);
+                            hasVisibleElements = true;
+                            visibleNodeCount++;
+                        }
+                    } catch(e) { console.log('getBBox error:', e); }
+                }
+            });
+
+            // Get visible clusters
+            svg.querySelectorAll('g.cluster').forEach(cluster => {
+                if (cluster.style.display !== 'none' && cluster.style.visibility !== 'hidden' && cluster.style.opacity !== '0') {
+                    try {
+                        const bbox = cluster.getBBox();
+                        if (bbox.width > 0 && bbox.height > 0) {
+                            minX = Math.min(minX, bbox.x);
+                            minY = Math.min(minY, bbox.y);
+                            maxX = Math.max(maxX, bbox.x + bbox.width);
+                            maxY = Math.max(maxY, bbox.y + bbox.height);
+                            hasVisibleElements = true;
+                        }
+                    } catch(e) {}
+                }
+            });
+
+            console.log('Visible bounds:', { minX, minY, maxX, maxY, hasVisibleElements, visibleNodeCount });
+
+            if (hasVisibleElements && minX !== Infinity && maxX > minX && maxY > minY) {
+                // Add generous padding
+                const padding = 150;
+                minX -= padding;
+                minY -= padding;
+                maxX += padding;
+                maxY += padding;
+
+                const width = maxX - minX;
+                const height = maxY - minY;
+
+                // Ensure minimum dimensions
+                const finalWidth = Math.max(width, 600);
+                const finalHeight = Math.max(height, 400);
+
+                // Update viewBox to fit visible content
+                const newViewBox = `${minX} ${minY} ${finalWidth} ${finalHeight}`;
+                svg.setAttribute('viewBox', newViewBox);
+                console.log('Filter viewBox set to:', newViewBox);
+            } else {
+                // Fallback: couldn't calculate bounds, try using full SVG bbox
+                console.log('Could not calculate visible bounds, using fallback');
+                try {
+                    const fullBbox = svg.getBBox();
+                    if (fullBbox.width > 0 && fullBbox.height > 0) {
+                        const padding = 50;
+                        const newViewBox = `${fullBbox.x - padding} ${fullBbox.y - padding} ${fullBbox.width + padding * 2} ${fullBbox.height + padding * 2}`;
+                        svg.setAttribute('viewBox', newViewBox);
+                        console.log('Fallback viewBox set to:', newViewBox);
+                    }
+                } catch(e) {
+                    console.log('Fallback getBBox failed:', e);
+                }
+            }
+
+            // Scroll to top-left
+            diagramContent.scrollTop = 0;
+            diagramContent.scrollLeft = 0;
+        }
+
+        // Store and auto-size viewBox on first load
+        function initializeViewBox() {
+            const svg = document.querySelector('.mermaid svg');
+            if (!svg) {
+                // SVG not ready yet, retry
+                console.log('SVG not found, retrying...');
+                setTimeout(initializeViewBox, 500);
+                return;
+            }
+
+            if (!svg.dataset.originalViewBox) {
+                // First try to auto-size based on content
+                autoSizeViewBox();
+
+                // If auto-size didn't work, use fallback
+                if (!svg.dataset.originalViewBox) {
+                    const viewBox = svg.getAttribute('viewBox');
+                    if (viewBox) {
+                        svg.dataset.originalViewBox = viewBox;
+                    } else {
+                        svg.dataset.originalViewBox = `0 0 ${svg.clientWidth || 1200} ${svg.clientHeight || 600}`;
+                    }
+                }
+            }
+
+            // Build edge graph after SVG is ready
+            buildEdgeGraph();
+        }
+
+        // Wait for Mermaid to finish rendering before initializing
+        const initCheckInterval = setInterval(() => {
+            const svg = document.querySelector('.mermaid svg');
+            if (svg && svg.querySelector('g.node')) {
+                clearInterval(initCheckInterval);
+                console.log('SVG and nodes detected, initializing...');
+                setTimeout(initializeViewBox, 300);
+            }
+        }, 200);
+        // Fallback timeout
+        setTimeout(() => {
+            clearInterval(initCheckInterval);
+            initializeViewBox();
+        }, 3000);
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // CLICK-TO-HIGHLIGHT FLOW FUNCTIONALITY
+        // ═══════════════════════════════════════════════════════════════════════
+
+        let flowHighlightActive = false;
+        let selectedNodeId = null;
+        let edgeGraph = { incoming: {}, outgoing: {} }; // Node relationships
+
+        // Map from Mermaid internal IDs to our sanitized node IDs
+        let nodeIdMap = {}; // mermaidInternalId -> sanitizedId
+        let sanitizedToMermaidMap = {}; // sanitizedId -> mermaidInternalId (for reverse lookup)
+
+        // Build edge graph after Mermaid renders
+        function buildEdgeGraph() {
+            const svg = document.querySelector('.mermaid svg');
+            if (!svg) return;
+
+            edgeGraph = { incoming: {}, outgoing: {} };
+            nodeIdMap = {};
+            sanitizedToMermaidMap = {};
+
+            // First, build a map of all node IDs
+            svg.querySelectorAll('g.node').forEach(node => {
+                const mermaidId = node.id || '';
+                // Extract the base sanitized ID (the part we defined in Mermaid code)
+                // Mermaid format: "flowchart-sanitizedId-123"
+                const match = mermaidId.match(/flowchart-(.+)-\d+$/);
+                if (match) {
+                    const sanitizedId = match[1];
+                    nodeIdMap[mermaidId] = sanitizedId;
+                    sanitizedToMermaidMap[sanitizedId] = mermaidId;
+                    // Also map the sanitized ID to itself for edge matching
+                    nodeIdMap[sanitizedId] = sanitizedId;
+                }
+            });
+
+            console.log('Node ID map (first 5):', Object.fromEntries(Object.entries(nodeIdMap).slice(0, 5)));
+            console.log('Total nodes mapped:', Object.keys(nodeIdMap).length);
+
+            // Parse edges from edgePath elements
+            // Try multiple methods to find edge connections
+            let edgesFound = 0;
+            svg.querySelectorAll('g.edgePath').forEach((edge, idx) => {
+                const classList = Array.from(edge.classList || []);
+                let startNode = '';
+                let endNode = '';
+
+                // Method 1: Look for LS-/LE- classes (standard Mermaid format)
+                classList.forEach(cls => {
+                    if (cls.startsWith('LS-')) startNode = cls.substring(3);
+                    if (cls.startsWith('LE-')) endNode = cls.substring(3);
+                });
+
+                // Method 2: Try to extract from edge ID if classes don't work
+                if ((!startNode || !endNode) && edge.id) {
+                    // Edge IDs might be in format like "L-NodeA-NodeB" or similar
+                    const edgeIdMatch = edge.id.match(/L-(.+?)-(.+)/);
+                    if (edgeIdMatch) {
+                        startNode = startNode || edgeIdMatch[1];
+                        endNode = endNode || edgeIdMatch[2];
+                    }
+                }
+
+                // Method 3: Check the edge's data attributes
+                if (!startNode || !endNode) {
+                    const dataStart = edge.getAttribute('data-start');
+                    const dataEnd = edge.getAttribute('data-end');
+                    if (dataStart) startNode = dataStart;
+                    if (dataEnd) endNode = dataEnd;
+                }
+
+                // Debug: log first few edges
+                if (idx < 3) {
+                    console.log(`Edge ${idx}: classes=[${classList.join(', ')}], id=${edge.id}, start=${startNode}, end=${endNode}`);
+                }
+
+                if (startNode && endNode) {
+                    edgesFound++;
+                    // outgoing: startNode -> endNode (startNode is used BY endNode)
+                    if (!edgeGraph.outgoing[startNode]) edgeGraph.outgoing[startNode] = [];
+                    if (!edgeGraph.outgoing[startNode].includes(endNode)) {
+                        edgeGraph.outgoing[startNode].push(endNode);
+                    }
+
+                    // incoming: endNode <- startNode (endNode USES startNode)
+                    if (!edgeGraph.incoming[endNode]) edgeGraph.incoming[endNode] = [];
+                    if (!edgeGraph.incoming[endNode].includes(startNode)) {
+                        edgeGraph.incoming[endNode].push(startNode);
+                    }
+                }
+            });
+
+            console.log('Total edges found:', edgesFound);
+            console.log('Edge graph outgoing nodes:', Object.keys(edgeGraph.outgoing).length);
+            console.log('Edge graph incoming nodes:', Object.keys(edgeGraph.incoming).length);
+
+            // Debug: Show sample of edge connections
+            const outgoingKeys = Object.keys(edgeGraph.outgoing);
+            if (outgoingKeys.length > 0) {
+                console.log('Sample outgoing:', outgoingKeys[0], '->', edgeGraph.outgoing[outgoingKeys[0]]);
+            }
+        }
+
+        // Find all upstream nodes (what the node depends on - recursively)
+        function findUpstream(nodeId, visited = new Set()) {
+            if (visited.has(nodeId)) return visited;
+            visited.add(nodeId);
+
+            const incoming = edgeGraph.incoming[nodeId] || [];
+            incoming.forEach(srcId => {
+                findUpstream(srcId, visited);
+            });
+
+            return visited;
+        }
+
+        // Find all downstream nodes (what uses this node - recursively)
+        function findDownstream(nodeId, visited = new Set()) {
+            if (visited.has(nodeId)) return visited;
+            visited.add(nodeId);
+
+            const outgoing = edgeGraph.outgoing[nodeId] || [];
+            outgoing.forEach(tgtId => {
+                findDownstream(tgtId, visited);
+            });
+
+            return visited;
+        }
+
+        // Highlight the complete flow for a node
+        function highlightNodeFlow(clickedNodeElement) {
+            const svg = document.querySelector('.mermaid svg');
+            if (!svg) return;
+
+            console.log('========================================');
+            console.log('Highlighting flow for clicked node');
+            console.log('Current filter:', currentFilter);
+
+            // Get all node info for better matching
+            const allNodeElements = Array.from(svg.querySelectorAll('g.node'));
+            const nodeInfoMap = new Map(); // mermaidId -> {element, sanitizedId, label, isVisible}
+
+            allNodeElements.forEach(node => {
+                const mermaidId = node.id || '';
+                const sanitizedId = nodeIdMap[mermaidId] || getSanitizedId(mermaidId);
+                const labelEl = node.querySelector('span.nodeLabel, foreignObject span, text');
+                const label = labelEl ? labelEl.textContent.trim() : '';
+
+                // Check if node is visible under current filter
+                const isUpstreamNode = idMatchesList(sanitizedId, upstreamNodeIds);
+                const isDownstreamNode = idMatchesList(sanitizedId, downstreamNodeIds);
+                const isRootNode = sanitizedId === rootNodeId || idMatchesList(sanitizedId, [rootNodeId]);
+
+                let isVisibleInFilter = true;
+                if (currentFilter === 'upstream') {
+                    isVisibleInFilter = isUpstreamNode || isRootNode;
+                } else if (currentFilter === 'downstream') {
+                    isVisibleInFilter = isDownstreamNode || isRootNode;
+                }
+
+                nodeInfoMap.set(mermaidId, {
+                    element: node,
+                    sanitizedId,
+                    label,
+                    mermaidId,
+                    isUpstream: isUpstreamNode,
+                    isDownstream: isDownstreamNode,
+                    isRoot: isRootNode,
+                    isVisibleInFilter
+                });
+            });
+
+            // Get clicked node info
+            const clickedMermaidId = clickedNodeElement.id || '';
+            const clickedInfo = nodeInfoMap.get(clickedMermaidId) || {};
+            const clickedSanitizedId = clickedInfo.sanitizedId || getSanitizedId(clickedMermaidId);
+            const clickedLabel = clickedInfo.label || '';
+
+            console.log('Clicked node:', {
+                mermaidId: clickedMermaidId,
+                sanitizedId: clickedSanitizedId,
+                label: clickedLabel,
+                isVisibleInFilter: clickedInfo.isVisibleInFilter
+            });
+
+            // Determine which nodes should be highlighted (respecting current filter)
+            let highlightedNodeElements = new Set();
+            highlightedNodeElements.add(clickedNodeElement); // Always include clicked node
+
+            // Try edge graph traversal first
+            let upstreamNodes = findUpstream(clickedSanitizedId, new Set());
+            let downstreamNodes = findDownstream(clickedSanitizedId, new Set());
+
+            console.log('Edge graph traversal - upstream:', upstreamNodes.size, 'downstream:', downstreamNodes.size);
+
+            // Map traversal results to node elements - BUT respect current filter
+            nodeInfoMap.forEach((info, mermaidId) => {
+                // Only consider nodes visible in current filter
+                if (!info.isVisibleInFilter) return;
+
+                if (upstreamNodes.has(info.sanitizedId) || downstreamNodes.has(info.sanitizedId)) {
+                    highlightedNodeElements.add(info.element);
+                }
+            });
+
+            // If edge graph traversal found few nodes, use precomputed lists as fallback
+            if (highlightedNodeElements.size <= 1) {
+                console.log('Using precomputed node lists as fallback');
+
+                // Check if clicked is root
+                const isRoot = clickedInfo.isRoot;
+                const isUpstream = clickedInfo.isUpstream;
+                const isDownstream = clickedInfo.isDownstream;
+
+                console.log('Node category - isRoot:', isRoot, 'isUpstream:', isUpstream, 'isDownstream:', isDownstream);
+
+                if (isRoot) {
+                    // Root: show connected nodes that are visible in current filter
+                    nodeInfoMap.forEach((info, mermaidId) => {
+                        if (!info.isVisibleInFilter) return;
+
+                        if (info.isUpstream || info.isDownstream || info.isRoot) {
+                            highlightedNodeElements.add(info.element);
+                        }
+                    });
+                } else if (isUpstream) {
+                    // Upstream node: show path to root (only if visible in filter)
+                    nodeInfoMap.forEach((info, mermaidId) => {
+                        if (!info.isVisibleInFilter) return;
+
+                        // Include root
+                        if (info.isRoot) {
+                            highlightedNodeElements.add(info.element);
+                        }
+                        // Include this node's dependencies (other upstream nodes it depends on)
+                        if (edgeGraph.incoming[clickedSanitizedId]?.includes(info.sanitizedId)) {
+                            highlightedNodeElements.add(info.element);
+                        }
+                    });
+                } else if (isDownstream) {
+                    // Downstream node: show path from root (only if visible in filter)
+                    nodeInfoMap.forEach((info, mermaidId) => {
+                        if (!info.isVisibleInFilter) return;
+
+                        // Include root
+                        if (info.isRoot) {
+                            highlightedNodeElements.add(info.element);
+                        }
+                        // Include nodes that this node leads to
+                        if (edgeGraph.outgoing[clickedSanitizedId]?.includes(info.sanitizedId)) {
+                            highlightedNodeElements.add(info.element);
+                        }
+                    });
+                }
+            }
+
+            console.log('Total nodes to highlight:', highlightedNodeElements.size);
+
+            // Activate highlight mode
+            flowHighlightActive = true;
+            selectedNodeId = clickedSanitizedId;
+
+            // Show clear button
+            document.getElementById('clear-selection-btn').style.display = '';
+
+            // Apply highlighting - add flow-highlighted to selected, flow-hidden to others
+            allNodeElements.forEach(node => {
+                node.classList.remove('flow-highlighted', 'flow-selected', 'flow-hidden');
+
+                if (highlightedNodeElements.has(node)) {
+                    node.classList.add('flow-highlighted');
+                    if (node === clickedNodeElement) {
+                        node.classList.add('flow-selected');
+                    }
+                } else {
+                    node.classList.add('flow-hidden');
+                }
+            });
+
+            // Build set of highlighted sanitized IDs for edge matching
+            const highlightedIds = new Set();
+            const highlightedLabels = new Set();
+            highlightedNodeElements.forEach(el => {
+                const info = nodeInfoMap.get(el.id);
+                if (info) {
+                    highlightedIds.add(info.sanitizedId);
+                    highlightedIds.add(info.mermaidId);
+                    if (info.label) highlightedLabels.add(info.label);
+                }
+            });
+
+            console.log('Highlighted IDs for edge matching:', [...highlightedIds]);
+            console.log('Edge graph keys:', { outgoing: Object.keys(edgeGraph.outgoing), incoming: Object.keys(edgeGraph.incoming) });
+
+            // Highlight edges - only show edges where BOTH endpoints are highlighted
+            // Use both CSS classes AND inline styles for maximum compatibility
+            let edgesHighlighted = 0;
+            let edgesHidden = 0;
+            let edgeDebugCount = 0;
+
+            // Helper to check if ID matches any highlighted ID
+            function matchesHighlighted(edgeId) {
+                if (!edgeId) return false;
+                // Direct match
+                if (highlightedIds.has(edgeId)) return true;
+                // Partial match (ID contains highlighted or vice versa)
+                for (const hId of highlightedIds) {
+                    if (hId && edgeId) {
+                        // Check substring match in both directions
+                        if (hId.includes(edgeId) || edgeId.includes(hId)) return true;
+                        // Also check with flowchart- prefix stripped
+                        const cleanEdgeId = edgeId.replace(/^flowchart-/, '').replace(/-\d+$/, '');
+                        const cleanHId = hId.replace(/^flowchart-/, '').replace(/-\d+$/, '');
+                        if (cleanEdgeId && cleanHId && (cleanEdgeId.includes(cleanHId) || cleanHId.includes(cleanEdgeId))) return true;
+                    }
+                }
+                return false;
+            }
+
+            // Also add a fallback check using node labels
+            function matchesHighlightedByLabel(edgeId) {
+                if (!edgeId) return false;
+                for (const label of highlightedLabels) {
+                    if (label && edgeId && edgeId.toLowerCase().includes(label.toLowerCase().replace(/[\[\]]/g, ''))) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            console.log('All highlighted IDs for matching:', [...highlightedIds]);
+            console.log('All highlighted labels:', [...highlightedLabels]);
+
+            svg.querySelectorAll('g.edgePath').forEach(edge => {
+                edge.classList.remove('flow-highlighted', 'flow-hidden');
+
+                const classList = Array.from(edge.classList || []);
+                let startNode = '';
+                let endNode = '';
+
+                classList.forEach(cls => {
+                    if (cls.startsWith('LS-')) startNode = cls.substring(3);
+                    if (cls.startsWith('LE-')) endNode = cls.substring(3);
+                });
+
+                // Debug first few edges
+                if (edgeDebugCount < 5) {
+                    console.log(`Edge ${edgeDebugCount}: start='${startNode}', end='${endNode}'`);
+                    console.log(`  startMatch=${matchesHighlighted(startNode)}, endMatch=${matchesHighlighted(endNode)}`);
+                    edgeDebugCount++;
+                }
+
+                // Check if both endpoints match highlighted nodes (try multiple methods)
+                const startInFlow = matchesHighlighted(startNode) || matchesHighlightedByLabel(startNode);
+                const endInFlow = matchesHighlighted(endNode) || matchesHighlightedByLabel(endNode);
+
+                if (startInFlow && endInFlow) {
+                    edge.classList.add('flow-highlighted');
+                    // Reset ALL visibility styles (display may be 'none' from filter)
+                    edge.style.display = '';
+                    edge.style.opacity = '1';
+                    edge.style.visibility = 'visible';
+                    edge.style.pointerEvents = 'auto';
+                    // Style the path for emphasis - using new cyan color
+                    const path = edge.querySelector('path');
+                    if (path) {
+                        path.style.display = '';
+                        path.style.opacity = '1';
+                        path.style.visibility = 'visible';
+                        path.style.strokeWidth = '4px';
+                        path.style.stroke = '#00F0FF';
+                        path.style.filter = 'drop-shadow(0 0 6px rgba(0, 240, 255, 0.6))';
+                    }
+                    // Also show any marker elements
+                    edge.querySelectorAll('marker, [marker-end], [marker-start]').forEach(m => {
+                        m.style.display = '';
+                        m.style.opacity = '1';
+                        m.style.visibility = 'visible';
+                    });
+                    edgesHighlighted++;
+                } else {
+                    edge.classList.add('flow-hidden');
+                    // Force hide with inline styles
+                    edge.style.display = 'none';
+                    edge.style.opacity = '0';
+                    edge.style.visibility = 'hidden';
+                    const path = edge.querySelector('path');
+                    if (path) {
+                        path.style.display = 'none';
+                        path.style.opacity = '0';
+                        path.style.visibility = 'hidden';
+                    }
+                    edgesHidden++;
+                }
+            });
+            console.log('Edges highlighted:', edgesHighlighted, 'hidden:', edgesHidden);
+
+            // Also hide any standalone path elements that might be edge arrows
+            svg.querySelectorAll('path[marker-end], path[marker-start]').forEach(path => {
+                if (path.closest('g.edgePath')) return; // Already handled
+                // Hide by default unless it's part of a visible edge
+                path.style.opacity = '0';
+                path.style.visibility = 'hidden';
+            });
+
+            // Hide edge labels too
+            svg.querySelectorAll('g.edgeLabel').forEach(label => {
+                label.style.opacity = '0';
+                label.style.visibility = 'hidden';
+            });
+
+            // Handle clusters - show if they contain highlighted nodes
+            svg.querySelectorAll('g.cluster').forEach(cluster => {
+                cluster.classList.remove('flow-highlighted', 'flow-hidden');
+
+                const hasHighlightedNode = cluster.querySelector('g.node.flow-highlighted');
+                if (hasHighlightedNode) {
+                    cluster.classList.add('flow-highlighted');
+                } else {
+                    cluster.classList.add('flow-hidden');
+                }
+            });
+
+            console.log('========================================');
+
+            // Adjust viewBox to fit only the highlighted elements
+            setTimeout(() => {
+                fitViewBoxToHighlighted(svg);
+            }, 100);
+        }
+
+        // Fit viewBox to highlighted elements only
+        function fitViewBoxToHighlighted(svg) {
+            if (!svg) return;
+
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+            let hasElements = false;
+
+            // Helper to get element bounds in SVG coordinate space
+            function getElementBounds(element) {
+                try {
+                    const bbox = element.getBBox();
+                    // Walk up the transform chain to get actual position
+                    let x = bbox.x;
+                    let y = bbox.y;
+                    let el = element;
+                    while (el && el !== svg) {
+                        const transform = el.getAttribute('transform');
+                        if (transform) {
+                            const translateMatch = transform.match(/translate\s*\(\s*([^,\s]+)[\s,]+([^,\s\)]+)/);
+                            if (translateMatch) {
+                                x += parseFloat(translateMatch[1]) || 0;
+                                y += parseFloat(translateMatch[2]) || 0;
+                            }
+                        }
+                        el = el.parentElement;
+                    }
+                    return { x, y, width: bbox.width, height: bbox.height };
+                } catch(e) {
+                    return null;
+                }
+            }
+
+            // Find bounds of highlighted nodes
+            svg.querySelectorAll('g.node.flow-highlighted, g.node.flow-selected').forEach(node => {
+                const bounds = getElementBounds(node);
+                if (bounds) {
+                    minX = Math.min(minX, bounds.x);
+                    minY = Math.min(minY, bounds.y);
+                    maxX = Math.max(maxX, bounds.x + bounds.width);
+                    maxY = Math.max(maxY, bounds.y + bounds.height);
+                    hasElements = true;
+                }
+            });
+
+            // Include highlighted clusters
+            svg.querySelectorAll('g.cluster.flow-highlighted').forEach(cluster => {
+                const bounds = getElementBounds(cluster);
+                if (bounds) {
+                    minX = Math.min(minX, bounds.x);
+                    minY = Math.min(minY, bounds.y);
+                    maxX = Math.max(maxX, bounds.x + bounds.width);
+                    maxY = Math.max(maxY, bounds.y + bounds.height);
+                    hasElements = true;
+                }
+            });
+
+            if (hasElements && minX !== Infinity) {
+                // Add generous padding
+                const padding = 150;
+                minX -= padding;
+                minY -= padding;
+                maxX += padding;
+                maxY += padding;
+
+                const width = Math.max(maxX - minX, 400);
+                const height = Math.max(maxY - minY, 300);
+
+                // Update viewBox
+                const newViewBox = `${minX} ${minY} ${width} ${height}`;
+                svg.setAttribute('viewBox', newViewBox);
+                console.log('Highlight viewBox set to:', newViewBox);
+            }
+        }
+
+        // Clear all flow highlighting
+        function clearFlowHighlight() {
+            const svg = document.querySelector('.mermaid svg');
+            if (!svg) return;
+
+            flowHighlightActive = false;
+            selectedNodeId = null;
+
+            // Hide clear button
+            const clearBtn = document.getElementById('clear-selection-btn');
+            if (clearBtn) clearBtn.style.display = 'none';
+
+            // Remove all highlight and hidden classes from nodes
+            svg.querySelectorAll('g.node').forEach(node => {
+                node.classList.remove('flow-highlighted', 'flow-selected', 'flow-hidden');
+                node.style.opacity = '';
+                node.style.visibility = '';
+                node.style.filter = '';
+                node.style.display = '';
+            });
+
+            // Remove all highlight and hidden classes from edges
+            svg.querySelectorAll('g.edgePath').forEach(edge => {
+                edge.classList.remove('flow-highlighted', 'flow-hidden');
+                edge.style.opacity = '';
+                edge.style.visibility = '';
+                edge.style.display = '';
+                const path = edge.querySelector('path');
+                if (path) {
+                    path.style.opacity = '';
+                    path.style.visibility = '';
+                    path.style.display = '';
+                    path.style.strokeWidth = '';
+                    path.style.stroke = '';
+                    path.style.filter = '';
+                }
+            });
+
+            // Clear inline styles from standalone paths
+            svg.querySelectorAll('path[marker-end], path[marker-start]').forEach(path => {
+                path.style.opacity = '';
+                path.style.visibility = '';
+            });
+
+            // Clear edge labels
+            svg.querySelectorAll('g.edgeLabel').forEach(label => {
+                label.style.opacity = '';
+                label.style.visibility = '';
+            });
+
+            // Remove all highlight and hidden classes from clusters
+            svg.querySelectorAll('g.cluster').forEach(cluster => {
+                cluster.classList.remove('flow-highlighted', 'flow-hidden');
+                cluster.style.opacity = '';
+                cluster.style.visibility = '';
+            });
+
+            // Restore original viewBox
+            if (svg.dataset.originalViewBox) {
+                svg.setAttribute('viewBox', svg.dataset.originalViewBox);
+                console.log('Restored viewBox to:', svg.dataset.originalViewBox);
+            }
+
+            console.log('Flow highlight cleared - all elements reset to normal');
+
+            // IMPORTANT: Reapply current filter to restore visibility state
+            if (currentFilter !== 'all') {
+                console.log('Reapplying filter:', currentFilter);
+                setFilter(currentFilter);
+            }
+        }
+
+        // Extract clean node ID from Mermaid's internal ID format
+        function extractNodeId(mermaidId) {
+            // Use the nodeIdMap for accurate mapping
+            if (nodeIdMap[mermaidId]) {
+                return nodeIdMap[mermaidId];
+            }
+            // Fallback: Mermaid uses format like "flowchart-NodeName-123"
+            if (!mermaidId) return '';
+            const match = mermaidId.match(/flowchart-(.+)-\d+$/);
+            if (match) {
+                return match[1];
+            }
+            return mermaidId;
+        }
+
+        // Alternative edge detection: analyze path endpoints to match nodes
+        function buildEdgeGraphFromPaths() {
+            const svg = document.querySelector('.mermaid svg');
+            if (!svg) return;
+
+            // Get all node bounding boxes for proximity matching
+            const nodeBounds = {};
+            svg.querySelectorAll('g.node').forEach(node => {
+                const mermaidId = node.id || '';
+                const sanitizedId = nodeIdMap[mermaidId];
+                if (sanitizedId) {
+                    try {
+                        const bbox = node.getBBox();
+                        const transform = node.getAttribute('transform') || '';
+                        const match = transform.match(/translate\(([^,]+),\s*([^)]+)\)/);
+                        let tx = 0, ty = 0;
+                        if (match) {
+                            tx = parseFloat(match[1]) || 0;
+                            ty = parseFloat(match[2]) || 0;
+                        }
+                        nodeBounds[sanitizedId] = {
+                            x: bbox.x + tx,
+                            y: bbox.y + ty,
+                            width: bbox.width,
+                            height: bbox.height,
+                            cx: bbox.x + tx + bbox.width / 2,
+                            cy: bbox.y + ty + bbox.height / 2
+                        };
+                    } catch (e) {}
+                }
+            });
+
+            console.log('Node bounds computed for', Object.keys(nodeBounds).length, 'nodes');
+        }
+
+        // Initialize click handlers after Mermaid renders
+        function initializeClickHandlers() {
+            const svg = document.querySelector('.mermaid svg');
+            if (!svg) {
+                console.log('SVG not ready, retrying...');
+                setTimeout(initializeClickHandlers, 500);
+                return;
+            }
+
+            console.log('Initializing click handlers...');
+
+            // Build the edge graph
+            buildEdgeGraph();
+
+            // If edge graph is empty, try alternative method
+            if (Object.keys(edgeGraph.outgoing).length === 0 && Object.keys(edgeGraph.incoming).length === 0) {
+                console.log('Primary edge detection found no edges, trying path analysis...');
+                buildEdgeGraphFromPaths();
+            }
+
+            // Fallback: use the pre-computed upstream/downstream lists
+            if (Object.keys(edgeGraph.outgoing).length === 0) {
+                console.log('Using pre-computed node lists as fallback for edge graph');
+                // Build edge graph from known node relationships
+                // Root connects to all upstream (root depends on them)
+                upstreamNodeIds.forEach(upId => {
+                    if (!edgeGraph.outgoing[upId]) edgeGraph.outgoing[upId] = [];
+                    if (!edgeGraph.outgoing[upId].includes(rootNodeId)) {
+                        edgeGraph.outgoing[upId].push(rootNodeId);
+                    }
+                    if (!edgeGraph.incoming[rootNodeId]) edgeGraph.incoming[rootNodeId] = [];
+                    if (!edgeGraph.incoming[rootNodeId].includes(upId)) {
+                        edgeGraph.incoming[rootNodeId].push(upId);
+                    }
+                });
+
+                // Root connects to all downstream (downstream depends on root)
+                downstreamNodeIds.forEach(downId => {
+                    if (!edgeGraph.outgoing[rootNodeId]) edgeGraph.outgoing[rootNodeId] = [];
+                    if (!edgeGraph.outgoing[rootNodeId].includes(downId)) {
+                        edgeGraph.outgoing[rootNodeId].push(downId);
+                    }
+                    if (!edgeGraph.incoming[downId]) edgeGraph.incoming[downId] = [];
+                    if (!edgeGraph.incoming[downId].includes(rootNodeId)) {
+                        edgeGraph.incoming[downId].push(rootNodeId);
+                    }
+                });
+
+                console.log('Fallback edge graph built:');
+                console.log('  Outgoing nodes:', Object.keys(edgeGraph.outgoing).length);
+                console.log('  Incoming nodes:', Object.keys(edgeGraph.incoming).length);
+            }
+
+            // Also try to build edge relationships by analyzing the actual edge paths in SVG
+            // This catches edges that might have been missed by class-based detection
+            svg.querySelectorAll('g.edgePath').forEach(edge => {
+                // Try to get edge info from various attributes
+                const id = edge.id || '';
+                const classList = Array.from(edge.classList || []);
+
+                // Skip if already processed
+                let startNode = '';
+                let endNode = '';
+
+                classList.forEach(cls => {
+                    if (cls.startsWith('LS-')) startNode = cls.substring(3);
+                    if (cls.startsWith('LE-')) endNode = cls.substring(3);
+                });
+
+                if (startNode && endNode) {
+                    // Make sure both directions are recorded
+                    if (!edgeGraph.outgoing[startNode]) edgeGraph.outgoing[startNode] = [];
+                    if (!edgeGraph.outgoing[startNode].includes(endNode)) {
+                        edgeGraph.outgoing[startNode].push(endNode);
+                    }
+                    if (!edgeGraph.incoming[endNode]) edgeGraph.incoming[endNode] = [];
+                    if (!edgeGraph.incoming[endNode].includes(startNode)) {
+                        edgeGraph.incoming[endNode].push(startNode);
+                    }
+                }
+            });
+
+            console.log('Final edge graph:');
+            console.log('  Outgoing nodes:', Object.keys(edgeGraph.outgoing).length);
+            console.log('  Incoming nodes:', Object.keys(edgeGraph.incoming).length);
+
+            // Show hint briefly
+            const hint = document.getElementById('click-hint');
+            if (hint) {
+                hint.classList.add('visible');
+                setTimeout(() => hint.classList.remove('visible'), 4000);
+            }
+
+            // Add click handlers to nodes
+            svg.querySelectorAll('g.node').forEach(node => {
+                node.addEventListener('click', (e) => {
+                    e.stopPropagation();
+
+                    const mermaidId = node.id;
+                    const nodeId = extractNodeId(mermaidId);
+
+                    console.log('--- Node Clicked ---');
+                    console.log('Mermaid ID:', mermaidId);
+                    console.log('Sanitized ID:', nodeId);
+                    console.log('Outgoing to:', edgeGraph.outgoing[nodeId] || 'none');
+                    console.log('Incoming from:', edgeGraph.incoming[nodeId] || 'none');
+
+                    if (flowHighlightActive && selectedNodeId === nodeId) {
+                        // Clicking same node again clears highlight
+                        clearFlowHighlight();
+                    } else {
+                        // Highlight the clicked node's flow
+                        clearFlowHighlight(); // Clear previous
+                        highlightNodeFlow(node); // Pass the node element
+                    }
+                });
+            });
+
+            // Click on SVG background clears highlight
+            svg.addEventListener('click', (e) => {
+                if (e.target === svg || e.target.tagName === 'svg') {
+                    clearFlowHighlight();
+                }
+            });
+
+            // Escape key clears highlight
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && flowHighlightActive) {
+                    clearFlowHighlight();
+                }
+            });
+
+            console.log('Click handlers initialized successfully');
+            console.log('Total nodes with click handlers:', svg.querySelectorAll('g.node').length);
+        }
+
+        // Initialize after Mermaid renders (with longer delay to ensure complete rendering)
+        setTimeout(initializeClickHandlers, 1500);
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // PANEL DATA
+        // ═══════════════════════════════════════════════════════════════════════
+
+        // Panel data
+        const referencedMeasures = __REF_MEASURES_JSON__;
+        const referencedColumns = __REF_COLUMNS_JSON__;
+        const usedByMeasures = __USED_BY_JSON__;
+
+        // Group items by table
+        function groupByTable(items, nameKey = 'name') {
+            const groups = {};
+            items.forEach(item => {
+                const table = item.table || 'Unknown';
+                if (!groups[table]) {
+                    groups[table] = [];
+                }
+                groups[table].push(item[nameKey] || item.measure || item.name);
+            });
+            return groups;
+        }
+
+        // Render panel content
+        function renderPanelContent(containerId, groups, itemType = 'measure') {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            const tables = Object.keys(groups).sort();
+            if (tables.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">${itemType === 'measure' ? '📊' : '📁'}</div>
+                        <div>No ${itemType === 'measure' ? 'measures' : 'columns'} found</div>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            tables.forEach(table => {
+                const items = groups[table].sort();
+                html += `
+                    <div class="table-group" data-table="${table.toLowerCase()}">
+                        <div class="table-group-header" onclick="toggleGroup(this)">
+                            <span class="table-group-name">${table}</span>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span class="table-group-count">${items.length}</span>
+                                <span class="chevron">▼</span>
+                            </div>
+                        </div>
+                        <div class="table-group-items">
+                            ${items.map(name => `
+                                <div class="item ${itemType}" data-name="${name.toLowerCase()}" data-table="${table.toLowerCase()}">
+                                    <span class="item-icon">●</span>
+                                    <span class="item-name">${name}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Toggle table group collapse
+        function toggleGroup(header) {
+            const group = header.closest('.table-group');
+            if (group) {
+                group.classList.toggle('collapsed');
+            }
+        }
+
+        // Filter panel content
+        function filterPanel(panelType) {
+            const searchInput = document.getElementById(`${panelType}-search`);
+            const container = document.getElementById(`${panelType}-content`);
+            const noResults = document.getElementById(`${panelType}-no-results`);
+
+            if (!searchInput || !container) return;
+
+            const filter = searchInput.value.toLowerCase().trim();
+            const groups = container.querySelectorAll('.table-group');
+            let hasVisibleItems = false;
+
+            groups.forEach(group => {
+                const items = group.querySelectorAll('.item');
+                let groupHasVisible = false;
+
+                items.forEach(item => {
+                    const name = item.dataset.name || '';
+                    const table = item.dataset.table || '';
+                    const matches = !filter || name.includes(filter) || table.includes(filter);
+                    item.style.display = matches ? 'flex' : 'none';
+                    if (matches) {
+                        groupHasVisible = true;
+                        hasVisibleItems = true;
+                    }
+                });
+
+                // Show/hide group based on matching items
+                group.style.display = groupHasVisible ? 'block' : 'none';
+
+                // Auto-expand groups when filtering
+                if (filter && groupHasVisible) {
+                    group.classList.remove('collapsed');
+                }
+            });
+
+            // Show no results message
+            if (noResults) {
+                noResults.style.display = hasVisibleItems ? 'none' : 'block';
+            }
+
+            // Update visible count
+            updateVisibleCount(panelType, hasVisibleItems ? countVisibleItems(container) : 0);
+        }
+
+        // Count visible items
+        function countVisibleItems(container) {
+            return container.querySelectorAll('.item[style*="display: flex"], .item:not([style*="display"])').length;
+        }
+
+        // Update count badge
+        function updateVisibleCount(panelType, count) {
+            const countEl = document.getElementById(`${panelType}-count`);
+            if (countEl) {
+                const original = panelType === 'deps'
+                    ? referencedMeasures.length + referencedColumns.length
+                    : usedByMeasures.length;
+                countEl.textContent = count < original ? `${count}/${original}` : original;
+            }
+        }
+
+        // Initialize panels on load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Debug: Log initial data
+            console.log('=== Initializing Dependency Panels ===');
+            console.log('referencedMeasures:', referencedMeasures);
+            console.log('referencedColumns:', referencedColumns);
+
+            // Combine measures and columns for dependencies panel
+            const depsGroups = {};
+
+            // Add measures
+            referencedMeasures.forEach(item => {
+                const table = item.table || 'Unknown';
+                if (!depsGroups[table]) depsGroups[table] = { measures: [], columns: [] };
+                depsGroups[table].measures.push(item.name);
+            });
+
+            // Add columns
+            referencedColumns.forEach(item => {
+                console.log('Adding column:', item);
+                const table = item.table || 'Unknown';
+                if (!depsGroups[table]) depsGroups[table] = { measures: [], columns: [] };
+                depsGroups[table].columns.push(item.name);
+            });
+
+            console.log('Final depsGroups:', depsGroups);
+
+            // Render dependencies panel with both measures and columns
+            const depsContainer = document.getElementById('deps-content');
+            if (depsContainer) {
+                const tables = Object.keys(depsGroups).sort();
+                if (tables.length === 0) {
+                    depsContainer.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📊</div>
+                            <div>No dependencies found</div>
+                            <div style="font-size: 0.75rem; margin-top: 0.25rem;">This measure doesn't reference any other measures or columns</div>
+                        </div>
+                    `;
+                } else {
+                    let html = '';
+                    tables.forEach(table => {
+                        const data = depsGroups[table];
+                        const items = [
+                            ...data.measures.map(m => ({ name: m, type: 'measure', displayName: `${table}[${m}]` })),
+                            ...data.columns.map(c => ({ name: c, type: 'column', displayName: `${table}[${c}]` }))
+                        ].sort((a, b) => a.name.localeCompare(b.name));
+
+                        html += `
+                            <div class="table-group" data-table="${table.toLowerCase()}">
+                                <div class="table-group-header" onclick="toggleGroup(this)">
+                                    <span class="table-group-name">${table}</span>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <span class="table-group-count">${items.length}</span>
+                                        <span class="chevron">▼</span>
+                                    </div>
+                                </div>
+                                <div class="table-group-items">
+                                    ${items.map(item => `
+                                        <div class="item ${item.type}" data-name="${item.name.toLowerCase()}" data-table="${table.toLowerCase()}">
+                                            <span class="item-icon">${item.type === 'measure' ? '●' : '◇'}</span>
+                                            <span class="item-name">${item.displayName}</span>
+                                            <span style="color: var(--text-muted); font-size: 0.6875rem; margin-left: auto;">${item.type}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    depsContainer.innerHTML = html;
+                }
+            }
+
+            // Render used-by panel with display folder support
+            const usedByContainer = document.getElementById('used-by-content');
+            if (usedByContainer) {
+                if (usedByMeasures.length === 0) {
+                    usedByContainer.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📭</div>
+                            <div>No measures use this measure</div>
+                            <div style="font-size: 0.75rem; margin-top: 0.25rem;">This measure is not referenced by any other measures</div>
+                        </div>
+                    `;
+                } else {
+                    // Group by table
+                    const usedByByTable = {};
+                    usedByMeasures.forEach(item => {
+                        const table = item.table || 'Unknown';
+                        if (!usedByByTable[table]) usedByByTable[table] = [];
+                        usedByByTable[table].push({
+                            name: item.measure,
+                            displayName: `${table}[${item.measure}]`,
+                            displayFolder: item.display_folder || ''
+                        });
+                    });
+
+                    let html = '';
+                    Object.keys(usedByByTable).sort().forEach(table => {
+                        const items = usedByByTable[table].sort((a, b) => a.name.localeCompare(b.name));
+                        html += `
+                            <div class="table-group" data-table="${table.toLowerCase()}">
+                                <div class="table-group-header" onclick="toggleGroup(this)">
+                                    <span class="table-group-name">${table}</span>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <span class="table-group-count">${items.length}</span>
+                                        <span class="chevron">▼</span>
+                                    </div>
+                                </div>
+                                <div class="table-group-items">
+                                    ${items.map(item => `
+                                        <div class="item measure" data-name="${item.name.toLowerCase()}" data-table="${table.toLowerCase()}">
+                                            <span class="item-icon">●</span>
+                                            <div style="display: flex; flex-direction: column; gap: 0.125rem; flex: 1;">
+                                                <span class="item-name">${item.displayName}</span>
+                                                ${item.displayFolder ? `<span style="color: var(--text-muted); font-size: 0.625rem;">📁 ${item.displayFolder}</span>` : ''}
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    usedByContainer.innerHTML = html;
+                }
+            }
+        });
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // SIDEBAR FUNCTIONALITY (NEW)
+        // ═══════════════════════════════════════════════════════════════════════
+        const sidebarMeasuresByTable = __MEASURES_BY_TABLE_JSON__;
+        const sidebarColumnsByTable = __COLUMNS_BY_TABLE_JSON__;
+        const allDependencies = __ALL_DEPENDENCIES_JSON__;
+        // currentMainItem is declared earlier with the other initial state variables
+
+        // Node metadata for info tooltips (expression for measures, dataType for columns)
+        const nodeMetadata = __NODE_METADATA_JSON__;
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // INFO ICON & TOOLTIP FUNCTIONALITY
+        // ═══════════════════════════════════════════════════════════════════════
+        let activeTooltip = null;
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function getNodeKeyFromLabel(labelText) {
+            // Try to extract Table[Name] from node label
+            if (!labelText) return null;
+            // Match patterns like "TableName[MeasureName]" or just the text
+            const match = labelText.match(/^(.+?)\[(.+?)\]$/);
+            if (match) {
+                return labelText;
+            }
+            // Try matching from nodeMetadata keys
+            for (const key of Object.keys(nodeMetadata)) {
+                if (key.includes(labelText) || labelText.includes(key.split('[')[1]?.replace(']', '') || '')) {
+                    return key;
+                }
+            }
+            return null;
+        }
+
+        function showNodeTooltip(nodeKey, x, y) {
+            const tooltip = document.getElementById('node-tooltip');
+            const meta = nodeMetadata[nodeKey];
+
+            if (!tooltip || !meta) {
+                console.log('No metadata for:', nodeKey);
+                return;
+            }
+
+            // Update tooltip content
+            const typeBadge = document.getElementById('tooltip-type-badge');
+            const typeIcon = document.getElementById('tooltip-type-icon');
+            const typeText = document.getElementById('tooltip-type-text');
+            const titleEl = document.getElementById('tooltip-title');
+            const tableEl = document.getElementById('tooltip-table');
+            const bodyEl = document.getElementById('tooltip-body');
+
+            // Set type badge
+            typeBadge.className = 'tooltip-type-badge ' + meta.type;
+            typeIcon.textContent = meta.type === 'measure' ? '📐' : '📋';
+            typeText.textContent = meta.type === 'measure' ? 'Measure' : 'Column';
+
+            // Set title and table
+            titleEl.textContent = meta.name;
+            tableEl.textContent = 'Table: ' + meta.table;
+
+            // Build body content based on type
+            let bodyHtml = '';
+            if (meta.type === 'measure') {
+                bodyHtml = `
+                    <div class="tooltip-section">
+                        <div class="tooltip-section-label">DAX Expression</div>
+                        <div class="tooltip-expression">${escapeHtml(meta.expression) || 'No expression available'}</div>
+                    </div>
+                `;
+            } else {
+                bodyHtml = `
+                    <div class="tooltip-section">
+                        <div class="tooltip-section-label">Column Properties</div>
+                        <div class="tooltip-meta-grid">
+                            <div class="tooltip-meta-item">
+                                <span class="tooltip-meta-label">Data Type</span>
+                                <span class="tooltip-meta-value data-type">${escapeHtml(String(meta.dataType)) || 'Unknown'}</span>
+                            </div>
+                            <div class="tooltip-meta-item">
+                                <span class="tooltip-meta-label">Column Type</span>
+                                <span class="tooltip-meta-value">${escapeHtml(meta.columnType) || 'Data'}</span>
+                            </div>
+                            <div class="tooltip-meta-item">
+                                <span class="tooltip-meta-label">Is Hidden</span>
+                                <span class="tooltip-meta-value ${meta.isHidden ? 'hidden-yes' : ''}">${meta.isHidden ? 'Yes' : 'No'}</span>
+                            </div>
+                            <div class="tooltip-meta-item">
+                                <span class="tooltip-meta-label">Is Key</span>
+                                <span class="tooltip-meta-value ${meta.isKey ? 'key-yes' : ''}">${meta.isKey ? 'Yes' : 'No'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            bodyEl.innerHTML = bodyHtml;
+
+            // Position tooltip
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const tooltipWidth = 400;
+            const tooltipHeight = 300;
+
+            let left = x + 15;
+            let top = y + 15;
+
+            // Adjust if tooltip would go off screen
+            if (left + tooltipWidth > viewportWidth - 20) {
+                left = x - tooltipWidth - 15;
+            }
+            if (top + tooltipHeight > viewportHeight - 20) {
+                top = viewportHeight - tooltipHeight - 20;
+            }
+            if (left < 20) left = 20;
+            if (top < 20) top = 20;
+
+            tooltip.style.left = left + 'px';
+            tooltip.style.top = top + 'px';
+
+            // Show tooltip
+            tooltip.classList.add('visible');
+            activeTooltip = nodeKey;
+        }
+
+        function hideNodeTooltip() {
+            const tooltip = document.getElementById('node-tooltip');
+            if (tooltip) {
+                tooltip.classList.remove('visible');
+            }
+            activeTooltip = null;
+        }
+
+        function addInfoIconsToNodes() {
+            const svg = document.querySelector('.mermaid svg');
+            if (!svg) {
+                console.log('SVG not found, retrying info icons...');
+                setTimeout(addInfoIconsToNodes, 500);
+                return;
+            }
+
+            console.log('Adding info icons to nodes...');
+            const nodes = svg.querySelectorAll('g.node');
+
+            nodes.forEach((node, idx) => {
+                // Skip if already has info icon
+                if (node.querySelector('.node-info-btn-wrapper')) return;
+
+                // Get node label to determine the key
+                const labelEl = node.querySelector('span.nodeLabel, foreignObject span, text');
+                const labelText = labelEl ? labelEl.textContent.trim() : '';
+                const nodeKey = getNodeKeyFromLabel(labelText);
+
+                if (!nodeKey || !nodeMetadata[nodeKey]) {
+                    console.log('No metadata for node label:', labelText);
+                    return;
+                }
+
+                // Get node bounding box for positioning
+                try {
+                    const bbox = node.getBBox();
+                    const transform = node.getAttribute('transform') || '';
+                    const translateMatch = transform.match(/translate\s*\(\s*([^,\s]+)[\s,]+([^,\s\)]+)/);
+                    let tx = 0, ty = 0;
+                    if (translateMatch) {
+                        tx = parseFloat(translateMatch[1]) || 0;
+                        ty = parseFloat(translateMatch[2]) || 0;
+                    }
+
+                    // Create a foreignObject to hold the info button
+                    const fo = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+                    fo.setAttribute('class', 'node-info-btn-wrapper');
+                    fo.setAttribute('x', (bbox.x + bbox.width - 12).toString());
+                    fo.setAttribute('y', (bbox.y - 12).toString());
+                    fo.setAttribute('width', '28');
+                    fo.setAttribute('height', '28');
+                    fo.style.overflow = 'visible';
+
+                    // Create the button
+                    const btn = document.createElement('div');
+                    btn.className = 'node-info-btn';
+                    btn.setAttribute('data-node-key', nodeKey);
+
+                    // Add click handler
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+
+                        if (activeTooltip === nodeKey) {
+                            hideNodeTooltip();
+                        } else {
+                            showNodeTooltip(nodeKey, e.clientX, e.clientY);
+                        }
+                    });
+
+                    fo.appendChild(btn);
+                    node.appendChild(fo);
+                } catch (err) {
+                    console.log('Error adding info icon to node:', err);
+                }
+            });
+
+            console.log('Info icons added to', nodes.length, 'nodes');
+        }
+
+        // Close tooltip on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && activeTooltip) {
+                hideNodeTooltip();
+            }
+        });
+
+        // Close tooltip when clicking outside
+        document.addEventListener('click', (e) => {
+            const tooltip = document.getElementById('node-tooltip');
+            if (activeTooltip && tooltip && !tooltip.contains(e.target) && !e.target.closest('.node-info-btn')) {
+                hideNodeTooltip();
+            }
+        });
+
+        // Initialize info icons after Mermaid renders
+        setTimeout(addInfoIconsToNodes, 2000);
+
+        let sidebarOpen = false;
+
+        function toggleSidebar() {
+            sidebarOpen = !sidebarOpen;
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const toggleBtn = document.getElementById('sidebar-toggle');
+            const toggleIcon = document.getElementById('sidebar-toggle-icon');
+            const toggleText = document.getElementById('sidebar-toggle-text');
+
+            if (sidebarOpen) {
+                sidebar.classList.add('visible');
+                mainContent.classList.add('sidebar-open');
+                toggleBtn.classList.add('sidebar-open');
+                toggleIcon.textContent = '✕';
+                toggleText.textContent = 'Close';
+            } else {
+                sidebar.classList.remove('visible');
+                mainContent.classList.remove('sidebar-open');
+                toggleBtn.classList.remove('sidebar-open');
+                toggleIcon.textContent = '📂';
+                toggleText.textContent = 'Model Browser';
+            }
+        }
+
+        function toggleSidebarCategory(category) {
+            const panel = document.getElementById('sidebar-' + category);
+            if (panel) {
+                panel.classList.toggle('collapsed');
+            }
+        }
+
+        function toggleSidebarTableGroup(element) {
+            const group = element.closest('.sidebar-table-group');
+            if (group) {
+                group.classList.toggle('collapsed');
+            }
+        }
+
+        function populateSidebar() {
+            // Populate measures
+            const measuresContent = document.getElementById('sidebar-measures-content');
+            if (measuresContent) {
+                let html = '';
+                for (const [table, measures] of Object.entries(sidebarMeasuresByTable).sort()) {
+                    html += `
+                        <div class="sidebar-table-group">
+                            <div class="sidebar-table-header" onclick="toggleSidebarTableGroup(this)">
+                                <span class="sidebar-table-name">📁 ${table}</span>
+                                <span class="sidebar-table-count">${measures.length}</span>
+                            </div>
+                            <div class="sidebar-table-items">
+                                ${measures.map(m => `
+                                    <div class="sidebar-item measure ${m.key === currentMainItem ? 'selected' : ''}"
+                                         data-key="${m.key}"
+                                         onclick="selectSidebarItem('${m.key.replace(/'/g, "\\\\'")}', 'measure')"
+                                         title="${m.key}">
+                                        <span class="sidebar-item-dot"></span>
+                                        <span class="sidebar-item-name">${m.name}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                measuresContent.innerHTML = html || '<div style="padding: 1rem; color: var(--text-muted);">No measures available</div>';
+            }
+
+            // Populate columns
+            const columnsContent = document.getElementById('sidebar-columns-content');
+            if (columnsContent) {
+                let html = '';
+                for (const [table, columns] of Object.entries(sidebarColumnsByTable).sort()) {
+                    html += `
+                        <div class="sidebar-table-group collapsed">
+                            <div class="sidebar-table-header" onclick="toggleSidebarTableGroup(this)">
+                                <span class="sidebar-table-name">📁 ${table}</span>
+                                <span class="sidebar-table-count">${columns.length}</span>
+                            </div>
+                            <div class="sidebar-table-items">
+                                ${columns.map(c => `
+                                    <div class="sidebar-item column ${c.key === currentMainItem ? 'selected' : ''}"
+                                         data-key="${c.key}"
+                                         onclick="selectSidebarItem('${c.key.replace(/'/g, "\\\\'")}', 'column')"
+                                         title="${c.key}">
+                                        <span class="sidebar-item-dot"></span>
+                                        <span class="sidebar-item-name">${c.name}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                columnsContent.innerHTML = html || '<div style="padding: 1rem; color: var(--text-muted);">No columns available</div>';
+            }
+        }
+
+        function selectSidebarItem(itemKey, itemType) {
+            // Check if we have dependency data for this item
+            const deps = allDependencies[itemKey];
+
+            if (!deps) {
+                console.warn(`No dependency data for ${itemKey}`);
+                return;
+            }
+
+            console.log('Switching to item:', itemKey, deps);
+
+            // Update sidebar selection
+            document.querySelectorAll('.sidebar-item.selected').forEach(el => el.classList.remove('selected'));
+            const itemEl = document.querySelector(`.sidebar-item[data-key="${CSS.escape(itemKey)}"]`);
+            if (itemEl) {
+                itemEl.classList.add('selected');
+                // Scroll item into view
+                itemEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            // Parse item key to get table and name
+            const match = itemKey.match(/^(.+)\[(.+)\]$/);
+            if (!match) return;
+            const itemTable = match[1];
+            const itemName = match[2];
+
+            // Update hero card
+            const heroTitle = document.querySelector('.hero-title');
+            if (heroTitle) {
+                heroTitle.innerHTML = `<span class="table-name">${itemTable}</span><span class="measure-name">[${itemName}]</span>`;
+            }
+
+            // Get dependency counts
+            const upstreamMeasures = deps.upstream?.measures || [];
+            const upstreamColumns = deps.upstream?.columns || [];
+            const downstreamMeasures = deps.downstream?.measures || [];
+            const totalUpstream = upstreamMeasures.length + upstreamColumns.length;
+            const totalDownstream = downstreamMeasures.length;
+
+            // Update stats
+            const statCards = document.querySelectorAll('.stat-card');
+            if (statCards.length >= 4) {
+                statCards[0].querySelector('.stat-value').textContent = totalUpstream;
+                statCards[1].querySelector('.stat-value').textContent = totalDownstream;
+                // Node and edge counts will be updated after diagram regeneration
+            }
+
+            // Update panel counts
+            const depsCount = document.getElementById('deps-count');
+            const usedByCount = document.getElementById('used-by-count');
+            if (depsCount) depsCount.textContent = totalUpstream;
+            if (usedByCount) usedByCount.textContent = totalDownstream;
+
+            // Rebuild dependencies panel (upstream)
+            rebuildDepsPanel(upstreamMeasures, upstreamColumns);
+
+            // Rebuild used-by panel (downstream)
+            rebuildUsedByPanel(downstreamMeasures);
+
+            // Regenerate Mermaid diagram
+            regenerateDiagram(itemKey, itemTable, itemName, deps);
+        }
+
+        function rebuildDepsPanel(measures, columns) {
+            const container = document.getElementById('deps-content');
+            if (!container) return;
+
+            // Group by table
+            const groups = {};
+
+            measures.forEach(key => {
+                const m = key.match(/^(.+)\[(.+)\]$/);
+                if (m) {
+                    const table = m[1];
+                    if (!groups[table]) groups[table] = { measures: [], columns: [] };
+                    groups[table].measures.push(m[2]);
+                }
+            });
+
+            columns.forEach(key => {
+                const m = key.match(/^(.+)\[(.+)\]$/);
+                if (m) {
+                    const table = m[1];
+                    if (!groups[table]) groups[table] = { measures: [], columns: [] };
+                    groups[table].columns.push(m[2]);
+                }
+            });
+
+            const tables = Object.keys(groups).sort();
+            if (tables.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📊</div>
+                        <div>No dependencies found</div>
+                    </div>`;
+                return;
+            }
+
+            let html = '';
+            tables.forEach(table => {
+                const data = groups[table];
+                const items = [
+                    ...data.measures.map(m => ({ name: m, type: 'measure', displayName: `${table}[${m}]` })),
+                    ...data.columns.map(c => ({ name: c, type: 'column', displayName: `${table}[${c}]` }))
+                ].sort((a, b) => a.name.localeCompare(b.name));
+
+                html += `
+                    <div class="table-group" data-table="${table.toLowerCase()}">
+                        <div class="table-group-header" onclick="toggleGroup(this)">
+                            <span class="table-group-name">${table}</span>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span class="table-group-count">${items.length}</span>
+                                <span class="chevron">▼</span>
+                            </div>
+                        </div>
+                        <div class="table-group-items">
+                            ${items.map(item => `
+                                <div class="item ${item.type}" data-name="${item.name.toLowerCase()}" data-table="${table.toLowerCase()}">
+                                    <span class="item-icon">${item.type === 'measure' ? '●' : '◇'}</span>
+                                    <span class="item-name">${item.displayName}</span>
+                                    <span style="color: var(--text-muted); font-size: 0.6875rem; margin-left: auto;">${item.type}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function rebuildUsedByPanel(measures) {
+            const container = document.getElementById('used-by-content');
+            if (!container) return;
+
+            if (measures.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <div>No measures use this item</div>
+                    </div>`;
+                return;
+            }
+
+            // Group by table
+            const groups = {};
+            measures.forEach(key => {
+                const m = key.match(/^(.+)\[(.+)\]$/);
+                if (m) {
+                    const table = m[1];
+                    if (!groups[table]) groups[table] = [];
+                    groups[table].push(m[2]);
+                }
+            });
+
+            let html = '';
+            Object.keys(groups).sort().forEach(table => {
+                const items = groups[table].sort();
+                html += `
+                    <div class="table-group" data-table="${table.toLowerCase()}">
+                        <div class="table-group-header" onclick="toggleGroup(this)">
+                            <span class="table-group-name">${table}</span>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span class="table-group-count">${items.length}</span>
+                                <span class="chevron">▼</span>
+                            </div>
+                        </div>
+                        <div class="table-group-items">
+                            ${items.map(name => `
+                                <div class="item measure" data-name="${name.toLowerCase()}" data-table="${table.toLowerCase()}">
+                                    <span class="item-icon">●</span>
+                                    <span class="item-name">${table}[${name}]</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function regenerateDiagram(itemKey, itemTable, itemName, deps) {
+            const upstreamMeasures = deps.upstream?.measures || [];
+            const upstreamColumns = deps.upstream?.columns || [];
+            const downstreamMeasures = deps.downstream?.measures || [];
+
+            // Update the global node ID lists for filtering/highlighting
+            updateNodeIdLists(itemKey, deps);
+
+            // Build Mermaid code
+            const rootId = sanitizeForMermaid(itemKey);
+            let mermaidCode = 'flowchart LR\\n';
+
+            // Add styling classes
+            mermaidCode += '    classDef root fill:#00F0FF,stroke:#00B8C5,stroke-width:3px,color:#030308\\n';
+            mermaidCode += '    classDef upstream fill:#00FF94,stroke:#00CC76,stroke-width:2px,color:#030308\\n';
+            mermaidCode += '    classDef downstream fill:#FFD93D,stroke:#C9A927,stroke-width:2px,color:#030308\\n';
+            mermaidCode += '    classDef column fill:#FF00F5,stroke:#C500BF,stroke-width:2px,color:#030308\\n';
+
+            // Root node - show full Table[Name] format
+            mermaidCode += `    ${rootId}["${itemTable}[${itemName}]"]:::root\\n`;
+
+            // Track node count
+            let nodeCount = 1;
+            let edgeCount = 0;
+
+            // Upstream subgraph (Dependencies)
+            if (upstreamMeasures.length > 0 || upstreamColumns.length > 0) {
+                mermaidCode += '    subgraph Dependencies["⬆ Dependencies"]\\n';
+                mermaidCode += '    direction TB\\n';
+
+                upstreamMeasures.forEach(key => {
+                    const m = key.match(/^(.+)\[(.+)\]$/);
+                    if (m) {
+                        const nodeId = sanitizeForMermaid(key);
+                        // Show full Table[Name] format in node label
+                        mermaidCode += `        ${nodeId}["${m[1]}[${m[2]}]"]:::upstream\\n`;
+                        nodeCount++;
+                    }
+                });
+
+                upstreamColumns.forEach(key => {
+                    const m = key.match(/^(.+)\[(.+)\]$/);
+                    if (m) {
+                        const nodeId = sanitizeForMermaid(key);
+                        // Show full Table[Column] format in node label
+                        mermaidCode += `        ${nodeId}["${m[1]}[${m[2]}]"]:::column\\n`;
+                        nodeCount++;
+                    }
+                });
+
+                mermaidCode += '    end\\n';
+
+                // Edges from upstream to root
+                upstreamMeasures.forEach(key => {
+                    const nodeId = sanitizeForMermaid(key);
+                    mermaidCode += `    ${nodeId} --> ${rootId}\\n`;
+                    edgeCount++;
+                });
+                upstreamColumns.forEach(key => {
+                    const nodeId = sanitizeForMermaid(key);
+                    mermaidCode += `    ${nodeId} --> ${rootId}\\n`;
+                    edgeCount++;
+                });
+            }
+
+            // Downstream subgraph (Dependents)
+            if (downstreamMeasures.length > 0) {
+                mermaidCode += '    subgraph Dependents["⬇ Used By"]\\n';
+                mermaidCode += '    direction TB\\n';
+
+                downstreamMeasures.forEach(key => {
+                    const m = key.match(/^(.+)\[(.+)\]$/);
+                    if (m) {
+                        const nodeId = sanitizeForMermaid(key);
+                        // Show full Table[Name] format in node label
+                        mermaidCode += `        ${nodeId}["${m[1]}[${m[2]}]"]:::downstream\\n`;
+                        nodeCount++;
+                    }
+                });
+
+                mermaidCode += '    end\\n';
+
+                // Edges from root to downstream
+                downstreamMeasures.forEach(key => {
+                    const nodeId = sanitizeForMermaid(key);
+                    mermaidCode += `    ${rootId} --> ${nodeId}\\n`;
+                    edgeCount++;
+                });
+            }
+
+            // Update node/edge stats
+            const statCards = document.querySelectorAll('.stat-card');
+            if (statCards.length >= 4) {
+                statCards[2].querySelector('.stat-value').textContent = nodeCount;
+                statCards[3].querySelector('.stat-value').textContent = edgeCount;
+            }
+
+            // Re-render Mermaid diagram using mermaid.render (more reliable than init)
+            const diagramContainer = document.getElementById('mermaid-diagram');
+            if (diagramContainer) {
+                // Generate unique ID for this render
+                const renderId = 'mermaid-' + Date.now();
+
+                // Use mermaid.render which returns SVG directly
+                mermaid.render(renderId, mermaidCode).then(({ svg }) => {
+                    // Replace container contents with new SVG
+                    diagramContainer.innerHTML = svg;
+
+                    console.log('Mermaid diagram regenerated for', itemKey);
+
+                    // Reset filter to 'all' after regeneration
+                    currentFilter = 'all';
+                    document.querySelectorAll('.btn-filter').forEach(btn => btn.classList.remove('active'));
+                    document.getElementById('filter-all')?.classList.add('active');
+
+                    // Show both panels
+                    const depsPanel = document.getElementById('dependencies-panel');
+                    const usedByPanel = document.getElementById('used-by-panel');
+                    if (depsPanel) depsPanel.style.display = '';
+                    if (usedByPanel) usedByPanel.style.display = '';
+
+                    // Auto-size viewBox and setup after render
+                    setTimeout(() => {
+                        autoSizeViewBox();
+                        buildEdgeGraph();
+                        initClickHandlersForNewDiagram();
+                        // Clear any stale highlight state
+                        flowHighlightActive = false;
+                        selectedNodeId = null;
+                        const clearBtn = document.getElementById('clear-selection-btn');
+                        if (clearBtn) clearBtn.style.display = 'none';
+                    }, 300);
+                }).catch(err => {
+                    console.error('Mermaid render error:', err);
+                    diagramContainer.innerHTML = '<div style="color: red; padding: 2rem;">Error rendering diagram: ' + err.message + '</div>';
+                });
+            }
+        }
+
+        function initClickHandlersForNewDiagram() {
+            const svg = document.querySelector('.mermaid svg');
+            if (!svg) return;
+
+            svg.querySelectorAll('g.node').forEach(node => {
+                node.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const mermaidId = node.id;
+                    const nodeId = extractNodeId(mermaidId);
+                    console.log('Node clicked:', nodeId);
+
+                    if (flowHighlightActive && selectedNodeId === nodeId) {
+                        clearFlowHighlight();
+                    } else {
+                        clearFlowHighlight();
+                        highlightNodeFlow(node);
+                    }
+                });
+            });
+
+            // Re-add info icons after diagram regeneration
+            hideNodeTooltip();
+            addInfoIconsToNodes();
+        }
+
+        function setupSidebarSearch() {
+            const searchInput = document.getElementById('sidebar-search');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase();
+                    document.querySelectorAll('.sidebar-item').forEach(item => {
+                        const name = item.querySelector('.sidebar-item-name')?.textContent?.toLowerCase() || '';
+                        const key = item.dataset.key?.toLowerCase() || '';
+                        const matches = name.includes(query) || key.includes(query);
+                        item.style.display = matches ? '' : 'none';
+                    });
+
+                    // Expand all groups when searching
+                    if (query) {
+                        document.querySelectorAll('.sidebar-table-group').forEach(g => g.classList.remove('collapsed'));
+                        document.querySelectorAll('.sidebar-category').forEach(c => c.classList.remove('collapsed'));
+                    }
+                });
+            }
+        }
+
+        // Initialize sidebar on load
+        document.addEventListener('DOMContentLoaded', function() {
+            populateSidebar();
+            setupSidebarSearch();
+        });
+    </script>
+</body>
+</html>

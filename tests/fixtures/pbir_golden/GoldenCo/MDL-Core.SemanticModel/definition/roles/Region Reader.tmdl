@@ -1,0 +1,13 @@
+/// Readers only see their own regions; admins see everything.
+role 'Region Reader'
+	modelPermission: read
+
+	tablePermission 'Product Line' =
+			-- multi-line RLS filter: the region list comes from the user's mapping
+			VAR __upn = USERPRINCIPALNAME ()
+			VAR __isAdmin = __upn = "admin@example.com"
+			RETURN
+			    __isAdmin
+			        || 'Product Line'[Region] IN { "EU", "O'Brien Isles" }
+
+	annotation PBI_Id = 00000000000000000000000000000001

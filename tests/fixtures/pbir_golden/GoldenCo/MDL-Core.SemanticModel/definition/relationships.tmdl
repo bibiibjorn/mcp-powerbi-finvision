@@ -1,0 +1,7 @@
+relationship 0f1e2d3c-0000-4000-8000-000000000001
+	fromColumn: Sales.'Product Key'
+	toColumn: 'Product Line'.'Product Key'
+
+relationship 0f1e2d3c-0000-4000-8000-000000000002
+	fromColumn: Sales.'Owner Key'
+	toColumn: 'Owner''s Book'.'Owner Key'

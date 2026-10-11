@@ -1,0 +1,54 @@
+{
+  "manifest_version": "0.2",
+  "name": "mcp-powerbi-finvision",
+  "display_name": "Power BI MCP Server",
+  "version": "7.21.0",
+  "description": "MCP server for Power BI Desktop analysis, DAX debugging, and model operations",
+  "long_description": "MCP-PowerBi-Finvision enables AI-powered analysis of Power BI models with consolidated tools for connection, model operations, DAX intelligence, analysis, and debugging.",
+  "author": {
+    "name": "Finvision",
+    "url": "https://github.com/bibiibjorn/MCP-PowerBi-Finvision"
+  },
+  "server": {
+    "type": "python",
+    "entry_point": "src/run_server.py",
+    "mcp_config": {
+      "command": "${__dirname}/venv/Scripts/python.exe",
+      "args": ["${__dirname}/src/run_server.py"],
+      "env": {"PYTHONIOENCODING": "utf-8"}
+    }
+  },
+  "tools": [
+    {"name": "00_Client_Mode", "description": "[00] Client-masking gateway for Claude Code (status, on, off, refresh, gateway_*, route_folder, unroute_folder, route_all, unroute_all, setup, selftest)"},
+    {"name": "01_Connection", "description": "[01] Detect PBI instances and connect"},
+    {"name": "02_Model_Operations", "description": "[02] Unified CRUD for tables, columns, measures, relationships, calc groups"},
+    {"name": "02_TMDL_Operations", "description": "[02] TMDL export, find/replace, bulk rename, migration"},
+    {"name": "02_QA_Linguistic", "description": "[02] Q&A linguistic schema CRUD on PBIP semantic models"},
+    {"name": "03_Batch_Operations", "description": "[03] Batch create/update/delete with transactions"},
+    {"name": "04_Run_DAX", "description": "[04] Execute DAX query with trace analysis"},
+    {"name": "04_Query_Operations", "description": "[04] Data sources, M expressions, search, roles, RLS testing"},
+    {"name": "05_DAX_Intelligence", "description": "[05] DAX analysis, optimization, dependencies, impact"},
+    {"name": "05_Column_Usage_Mapping", "description": "[05] Column/measure usage analysis and export"},
+    {"name": "06_Analysis_Operations", "description": "[06] BPA, model analysis, model comparison"},
+    {"name": "07_Report_Operations", "description": "[07] Report info, measure usage, rename, rebind, backup"},
+    {"name": "07_PBIP_Operations", "description": "[07] Offline PBIP analysis, validation, dependencies, aggregation"},
+    {"name": "07_Page_Operations", "description": "[07] Page CRUD, display, filters, interactions"},
+    {"name": "07_Visual_Operations", "description": "[07] Visual CRUD, formatting, data binding, sync, interactions"},
+    {"name": "07_Bookmark_Operations", "description": "[07] Bookmark CRUD and analysis"},
+    {"name": "07_Theme_Operations", "description": "[07] Theme compliance, colors, formatting, fonts"},
+    {"name": "08_Documentation_Word", "description": "[08] Generate/update Word documentation"},
+    {"name": "09_Debug_Operations", "description": "[09] Visual debug, SE/FE trace, compare, drill, audit, config"},
+    {"name": "09_Validate", "description": "[09] Cross-visual validation, expected values, filter permutations"},
+    {"name": "09_Profile", "description": "[09] Performance profiling, decomposition, contribution, trends"},
+    {"name": "09_Document", "description": "[09] Page/report documentation, measure/filter lineage"},
+    {"name": "10_Show_User_Guide", "description": "[10] Show comprehensive user guide"},
+    {"name": "11_PBIP_Authoring", "description": "[11] PBIP page/visual authoring, cloning, templates"},
+    {"name": "16_Dependency_Graph", "description": "[16] Structured dependency graph queries (model + report)"},
+    {"name": "13_Query_Plan", "description": "[13] Capture/parse/analyze DAX query plans"},
+    {"name": "15_DAX_Refactor", "description": "[15] Bulk DAX refactor transforms with preview/apply + plan_hash"},
+    {"name": "17_Desktop_Bridge", "description": "[17] Live Desktop bridge: in-place reload + screenshot of a running Power BI Desktop (reload/save are destructive)"}
+  ],
+  "keywords": ["power-bi", "dax", "tabular-model", "analysis", "vertipaq", "pbix", "tmdl", "pbip"],
+  "license": "MIT",
+  "compatibility": {"platforms": ["win32"]}
+}

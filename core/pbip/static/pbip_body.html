@@ -1,0 +1,2207 @@
+<div id="app" v-cloak :class="{ 'dark-mode': darkMode }">
+        <div class="app-layout">
+            <!-- Sidebar Navigation -->
+            <aside class="sidebar">
+                <div class="sidebar__header">
+                    <div class="sidebar__brand">
+                        <div class="sidebar__logo">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                                <line x1="12" y1="22.08" x2="12" y2="12"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="sidebar__title">{{ repositoryName }}</h1>
+                            <p class="sidebar__subtitle">PBIP Analysis</p>
+                        </div>
+                    </div>
+                </div>
+
+                <nav class="sidebar__nav">
+                    <div class="nav-section">
+                        <div class="nav-section__title">Overview</div>
+                        <button
+                            @click="activeTab = 'summary'"
+                            :class="['nav-item', { active: activeTab === 'summary' }]"
+                        >
+                            <svg class="nav-item__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7"/>
+                                <rect x="14" y="3" width="7" height="7"/>
+                                <rect x="14" y="14" width="7" height="7"/>
+                                <rect x="3" y="14" width="7" height="7"/>
+                            </svg>
+                            <span class="nav-item__text">Summary</span>
+                        </button>
+                    </div>
+
+                    <div class="nav-section">
+                        <div class="nav-section__title">Model</div>
+                        <button
+                            @click="activeTab = 'model'"
+                            :class="['nav-item', { active: activeTab === 'model' }]"
+                        >
+                            <svg class="nav-item__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            </svg>
+                            <span class="nav-item__text">Model</span>
+                            <span class="nav-item__badge">{{ modelData.tables?.length || 0 }}</span>
+                        </button>
+                        <div v-show="activeTab === 'model'" class="nav-subitems">
+                            <button @click="modelSubTab = 'tables'" :class="['nav-subitem', { active: modelSubTab === 'tables' }]">Tables</button>
+                            <button @click="modelSubTab = 'measures'" :class="['nav-subitem', { active: modelSubTab === 'measures' }]">Measures</button>
+                            <button @click="modelSubTab = 'relationships'" :class="['nav-subitem', { active: modelSubTab === 'relationships' }]">Relationships</button>
+                        </div>
+
+                        <button
+                            v-if="reportData"
+                            @click="activeTab = 'report'"
+                            :class="['nav-item', { active: activeTab === 'report' }]"
+                        >
+                            <svg class="nav-item__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                            <span class="nav-item__text">Report</span>
+                            <span class="nav-item__badge">{{ reportData.pages?.length || 0 }}</span>
+                        </button>
+                    </div>
+
+                    <div class="nav-section">
+                        <div class="nav-section__title">Analysis</div>
+                        <button
+                            @click="activeTab = 'dependencies'"
+                            :class="['nav-item', { active: activeTab === 'dependencies' }]"
+                        >
+                            <svg class="nav-item__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="18" cy="5" r="3"/>
+                                <circle cx="6" cy="12" r="3"/>
+                                <circle cx="18" cy="19" r="3"/>
+                                <path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98"/>
+                            </svg>
+                            <span class="nav-item__text">Dependencies</span>
+                        </button>
+                        <div v-show="activeTab === 'dependencies'" class="nav-subitems">
+                            <button @click="dependencySubTab = 'measures'" :class="['nav-subitem', { active: dependencySubTab === 'measures' }]">Measures</button>
+                            <button @click="dependencySubTab = 'columns'" :class="['nav-subitem', { active: dependencySubTab === 'columns' }]">Columns</button>
+                            <button @click="dependencySubTab = 'chains'" :class="['nav-subitem', { active: dependencySubTab === 'chains' }]">Chains</button>
+                            <button @click="dependencySubTab = 'visuals'" :class="['nav-subitem', { active: dependencySubTab === 'visuals' }]">Visuals</button>
+                        </div>
+
+                        <button
+                            @click="activeTab = 'usage'"
+                            :class="['nav-item', { active: activeTab === 'usage' }]"
+                        >
+                            <svg class="nav-item__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 3v18h18"/>
+                                <path d="M18 17V9"/>
+                                <path d="M13 17V5"/>
+                                <path d="M8 17v-3"/>
+                            </svg>
+                            <span class="nav-item__text">Usage</span>
+                        </button>
+                    </div>
+
+                    <div class="nav-section" v-if="enhancedData?.analyses">
+                        <div class="nav-section__title">Quality</div>
+                        <button
+                            v-if="enhancedData?.analyses?.bpa"
+                            @click="activeTab = 'best-practices'"
+                            :class="['nav-item', { active: activeTab === 'best-practices' }]"
+                        >
+                            <svg class="nav-item__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
+                                <path d="m9 12 2 2 4-4"/>
+                            </svg>
+                            <span class="nav-item__text">Best Practices</span>
+                            <span class="nav-item__badge">{{ bpaViolationsCount }}</span>
+                        </button>
+
+                        <button
+                            v-if="enhancedData?.analyses?.data_types"
+                            @click="activeTab = 'data-quality'"
+                            :class="['nav-item', { active: activeTab === 'data-quality' }]"
+                        >
+                            <svg class="nav-item__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="m21 21-4.35-4.35"/>
+                            </svg>
+                            <span class="nav-item__text">Data Quality</span>
+                            <span class="nav-item__badge">{{ dataQualityIssuesCount }}</span>
+                        </button>
+
+                        <button
+                            v-if="enhancedData?.analyses?.perspectives?.has_perspectives"
+                            @click="activeTab = 'perspectives'"
+                            :class="['nav-item', { active: activeTab === 'perspectives' }]"
+                        >
+                            <svg class="nav-item__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            <span class="nav-item__text">Perspectives</span>
+                            <span class="nav-item__badge">{{ perspectivesCount }}</span>
+                        </button>
+                    </div>
+                </nav>
+
+                <div class="sidebar__footer">
+                    <button @click="toggleDarkMode" class="btn-icon" title="Toggle Dark Mode">
+                        <svg v-if="!darkMode" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                        </svg>
+                        <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"/>
+                            <line x1="12" y1="1" x2="12" y2="3"/>
+                            <line x1="12" y1="21" x2="12" y2="23"/>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                            <line x1="1" y1="12" x2="3" y2="12"/>
+                            <line x1="21" y1="12" x2="23" y2="12"/>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                        </svg>
+                    </button>
+                    <button @click="showCommandPalette = true" class="btn-icon" title="Command Palette (Ctrl/Cmd+K)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/>
+                        </svg>
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Main Content Wrapper -->
+            <div class="main-wrapper">
+                <!-- Header -->
+                <header class="header">
+                    <div class="header__inner">
+                        <h2 class="header__title">
+                            <span v-if="activeTab === 'summary'">Dashboard Overview</span>
+                            <span v-else-if="activeTab === 'model'">Model Explorer</span>
+                            <span v-else-if="activeTab === 'report'">Report Analysis</span>
+                            <span v-else-if="activeTab === 'dependencies'">Dependency Analysis</span>
+                            <span v-else-if="activeTab === 'usage'">Usage Analytics</span>
+                            <span v-else-if="activeTab === 'best-practices'">Best Practices</span>
+                            <span v-else-if="activeTab === 'data-quality'">Data Quality</span>
+                            <span v-else-if="activeTab === 'perspectives'">Perspectives</span>
+                        </h2>
+                        <div class="header__actions">
+                            <div class="search-box">
+                                <svg class="search-box__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"/>
+                                    <path d="m21 21-4.35-4.35"/>
+                                </svg>
+                                <input
+                                    v-model="searchQuery"
+                                    type="text"
+                                    placeholder="Search tables, measures..."
+                                    class="search-box__input"
+                                    @keydown.slash.prevent="$event.target.focus()"
+                                />
+                            </div>
+                            <button @click="exportToCSV" class="btn-icon" title="Export CSV">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                            </button>
+                            <button @click="exportToJSON" class="btn-icon" title="Export JSON">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <line x1="16" y1="13" x2="8" y2="13"/>
+                                    <line x1="16" y1="17" x2="8" y2="17"/>
+                                    <polyline points="10 9 9 9 8 9"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Main Content -->
+                <main class="main-content">
+            <!-- Summary Tab -->
+            <div v-show="activeTab === 'summary'" class="tab-content">
+                <!-- Hero Section -->
+                <div class="hero-section">
+                    <div class="hero-section__eyebrow">PBIP Analysis Report</div>
+                    <h1 class="hero-section__title">{{ repositoryName }}</h1>
+                    <p class="hero-section__subtitle">Comprehensive model analysis with {{ statistics.total_tables }} tables and {{ statistics.total_measures }} measures</p>
+                </div>
+
+                <!-- KPI Metrics Grid -->
+                <div class="metrics-grid">
+                    <div class="metric-card metric-card--terracotta">
+                        <div class="metric-card__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 3h18v18H3zM21 9H3M9 21V9"/>
+                            </svg>
+                        </div>
+                        <div class="metric-card__value">{{ statistics.total_tables }}</div>
+                        <div class="metric-card__label">Tables</div>
+                    </div>
+                    <div class="metric-card metric-card--sienna">
+                        <div class="metric-card__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+                                <line x1="4" y1="22" x2="4" y2="15"/>
+                            </svg>
+                        </div>
+                        <div class="metric-card__value">{{ statistics.total_measures }}</div>
+                        <div class="metric-card__label">Measures</div>
+                    </div>
+                    <div class="metric-card metric-card--sage">
+                        <div class="metric-card__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </div>
+                        <div class="metric-card__value">{{ statistics.total_columns }}</div>
+                        <div class="metric-card__label">Columns</div>
+                    </div>
+                    <div class="metric-card metric-card--ocean">
+                        <div class="metric-card__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="18" cy="5" r="3"/>
+                                <circle cx="6" cy="12" r="3"/>
+                                <circle cx="18" cy="19" r="3"/>
+                                <path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98"/>
+                            </svg>
+                        </div>
+                        <div class="metric-card__value">{{ statistics.total_relationships }}</div>
+                        <div class="metric-card__label">Relationships</div>
+                    </div>
+                </div>
+
+                <!-- Model Information Card -->
+                <div class="card">
+                    <div class="card__header">
+                        <h2 class="card__title">Model Information</h2>
+                    </div>
+                    <div class="card__body">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-item__label">Repository Path</span>
+                                <span class="info-item__value">{{ modelData.model_folder || 'Unknown' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-item__label">Model Type</span>
+                                <span class="info-item__value">Power BI Semantic Model (PBIP Format)</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-item__label">Architecture</span>
+                                <span class="badge badge-terracotta">{{ modelArchitecture }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-item__label">Expressions</span>
+                                <span class="info-item__value">{{ modelData.expressions?.length || 0 }} M/Power Query expressions</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Insights -->
+                <div class="card">
+                    <div class="card__header">
+                        <h2 class="card__title">Key Insights</h2>
+                    </div>
+                    <div class="card__body">
+                        <div class="insights-grid">
+                            <div class="insight-card">
+                                <div class="insight-card__icon insight-card__icon--terracotta">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                                    </svg>
+                                </div>
+                                <div class="insight-card__content">
+                                    <h3 class="insight-card__title">Table Distribution</h3>
+                                    <p class="insight-card__value">{{ tableDistribution.fact }}% fact · {{ tableDistribution.dimension }}% dimension</p>
+                                </div>
+                            </div>
+                            <div class="insight-card">
+                                <div class="insight-card__icon insight-card__icon--sienna">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                        <line x1="3" y1="9" x2="21" y2="9"/>
+                                        <line x1="9" y1="21" x2="9" y2="9"/>
+                                    </svg>
+                                </div>
+                                <div class="insight-card__content">
+                                    <h3 class="insight-card__title">Model Density</h3>
+                                    <p class="insight-card__value">{{ avgColumnsPerTable }} cols/table · {{ avgMeasuresPerTable }} measures/table</p>
+                                </div>
+                            </div>
+                            <div class="insight-card">
+                                <div class="insight-card__icon insight-card__icon--sage">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M3 3v18h18"/>
+                                        <path d="M18 17V9"/>
+                                        <path d="M13 17V5"/>
+                                        <path d="M8 17v-3"/>
+                                    </svg>
+                                </div>
+                                <div class="insight-card__content">
+                                    <h3 class="insight-card__title">Measure Coverage</h3>
+                                    <p class="insight-card__value">{{ measureToColumnRatio }}:1 ratio · {{ measuresUsedPct }}% in use</p>
+                                </div>
+                            </div>
+                            <div class="insight-card">
+                                <div class="insight-card__icon insight-card__icon--ocean">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
+                                        <path d="m9 12 2 2 4-4"/>
+                                    </svg>
+                                </div>
+                                <div class="insight-card__content">
+                                    <h3 class="insight-card__title">Data Quality</h3>
+                                    <p class="insight-card__value">{{ columnsUsedPct }}% columns referenced · {{ statistics.total_relationships }} relationships</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Issues & Recommendations -->
+                <div v-if="issues.length > 0" class="alert alert--warning">
+                    <div class="alert__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                    </div>
+                    <div class="alert__content">
+                        <h3 class="alert__title">Attention Required</h3>
+                        <ul class="alert__list">
+                            <li v-for="issue in issues" :key="issue">{{ issue }}</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div v-if="recommendations.length > 0" class="alert alert--success">
+                    <div class="alert__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                            <line x1="9" y1="9" x2="9.01" y2="9"/>
+                            <line x1="15" y1="9" x2="15.01" y2="9"/>
+                        </svg>
+                    </div>
+                    <div class="alert__content">
+                        <h3 class="alert__title">Recommendations</h3>
+                        <ul class="alert__list">
+                            <li v-for="rec in recommendations" :key="rec">{{ rec }}</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Model Health Summary -->
+                <div class="feature-card">
+                    <div class="feature-card__header">
+                        <div class="feature-card__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                            </svg>
+                        </div>
+                        <div class="feature-card__titles">
+                            <h2 class="feature-card__title">Model Health Summary</h2>
+                            <p class="feature-card__subtitle">{{ healthSummary }}</p>
+                        </div>
+                    </div>
+                    <div class="feature-card__body">
+                        <div class="health-stats">
+                            <div class="health-stat">
+                                <div class="health-stat__label">Unused Objects</div>
+                                <div class="health-stat__value">{{ statistics.unused_measures }} measures · {{ statistics.unused_columns }} columns</div>
+                            </div>
+                            <div class="health-stat">
+                                <div class="health-stat__label">Model Complexity</div>
+                                <div class="health-stat__value">{{ modelComplexity }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Model Tab -->
+            <div v-show="activeTab === 'model'" class="tab-content">
+                <!-- Model Sub-Tabs -->
+                <div class="subtabs">
+                    <button
+                        @click="modelSubTab = 'tables'"
+                        :class="['subtab', modelSubTab === 'tables' ? 'active' : '']"
+                    >
+                        <svg class="subtab__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 3h18v18H3zM21 9H3M9 21V9"/>
+                        </svg>
+                        Tables
+                    </button>
+                    <button
+                        @click="modelSubTab = 'measures'"
+                        :class="['subtab', modelSubTab === 'measures' ? 'active' : '']"
+                    >
+                        <svg class="subtab__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+                            <line x1="4" y1="22" x2="4" y2="15"/>
+                        </svg>
+                        Measures
+                    </button>
+                    <button
+                        @click="modelSubTab = 'relationships'"
+                        :class="['subtab', modelSubTab === 'relationships' ? 'active' : '']"
+                    >
+                        <svg class="subtab__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="18" cy="5" r="3"/>
+                            <circle cx="6" cy="12" r="3"/>
+                            <circle cx="18" cy="19" r="3"/>
+                            <path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98"/>
+                        </svg>
+                        Relationships
+                    </button>
+                </div>
+
+                <!-- Tables View -->
+                <div v-show="modelSubTab === 'tables'" class="panel-grid">
+                    <!-- Left Panel: Tables List -->
+                    <div class="panel">
+                        <div class="panel__header">
+                            <h3 class="panel__title">Tables ({{ filteredTables.length }})</h3>
+                            <input
+                                v-model="modelSearchQuery"
+                                type="search"
+                                placeholder="Search tables..."
+                                class="panel__search"
+                            />
+                        </div>
+                        <div class="panel__body">
+                            <div
+                                v-for="table in filteredTables"
+                                :key="table.name"
+                                @click="selectedTable = table"
+                                :class="['table-item', selectedTable?.name === table.name ? 'active' : '']"
+                            >
+                                <div class="table-item__name">{{ table.name }}</div>
+                                <div class="table-item__meta">
+                                    {{ table.columns?.length || 0 }} columns · {{ table.measures?.length || 0 }} measures
+                                </div>
+                                <div class="table-item__badges">
+                                    <span :class="['badge', getTableType(table.name) === 'DIMENSION' ? 'badge-success' : getTableType(table.name) === 'FACT' ? 'badge-info' : 'badge-gray']">
+                                        {{ getTableType(table.name).toLowerCase() }}
+                                    </span>
+                                    <span :class="['badge', getComplexityBadge(table)]">
+                                        {{ getTableComplexity(table).replace('Complexity: ', '').toLowerCase() }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Panel: Table Details -->
+                    <div class="panel">
+                        <div v-if="selectedTable">
+                            <div class="detail-header">
+                                <h2 class="detail-header__title">{{ selectedTable.name }}</h2>
+                                <div class="detail-header__badges">
+                                    <span :class="['badge', selectedTable.name.toLowerCase().startsWith('f ') ? 'badge-info' : selectedTable.name.toLowerCase().startsWith('d ') ? 'badge-success' : 'badge-gray']">
+                                        {{ getTableType(selectedTable.name) }}
+                                    </span>
+                                    <span :class="['badge', getComplexityBadge(selectedTable)]">
+                                        {{ getTableComplexity(selectedTable) }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Table Statistics -->
+                            <div class="detail-stats">
+                                <div class="detail-stat">
+                                    <div class="detail-stat__value">{{ selectedTable.columns?.length || 0 }}</div>
+                                    <div class="detail-stat__label">Columns</div>
+                                </div>
+                                <div class="detail-stat">
+                                    <div class="detail-stat__value">{{ selectedTable.measures?.length || 0 }}</div>
+                                    <div class="detail-stat__label">Measures</div>
+                                </div>
+                                <div class="detail-stat">
+                                    <div class="detail-stat__value">{{ getTableRelationshipCount(selectedTable.name) }}</div>
+                                    <div class="detail-stat__label">Relationships</div>
+                                </div>
+                                <div class="detail-stat">
+                                    <div class="detail-stat__value">{{ getTableUsageCount(selectedTable.name) }}</div>
+                                    <div class="detail-stat__label">Usage</div>
+                                </div>
+                            </div>
+
+                            <div class="detail-tabs-container">
+                                <div class="detail-tabs">
+                                    <button
+                                        @click="modelDetailTab = 'columns'"
+                                        :class="['detail-tab', modelDetailTab === 'columns' ? 'active' : '']"
+                                    >
+                                        Columns ({{ selectedTable.columns?.length || 0 }})
+                                    </button>
+                                    <button
+                                        @click="modelDetailTab = 'measures'"
+                                        :class="['detail-tab', modelDetailTab === 'measures' ? 'active' : '']"
+                                    >
+                                        Measures ({{ selectedTable.measures?.length || 0 }})
+                                    </button>
+                                    <button
+                                        @click="modelDetailTab = 'relationships'"
+                                        :class="['detail-tab', modelDetailTab === 'relationships' ? 'active' : '']"
+                                    >
+                                        Relationships ({{ getTableRelationshipCount(selectedTable.name) }})
+                                    </button>
+                                    <button
+                                        @click="modelDetailTab = 'usage'"
+                                        :class="['detail-tab', modelDetailTab === 'usage' ? 'active' : '']"
+                                    >
+                                        Usage ({{ getTableUsageCount(selectedTable.name) }})
+                                    </button>
+                                </div>
+
+                                <!-- Columns -->
+                                <div v-show="modelDetailTab === 'columns'" class="detail-content">
+                                    <div v-if="selectedTable.columns?.length > 0" class="columns-grid">
+                                        <div v-for="col in selectedTable.columns" :key="col.name" class="column-card">
+                                            <div class="column-card__header">
+                                                <span class="column-card__name">{{ col.name }}</span>
+                                                <span v-if="isColumnInRelationship(selectedTable.name, col.name)" class="badge badge-info">
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18v3c0 .6.4 1 1 1h4v-3h3v-3h2l1.4-1.4a6.5 6.5 0 1 0-4-4Z"></path><circle cx="16.5" cy="7.5" r=".5"></circle></svg>
+                                                    Key
+                                                </span>
+                                                <span v-if="col.is_hidden" class="badge badge-warning">
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" x2="22" y1="2" y2="22"></line></svg>
+                                                    Hidden
+                                                </span>
+                                            </div>
+                                            <div class="column-card__type">
+                                                <span class="badge badge-gray">{{ col.data_type }}</span>
+                                            </div>
+                                            <div class="column-card__source">
+                                                Source: {{ col.source_column || '-' }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div v-else class="empty-state">No columns in this table</div>
+                                </div>
+
+                                <!-- Measures -->
+                                <div v-show="modelDetailTab === 'measures'" class="detail-content">
+                                    <div v-if="selectedTable.measures?.length > 0" class="measures-list">
+                                        <div v-for="measure in selectedTable.measures" :key="measure.name" class="measure-card" :data-measure="measure.name">
+                                            <div class="measure-card__header">
+                                                <div class="measure-card__info">
+                                                    <div class="measure-card__name">{{ measure.name }}</div>
+                                                    <span class="badge badge-primary">m Measure</span>
+                                                    <span v-if="measure.display_folder" class="badge badge-warning">📁 {{ measure.display_folder }}</span>
+                                                    <span v-if="measure.is_hidden" class="badge badge-gray">Hidden</span>
+                                                </div>
+                                                <button
+                                                    v-if="measure.expression"
+                                                    @click="toggleMeasureExpansion(measure.name)"
+                                                    class="btn-link"
+                                                >
+                                                    {{ expandedMeasures[measure.name] ? 'Hide DAX' : 'Show DAX' }}
+                                                </button>
+                                            </div>
+                                            <div v-if="measure.expression && expandedMeasures[measure.name]" class="code-block" v-html="highlightDAX(measure.expression)"></div>
+                                        </div>
+                                    </div>
+                                    <div v-else class="empty-state">No measures in this table</div>
+                                </div>
+
+                                <!-- Relationships -->
+                                <div v-show="modelDetailTab === 'relationships'" class="detail-content">
+                                    <div v-if="getTableRelationships(selectedTable.name).length > 0" class="relationships-section">
+                                        <div class="relationship-group">
+                                            <h4 class="relationship-group__title">Incoming ({{ getTableRelationships(selectedTable.name).filter(r => r.to_table === selectedTable.name).length }})</h4>
+                                            <div class="relationship-list">
+                                                <div v-for="rel in getTableRelationships(selectedTable.name).filter(r => r.to_table === selectedTable.name)" :key="rel.name" class="relationship-card relationship-card--incoming">
+                                                    <div class="relationship-card__header">
+                                                        <span class="relationship-card__table">{{ rel.from_table }}</span>
+                                                        <span class="badge badge-success">Active</span>
+                                                    </div>
+                                                    <div class="relationship-card__columns">
+                                                        [{{ rel.from_column_name }}] → [{{ rel.to_column_name }}]
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="relationship-group">
+                                            <h4 class="relationship-group__title">Outgoing ({{ getTableRelationships(selectedTable.name).filter(r => r.from_table === selectedTable.name).length }})</h4>
+                                            <div class="relationship-list">
+                                                <div v-for="rel in getTableRelationships(selectedTable.name).filter(r => r.from_table === selectedTable.name)" :key="rel.name" class="relationship-card relationship-card--outgoing">
+                                                    <div class="relationship-card__header">
+                                                        <span class="relationship-card__table">{{ rel.to_table }}</span>
+                                                        <span class="badge badge-success">Active</span>
+                                                    </div>
+                                                    <div class="relationship-card__columns">
+                                                        [{{ rel.from_column_name }}] → [{{ rel.to_column_name }}]
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div v-else class="empty-state">No relationships for this table</div>
+                                </div>
+
+                                <!-- Usage -->
+                                <div v-show="modelDetailTab === 'usage'" class="detail-content">
+                                    <h3 class="usage-title">Column Usage by Page</h3>
+                                    <div v-if="selectedTable.columns?.length > 0" class="usage-grid">
+                                        <div v-for="col in selectedTable.columns" :key="col.name" class="usage-card">
+                                            <div class="usage-card__header">
+                                                <span class="usage-card__name">{{ col.name }}</span>
+                                                <span class="badge badge-gray">{{ getColumnVisualUsage(selectedTable.name, col.name).length }} visual(s)</span>
+                                            </div>
+                                            <div class="usage-card__body">
+                                                <!-- Measure Usage -->
+                                                <div v-if="getColumnUsedByMeasures(selectedTable.name, col.name).length > 0" class="usage-section">
+                                                    <div class="usage-section__title">
+                                                        <span>📐</span>
+                                                        <span>Used in Measures</span>
+                                                    </div>
+                                                    <div class="usage-items">
+                                                        <div v-for="measure in getColumnUsedByMeasures(selectedTable.name, col.name)" :key="measure" class="usage-item usage-item--measure">
+                                                            <span class="badge badge-primary badge--small">Measure</span>
+                                                            <span>{{ measure }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Field Parameter Usage -->
+                                                <div v-if="getColumnFieldParams(selectedTable.name, col.name).length > 0" class="usage-section">
+                                                    <div class="usage-section__title">
+                                                        <span>📊</span>
+                                                        <span>Used in Field Parameters</span>
+                                                    </div>
+                                                    <div class="usage-items">
+                                                        <div v-for="fp in getColumnFieldParams(selectedTable.name, col.name)" :key="fp" class="usage-item usage-item--field-param">
+                                                            <span class="badge badge-success badge--small">Field Param</span>
+                                                            <span>{{ fp }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Visual Usage -->
+                                                <div v-if="getColumnVisualUsage(selectedTable.name, col.name).length > 0" class="usage-section">
+                                                    <div class="usage-section__title">
+                                                        <span>📈</span>
+                                                        <span>Used in Visuals</span>
+                                                    </div>
+                                                    <div class="usage-pages">
+                                                        <div v-for="(visuals, pageName) in groupColumnUsageByPage(selectedTable.name, col.name)" :key="pageName" class="usage-page">
+                                                            <div class="usage-page__header">
+                                                                <span>📄</span>
+                                                                <span>{{ pageName }}</span>
+                                                                <span class="usage-page__count">({{ visuals.length }})</span>
+                                                            </div>
+                                                            <div class="usage-items">
+                                                                <div v-for="usage in visuals" :key="usage.visualId" class="usage-item">
+                                                                    <span class="badge badge-primary badge--small">{{ usage.visualType }}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Filter Pane Usage -->
+                                                <div v-if="getColumnFilterUsage(selectedTable.name, col.name).length > 0" class="usage-section">
+                                                    <div class="usage-section__title">
+                                                        <span>🔽</span>
+                                                        <span>Used in Filter Pane</span>
+                                                    </div>
+                                                    <div class="usage-pages">
+                                                        <div v-for="(filters, pageName) in groupFilterUsageByPage(selectedTable.name, col.name)" :key="pageName" class="usage-page">
+                                                            <div class="usage-page__header">
+                                                                <span v-if="filters[0]?.filterLevel === 'report'">🌐</span>
+                                                                <span v-else>📄</span>
+                                                                <span>{{ pageName }}</span>
+                                                            </div>
+                                                            <div class="usage-items">
+                                                                <div v-for="(filter, idx) in filters" :key="idx" class="usage-item">
+                                                                    <span class="badge badge--small" :class="filter.filterLevel === 'report' ? 'badge-info' : 'badge-warning'">{{ filter.filterLevel === 'report' ? 'Report Filter' : 'Page Filter' }}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- No Usage Message -->
+                                                <div v-if="getColumnVisualUsage(selectedTable.name, col.name).length === 0 && getColumnFieldParams(selectedTable.name, col.name).length === 0 && getColumnUsedByMeasures(selectedTable.name, col.name).length === 0 && getColumnFilterUsage(selectedTable.name, col.name).length === 0" class="usage-empty">
+                                                    Not used in any measures, visuals, field parameters, or filters
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div v-else class="empty-state">No columns in this table</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else class="card">
+                            <p class="empty-state">Select a table from the left to view details</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Measures View -->
+                <div v-show="modelSubTab === 'measures'">
+                    <div class="card">
+                        <div class="card__header">
+                            <h2 class="card__title">All Measures by Folder</h2>
+                        </div>
+                        <div class="panel-grid panel-grid--measures">
+                            <!-- Left: Folder list -->
+                            <div class="panel-left scrollable">
+                                <input
+                                    v-model="measuresSearchQuery"
+                                    type="search"
+                                    placeholder="Search measures..."
+                                    class="search-input"
+                                />
+                                <div v-for="(folder, folderName) in measuresByFolder" :key="folderName" class="folder-group">
+                                    <div class="folder-header" @click="toggleFolder(folderName)">
+                                        <div class="folder-header__info">
+                                            <span class="folder-header__icon">📁</span>
+                                            <span class="folder-header__name">{{ folderName || 'No Folder' }}</span>
+                                            <span class="folder-header__count">({{ folder.length }})</span>
+                                        </div>
+                                        <span class="folder-header__toggle">▼</span>
+                                    </div>
+                                    <div v-show="!collapsedFolders[folderName]" class="folder-content">
+                                        <div
+                                            v-for="measure in folder"
+                                            :key="measure.key"
+                                            @click="selectedMeasure = measure"
+                                            :class="['measure-item', selectedMeasure?.key === measure.key ? 'active' : '']"
+                                        >
+                                            <div class="measure-item__name">{{ measure.name }}</div>
+                                            <div class="measure-item__table">{{ measure.table }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right: DAX viewer -->
+                            <div class="panel-right scrollable">
+                                <div v-if="selectedMeasure" class="measure-detail">
+                                    <div class="measure-detail__header">
+                                        <h3 class="measure-detail__name">{{ selectedMeasure.name }}</h3>
+                                        <div class="measure-detail__badges">
+                                            <span class="badge badge-primary">{{ selectedMeasure.table }}</span>
+                                            <span v-if="selectedMeasure.is_hidden" class="badge badge-warning">Hidden</span>
+                                            <span v-if="selectedMeasure.displayFolder" class="badge badge-gray">{{ selectedMeasure.displayFolder }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="code-block" v-if="selectedMeasure.expression" v-html="highlightDAX(selectedMeasure.expression)"></div>
+                                </div>
+                                <div v-else class="empty-state empty-state--centered">
+                                    <p>Select a measure from the left to view its DAX code</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Relationships View -->
+                <div v-show="modelSubTab === 'relationships'">
+                    <div class="card">
+                        <div class="card__header">
+                            <h2 class="card__title">Relationships ({{ sortedRelationships.length }})</h2>
+                        </div>
+
+                        <!-- List View -->
+                        <div v-if="sortedRelationships.length > 0" class="relationships-view">
+                            <!-- Group by Type -->
+                            <div class="relationship-type-group">
+                                <h3 class="relationship-type-group__title">Fact-to-Dimension Relationships</h3>
+                                <div class="relationship-list">
+                                    <div v-for="(rel, idx) in factToDimRelationships" :key="'f2d-' + idx" class="relationship-card relationship-card--fact-dim">
+                                        <div class="relationship-card__header">
+                                            <div class="relationship-card__table">
+                                                {{ rel.from_table }} → {{ rel.to_table }}
+                                            </div>
+                                            <span :class="['badge', rel.is_active !== false ? 'badge-success' : 'badge-gray']">
+                                                {{ rel.is_active !== false ? 'Active' : 'Inactive' }}
+                                            </span>
+                                        </div>
+                                        <div class="relationship-card__details">
+                                            <div><strong>From:</strong> {{ rel.from_table }}[{{ rel.from_column }}]</div>
+                                            <div><strong>To:</strong> {{ rel.to_table }}[{{ rel.to_column }}]</div>
+                                            <div class="relationship-card__badges">
+                                                <span class="badge badge-primary">{{ formatCardinality(rel) }}</span>
+                                                <span class="badge badge-gray">{{ formatCrossFilterDirection(rel) }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div v-if="factToDimRelationships.length === 0" class="empty-state empty-state--small">No fact-to-dimension relationships</div>
+                            </div>
+
+                            <div class="relationship-type-group">
+                                <h3 class="relationship-type-group__title">Dimension-to-Dimension Relationships</h3>
+                                <div class="relationship-list">
+                                    <div v-for="(rel, idx) in dimToDimRelationships" :key="'d2d-' + idx" class="relationship-card relationship-card--dim-dim">
+                                        <div class="relationship-card__header">
+                                            <div class="relationship-card__table">
+                                                {{ rel.from_table }} → {{ rel.to_table }}
+                                            </div>
+                                            <span :class="['badge', rel.is_active !== false ? 'badge-success' : 'badge-gray']">
+                                                {{ rel.is_active !== false ? 'Active' : 'Inactive' }}
+                                            </span>
+                                        </div>
+                                        <div class="relationship-card__details">
+                                            <div><strong>From:</strong> {{ rel.from_table }}[{{ rel.from_column }}]</div>
+                                            <div><strong>To:</strong> {{ rel.to_table }}[{{ rel.to_column }}]</div>
+                                            <div class="relationship-card__badges">
+                                                <span class="badge badge-primary">{{ formatCardinality(rel) }}</span>
+                                                <span class="badge badge-gray">{{ formatCrossFilterDirection(rel) }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div v-if="dimToDimRelationships.length === 0" class="empty-state empty-state--small">No dimension-to-dimension relationships</div>
+                            </div>
+
+                            <div class="relationship-type-group">
+                                <h3 class="relationship-type-group__title">Other Relationships</h3>
+                                <div class="relationship-list">
+                                    <div v-for="(rel, idx) in otherRelationships" :key="'other-' + idx" class="relationship-card relationship-card--other">
+                                        <div class="relationship-card__header">
+                                            <div class="relationship-card__table">
+                                                {{ rel.from_table }} → {{ rel.to_table }}
+                                            </div>
+                                            <span :class="['badge', rel.is_active !== false ? 'badge-success' : 'badge-gray']">
+                                                {{ rel.is_active !== false ? 'Active' : 'Inactive' }}
+                                            </span>
+                                        </div>
+                                        <div class="relationship-card__details">
+                                            <div><strong>From:</strong> {{ rel.from_table }}[{{ rel.from_column }}]</div>
+                                            <div><strong>To:</strong> {{ rel.to_table }}[{{ rel.to_column }}]</div>
+                                            <div class="relationship-card__badges">
+                                                <span class="badge badge-primary">{{ formatCardinality(rel) }}</span>
+                                                <span class="badge badge-gray">{{ formatCrossFilterDirection(rel) }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div v-if="otherRelationships.length === 0" class="empty-state empty-state--small">No other relationships</div>
+                            </div>
+                        </div>
+
+                        <div v-else class="empty-state">No relationships found in model</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Report Tab -->
+            <div v-show="activeTab === 'report'" class="tab-content">
+                <div class="panel-grid">
+                    <!-- Left Sidebar: Pages List -->
+                    <div class="panel-left">
+                        <div class="card">
+                            <div class="card__header">
+                                <h3 class="card__title">Pages ({{ reportData.pages?.length || 0 }})</h3>
+                            </div>
+                            <div class="page-list scrollable">
+                                <div
+                                    v-for="(page, idx) in sortedPages"
+                                    :key="idx"
+                                    @click="selectedPage = page"
+                                    :class="['page-item', selectedPage === page ? 'active' : '']"
+                                >
+                                    <div class="page-item__name">{{ page.display_name || page.name }}</div>
+                                    <div class="page-item__count">
+                                        {{ getVisibleVisualCount(page.visuals) }} visuals
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Panel: Page Details -->
+                    <div class="panel-right">
+                        <div v-if="selectedPage" class="card">
+                            <div class="card__header">
+                                <h2 class="card__title">{{ selectedPage.display_name || selectedPage.name }}</h2>
+                            </div>
+
+                            <!-- Page Filters -->
+                            <div v-if="selectedPage.filters?.length > 0" class="filters-section">
+                                <h3 class="filters-section__title">Page Filters</h3>
+                                <div class="filters-section__badges">
+                                    <span v-for="(filter, idx) in selectedPage.filters" :key="idx" class="badge badge-primary">
+                                        {{ filter.field?.table }}[{{ filter.field?.name }}]
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Visuals Grouped by Type -->
+                            <div class="visual-groups">
+                                <div v-for="(group, visualType) in visualsByType(selectedPage.visuals)" :key="visualType" class="visual-group">
+                                    <div class="visual-group__header" :class="{collapsed: collapsedVisualGroups[visualType]}" @click="toggleVisualGroup(visualType)">
+                                        <div class="visual-group__info">
+                                            <span :class="getVisualIcon(visualType)" v-html="getVisualEmoji(visualType)"></span>
+                                            <span class="visual-group__name">{{ visualType }}</span>
+                                            <span class="visual-group__count">({{ group.length }})</span>
+                                        </div>
+                                        <span class="visual-group__toggle">▼</span>
+                                    </div>
+                                    <div v-show="!collapsedVisualGroups[visualType]" class="visual-group__items">
+                                        <div v-for="(visual, idx) in group" :key="idx" class="visual-card">
+                                            <div class="visual-card__header">
+                                                <div class="visual-card__name">
+                                                    {{ visual.visual_name || visual.title || `${visualType} ${idx + 1}` }}
+                                                </div>
+                                                <div class="visual-card__id">{{ visual.id?.substring(0, 8) }}...</div>
+                                            </div>
+
+                                            <!-- Measures -->
+                                            <div v-if="visual.fields?.measures?.length > 0" class="visual-card__section">
+                                                <div class="visual-card__section-title">Measures ({{ visual.fields.measures.length }})</div>
+                                                <div class="visual-card__badges">
+                                                    <span v-for="(m, midx) in visual.fields.measures" :key="midx" class="badge badge-success">
+                                                        {{ m.table }}[{{ m.measure }}]
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <!-- Columns -->
+                                            <div v-if="visual.fields?.columns?.length > 0" class="visual-card__section">
+                                                <div class="visual-card__section-title">Columns ({{ visual.fields.columns.length }})</div>
+                                                <div class="visual-card__badges">
+                                                    <span v-for="(c, cidx) in visual.fields.columns" :key="cidx" class="badge badge-primary">
+                                                        {{ c.table }}[{{ c.column }}]
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else class="card">
+                            <p class="empty-state">Select a page from the left to view visuals</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dependencies Tab -->
+            <div v-show="activeTab === 'dependencies'">
+                <!-- Dependency Sub-Tabs -->
+                <div class="dependency-tabs">
+                    <button
+                        @click="dependencySubTab = 'measures'"
+                        :class="['dependency-tab', dependencySubTab === 'measures' ? 'active' : '']"
+                    >
+                        📐 Measures
+                    </button>
+                    <button
+                        @click="dependencySubTab = 'columns'"
+                        :class="['dependency-tab', dependencySubTab === 'columns' ? 'active' : '']"
+                    >
+                        📊 Columns
+                    </button>
+                    <button
+                        @click="dependencySubTab = 'chains'"
+                        :class="['dependency-tab', dependencySubTab === 'chains' ? 'active' : '']"
+                    >
+                        🔗 Measure Chains
+                    </button>
+                    <button
+                        @click="dependencySubTab = 'visuals'"
+                        :class="['dependency-tab', dependencySubTab === 'visuals' ? 'active' : '']"
+                    >
+                        📈 Visuals
+                    </button>
+                </div>
+
+                <!-- Measures Dependencies -->
+                <div v-show="dependencySubTab === 'measures'" class="panel-grid">
+                    <!-- Left: Search & Select -->
+                    <div class="panel-left">
+                        <div class="card">
+                            <div class="card__header">
+                                <h3 class="card__title">Select Measure</h3>
+                            </div>
+                            <input
+                                v-model="dependencySearchQuery"
+                                type="search"
+                                placeholder="Search measures..."
+                                class="search-input"
+                            />
+
+                            <div class="scrollable">
+                                <div v-for="(folder, folderName) in measuresForDependencyByFolder" :key="folderName" class="folder-group">
+                                    <div class="folder-header" @click="toggleDependencyFolder(folderName)">
+                                        <div class="folder-header__info">
+                                            <span class="folder-header__icon">📁</span>
+                                            <span class="folder-header__name">{{ folderName || 'No Folder' }}</span>
+                                            <span class="folder-header__count">({{ folder.length }})</span>
+                                        </div>
+                                        <span class="folder-header__toggle">▼</span>
+                                    </div>
+                                    <div v-show="!collapsedDependencyFolders[folderName]" class="folder-content">
+                                        <div
+                                            v-for="measure in folder"
+                                            :key="measure.key"
+                                            @click="selectDependencyObject(measure.key)"
+                                            :class="['measure-item', selectedDependencyKey === measure.key ? 'active' : '']"
+                                        >
+                                            <div class="measure-item__name">{{ measure.name }}</div>
+                                            <div class="measure-item__table">{{ measure.table }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Dependency Details -->
+                    <div class="panel-right">
+                        <div v-if="selectedDependencyKey" class="card">
+                            <div class="card__header">
+                                <h2 class="card__title">{{ selectedDependencyKey }}</h2>
+                            </div>
+
+                            <!-- Depends On -->
+                            <div class="dependency-section">
+                                <h3 class="dependency-section__title">
+                                    Depends On ({{ currentDependencyDetails.dependsOn.length }})
+                                </h3>
+                                <div v-if="currentDependencyDetails.dependsOn.length > 0" class="dependency-list">
+                                    <div v-for="dep in currentDependencyDetails.dependsOn" :key="dep" class="dep-list-item">
+                                        <span class="badge badge-primary">Measure</span>
+                                        <span>{{ dep }}</span>
+                                    </div>
+                                </div>
+                                <div v-else class="empty-state empty-state--small">No dependencies</div>
+                            </div>
+
+                            <!-- Used By -->
+                            <div class="dependency-section">
+                                <h3 class="dependency-section__title">
+                                    Used By ({{ currentDependencyDetails.usedBy.length }})
+                                </h3>
+                                <div v-if="currentDependencyDetails.usedBy.length > 0" class="dependency-groups">
+                                    <div v-for="(measures, folderName) in groupMeasuresByFolder(currentDependencyDetails.usedBy)" :key="folderName" class="folder-group">
+                                        <div class="folder-header" :class="{collapsed: collapsedUsedByFolders[folderName]}" @click="toggleUsedByFolder(folderName)">
+                                            <div class="folder-header__info">
+                                                <span>📁</span>
+                                                <span class="folder-header__name">{{ folderName }}</span>
+                                                <span class="folder-header__count">({{ measures.length }})</span>
+                                            </div>
+                                            <span class="folder-header__toggle">▼</span>
+                                        </div>
+                                        <div v-show="!collapsedUsedByFolders[folderName]" class="folder-content">
+                                            <div v-for="measure in measures" :key="measure" class="dep-list-item">
+                                                <span class="badge badge-success">Measure</span>
+                                                <span>{{ measure }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div v-else class="empty-state empty-state--small">Not used by other measures</div>
+                            </div>
+
+                            <!-- Used In Visuals -->
+                            <div v-if="reportData" class="dependency-section">
+                                <h3 class="dependency-section__title">
+                                    Used In Visuals ({{ currentDependencyDetails.visualUsage.length }})
+                                </h3>
+                                <div v-if="currentDependencyDetails.visualUsage.length > 0" class="usage-pages">
+                                    <div v-for="(visuals, pageName) in groupVisualUsageByPage(currentDependencyDetails.visualUsage)" :key="pageName" class="usage-page">
+                                        <div class="usage-page__header">
+                                            <span>📄</span>
+                                            <span>{{ pageName }}</span>
+                                            <span class="usage-page__count">({{ visuals.length }})</span>
+                                        </div>
+                                        <div class="usage-items">
+                                            <div v-for="usage in visuals" :key="usage.visualId" class="usage-item">
+                                                <span class="badge badge-warning">{{ usage.visualType }}</span>
+                                                <span>{{ usage.visualName || 'Unnamed Visual' }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div v-else class="empty-state empty-state--small">Not used in any visuals</div>
+                            </div>
+                        </div>
+                        <div v-else class="card">
+                            <p class="empty-state">Select a measure from the left to view dependencies</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columns Dependencies -->
+                <div v-show="dependencySubTab === 'columns'" class="panel-grid">
+                    <!-- Left: Search & Select -->
+                    <div class="panel-left">
+                        <div class="card">
+                            <div class="card__header">
+                                <h3 class="card__title">Select Column</h3>
+                            </div>
+                            <input
+                                v-model="columnSearchQuery"
+                                type="search"
+                                placeholder="Search columns..."
+                                class="search-input"
+                            />
+
+                            <div class="scrollable">
+                                <div v-for="(columns, tableName) in filteredColumnsForDependency" :key="tableName" class="folder-group">
+                                    <div class="folder-header" @click="toggleDependencyFolder(tableName)">
+                                        <div class="folder-header__info">
+                                            <span class="folder-header__icon">📊</span>
+                                            <span class="folder-header__name">{{ tableName }}</span>
+                                            <span class="folder-header__count">({{ columns.length }})</span>
+                                        </div>
+                                        <span class="folder-header__toggle">▼</span>
+                                    </div>
+                                    <div v-show="!collapsedDependencyFolders[tableName]" class="folder-content">
+                                        <div
+                                            v-for="column in columns"
+                                            :key="column.key"
+                                            @click="selectColumnDependency(column.key)"
+                                            :class="['measure-item', selectedColumnKey === column.key ? 'active' : '']"
+                                        >
+                                            <div class="measure-item__name">{{ column.name }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Column Dependency Details -->
+                    <div class="panel-right">
+                        <div v-if="selectedColumnKey" class="card">
+                            <div class="card__header">
+                                <h2 class="card__title">{{ selectedColumnKey }}</h2>
+                            </div>
+
+                            <!-- Used By Field Parameters -->
+                            <div class="dependency-section">
+                                <h3 class="dependency-section__title">
+                                    Used By Field Parameters ({{ currentColumnDependencies.usedByFieldParams.length }})
+                                </h3>
+                                <div v-if="currentColumnDependencies.usedByFieldParams.length > 0" class="dependency-list">
+                                    <div v-for="fieldParam in currentColumnDependencies.usedByFieldParams" :key="fieldParam" class="dep-list-item usage-item--field-param">
+                                        <span class="badge badge-success">Field Parameter</span>
+                                        <span>{{ fieldParam }}</span>
+                                    </div>
+                                </div>
+                                <div v-else class="empty-state empty-state--small">Not used by any field parameters</div>
+                            </div>
+
+                            <!-- Used By Measures -->
+                            <div class="dependency-section">
+                                <h3 class="dependency-section__title">
+                                    Used By Measures ({{ currentColumnDependencies.usedByMeasures.length }})
+                                </h3>
+                                <div v-if="currentColumnDependencies.usedByMeasures.length > 0" class="dependency-groups">
+                                    <div v-for="(measures, folderName) in groupMeasuresByFolder(currentColumnDependencies.usedByMeasures)" :key="folderName" class="usage-page">
+                                        <div class="usage-page__header">
+                                            <span>📁</span>
+                                            <span>{{ folderName }}</span>
+                                            <span class="usage-page__count">({{ measures.length }})</span>
+                                        </div>
+                                        <div class="usage-items">
+                                            <div v-for="measure in measures" :key="measure" class="dep-list-item">
+                                                <span class="badge badge-success">Measure</span>
+                                                <span>{{ measure }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div v-else class="empty-state empty-state--small">Not used by any measures</div>
+                            </div>
+
+                            <!-- Used In Visuals -->
+                            <div v-if="reportData" class="dependency-section">
+                                <h3 class="dependency-section__title">
+                                    Used In Visuals ({{ currentColumnDependencies.visualUsage.length }})
+                                </h3>
+                                <div v-if="currentColumnDependencies.visualUsage.length > 0" class="usage-pages">
+                                    <div v-for="(visuals, pageName) in groupVisualUsageByPage(currentColumnDependencies.visualUsage)" :key="pageName" class="usage-page">
+                                        <div class="usage-page__header">
+                                            <span>📄</span>
+                                            <span>{{ pageName }}</span>
+                                            <span class="usage-page__count">({{ visuals.length }})</span>
+                                        </div>
+                                        <div class="usage-items">
+                                            <div v-for="usage in visuals" :key="usage.visualId" class="usage-item">
+                                                <span class="badge badge-warning">{{ usage.visualType }}</span>
+                                                <span>{{ usage.visualName || 'Unnamed Visual' }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div v-else class="empty-state empty-state--small">Not used in any visuals</div>
+                            </div>
+
+                            <!-- Used In Filter Pane -->
+                            <div v-if="reportData" class="dependency-section">
+                                <h3 class="dependency-section__title">
+                                    Used In Filter Pane ({{ currentColumnDependencies.filterUsage?.length || 0 }})
+                                </h3>
+                                <div v-if="currentColumnDependencies.filterUsage?.length > 0" class="usage-pages">
+                                    <div v-for="(filters, pageName) in groupFilterUsageByPageForKey(currentColumnDependencies.filterUsage)" :key="pageName" class="usage-page">
+                                        <div class="usage-page__header">
+                                            <span v-if="filters[0]?.filterLevel === 'report'">🌐</span>
+                                            <span v-else>📄</span>
+                                            <span>{{ pageName }}</span>
+                                        </div>
+                                        <div class="usage-items">
+                                            <div v-for="(filter, idx) in filters" :key="idx" class="usage-item">
+                                                <span class="badge" :class="filter.filterLevel === 'report' ? 'badge-info' : 'badge-warning'">{{ filter.filterLevel === 'report' ? 'Report Filter' : 'Page Filter' }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div v-else class="empty-state empty-state--small">Not used in any filters</div>
+                            </div>
+                        </div>
+                        <div v-else class="card">
+                            <p class="empty-state">Select a column from the left to view usage</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Measure Chains Tab -->
+                <div v-show="dependencySubTab === 'chains'" class="panel-grid">
+                    <!-- Left: Measure List with Folders -->
+                    <div class="panel-left">
+                        <div class="card">
+                            <div class="card__header">
+                                <h3 class="card__title">Select Measure</h3>
+                            </div>
+                            <input
+                                v-model="chainSearchQuery"
+                                type="search"
+                                placeholder="Search measures..."
+                                class="search-input"
+                            />
+                            <div class="scrollable">
+                                <!-- Folder-based structure -->
+                                <div v-for="(measures, folderName) in filteredChainMeasuresByFolder" :key="folderName" class="folder-group">
+                                    <div class="folder-header" :class="{collapsed: collapsedChainFolders[folderName]}" @click="toggleChainFolder(folderName)">
+                                        <div class="folder-header__info">
+                                            <span class="folder-header__name">{{ folderName }}</span>
+                                            <span class="folder-header__count">({{ measures.length }})</span>
+                                        </div>
+                                        <span class="folder-header__toggle">▼</span>
+                                    </div>
+                                    <div v-show="!collapsedChainFolders[folderName]" class="folder-content">
+                                        <div v-for="measure in measures" :key="measure.fullName"
+                                            @click="selectedChainMeasure = measure.fullName"
+                                            :class="['chain-measure-item', selectedChainMeasure === measure.fullName ? 'active' : '']"
+                                        >
+                                            <div class="chain-measure-item__name">{{ measure.name }}</div>
+                                            <div class="chain-measure-item__table">{{ measure.table }}</div>
+                                            <div class="chain-measure-item__badges">
+                                                <span v-if="measure.isBase" class="badge badge-success badge--small">Base</span>
+                                                <span v-if="measure.chainDepth > 0" class="badge badge-primary badge--small">Chain: {{ measure.chainDepth }}</span>
+                                                <span v-if="measure.usedByCount > 0" class="badge badge-info badge--small">Used by {{ measure.usedByCount }}</span>
+                                                <span v-if="measure.usedInVisuals" class="badge badge-warning badge--small">{{ measure.visualCount }} visual(s)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Chain Visualization -->
+                    <div class="panel-right">
+                        <div v-if="selectedChainMeasure" class="card">
+                            <div class="card__header">
+                                <h3 class="card__title">Complete Measure Chain</h3>
+                            </div>
+                            <div class="card__body">
+                                <!-- Selected Measure - Center -->
+                                <div class="chain-selected-measure">
+                                    <div class="chain-selected-measure__label">SELECTED MEASURE</div>
+                                    <div class="chain-selected-measure__name">{{ selectedChainMeasure }}</div>
+                                </div>
+
+                                <div class="chain-sections">
+                                    <!-- UPWARD: Used By (What uses this measure) - HIERARCHICAL -->
+                                    <div v-if="currentChain.usedByChain && currentChain.usedByChain.length > 0" class="chain-section">
+                                        <div class="chain-section__header chain-section__header--upward">
+                                            <span class="chain-section__title">⬆️ USED BY CHAIN</span>
+                                            <span class="chain-section__count">({{ currentChain.usedByCount }} total measure(s) in chain)</span>
+                                        </div>
+
+                                        <!-- Recursive Used By Tree -->
+                                        <div class="chain-tree chain-tree--upward">
+                                            <div v-for="(item, idx) in currentChain.usedByChain" :key="idx" class="chain-node">
+                                                <div class="chain-node__item chain-node__item--level1">
+                                                    <span class="chain-node__arrow">→</span>
+                                                    <span class="chain-node__name">{{ item.measure }}</span>
+                                                </div>
+
+                                                <!-- Nested Used By (recursive) -->
+                                                <div v-if="item.usedBy && item.usedBy.length > 0" class="chain-tree chain-tree--nested">
+                                                    <div v-for="(child, cidx) in item.usedBy" :key="cidx" class="chain-node">
+                                                        <div class="chain-node__item chain-node__item--level2">
+                                                            <span class="chain-node__arrow">⇒</span>
+                                                            <span class="chain-node__name">{{ child.measure }}</span>
+                                                        </div>
+
+                                                        <!-- Level 3 -->
+                                                        <div v-if="child.usedBy && child.usedBy.length > 0" class="chain-tree chain-tree--nested">
+                                                            <div v-for="(grandchild, gidx) in child.usedBy" :key="gidx" class="chain-node">
+                                                                <div class="chain-node__item chain-node__item--level3">
+                                                                    <span class="chain-node__arrow">⇛</span>
+                                                                    <span class="chain-node__name">{{ grandchild.measure }}</span>
+                                                                </div>
+
+                                                                <!-- Level 4+ indicator -->
+                                                                <div v-if="grandchild.usedBy && grandchild.usedBy.length > 0" class="chain-node__more">
+                                                                    ... and {{ grandchild.usedBy.length }} more level(s)
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div v-else class="chain-section">
+                                        <div class="chain-section__header chain-section__header--muted">
+                                            <span class="chain-section__title">⬆️ USED BY</span>
+                                        </div>
+                                        <div class="chain-empty">No other measures depend on this measure</div>
+                                    </div>
+
+                                    <div class="chain-divider"></div>
+
+                                    <!-- DOWNWARD: Dependencies (What this measure uses) -->
+                                    <div v-if="currentChain.dependencies && currentChain.dependencies.length > 0" class="chain-section">
+                                        <div class="chain-section__header chain-section__header--downward">
+                                            <span class="chain-section__title">⬇️ DEPENDS ON</span>
+                                            <span class="chain-section__count">(This measure uses {{ currentChain.dependencies.length }} measure(s))</span>
+                                        </div>
+                                        <div class="chain-deps-grid">
+                                            <div v-for="dep in currentChain.dependencies" :key="dep" class="chain-dep-item">
+                                                {{ dep }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div v-else class="chain-section">
+                                        <div class="chain-section__header chain-section__header--downward">
+                                            <span class="chain-section__title">⬇️ DEPENDS ON</span>
+                                        </div>
+                                        <div class="chain-base-measure">
+                                            <div class="chain-base-measure__icon">🟢 BASE MEASURE</div>
+                                            <div class="chain-base-measure__text">This measure doesn't depend on any other measures</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else class="card">
+                            <div class="card__body">
+                                <p class="empty-state">Select a measure from the left to view its complete dependency chain</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visuals Tab -->
+                <div v-show="dependencySubTab === 'visuals'" class="panel-grid">
+                    <!-- Left: Page & Visual Selection -->
+                    <div class="panel-left">
+                        <div class="card">
+                            <div class="card__header">
+                                <h3 class="card__title">Select Page & Visual</h3>
+                            </div>
+                            <div class="card__body">
+                                <!-- Page Selection -->
+                                <div class="form-group">
+                                    <label class="form-label">Page</label>
+                                    <select v-model="selectedVisualPage" class="form-select" @change="selectedVisualId = null">
+                                        <option :value="null">-- Select a page --</option>
+                                        <option v-for="page in visualAnalysisPages" :key="page.name" :value="page.name">
+                                            {{ page.name }} ({{ page.visualCount }} visuals)
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- Visual Selection -->
+                                <div v-if="selectedVisualPage" class="form-group">
+                                    <label class="form-label">Visual</label>
+                                    <div class="scrollable">
+                                        <div v-for="visual in visualsOnSelectedPage" :key="visual.visualId"
+                                            @click="selectedVisualId = visual.visualId"
+                                            :class="['visual-select-item', selectedVisualId === visual.visualId ? 'active' : '']"
+                                        >
+                                            <span class="badge badge-primary badge--small">{{ visual.visualType }}</span>
+                                            <div class="visual-select-item__name">{{ visual.visualName || 'Unnamed Visual' }}</div>
+                                            <div class="visual-select-item__meta">{{ visual.measureCount }} measure(s)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div v-else class="empty-state">Select a page to view its visuals</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Measure Backward Trace -->
+                    <div class="panel-right">
+                        <div v-if="selectedVisualId && currentVisualAnalysis" class="card">
+                            <div class="card__header">
+                                <h3 class="card__title">Visual Measure Trace</h3>
+                            </div>
+                            <div class="card__body">
+                                <div class="visual-trace-header">
+                                    <span class="badge badge-primary">{{ currentVisualAnalysis.visualType }}</span>
+                                    <span class="visual-trace-header__name">{{ currentVisualAnalysis.visualName || 'Unnamed Visual' }}</span>
+                                    <div class="visual-trace-header__page">Page: {{ selectedVisualPage }}</div>
+                                </div>
+
+                                <!-- Backward Trace -->
+                                <div class="trace-sections">
+                                    <!-- Top-Level Measures (Used Directly in Visual) -->
+                                    <div v-if="currentVisualAnalysis.topMeasures && currentVisualAnalysis.topMeasures.length > 0" class="trace-section">
+                                        <div class="trace-section__header trace-section__header--visual">
+                                            <span class="trace-section__title">📊 Measures Used in Visual</span>
+                                            <span class="trace-section__count">({{ currentVisualAnalysis.topMeasures.length }})</span>
+                                        </div>
+                                        <div class="trace-tree trace-tree--visual">
+                                            <div v-for="measure in currentVisualAnalysis.topMeasures" :key="measure.fullName" class="trace-measure">
+                                                <div class="trace-measure__name">{{ measure.name }}</div>
+                                                <div class="trace-measure__table">{{ measure.table }}</div>
+
+                                                <!-- Show Dependencies -->
+                                                <div v-if="measure.dependencies && measure.dependencies.length > 0" class="trace-deps">
+                                                    <div class="trace-deps__header">⬇️ Depends on:</div>
+                                                    <div class="trace-deps__list">
+                                                        <div v-for="dep in measure.dependencies" :key="dep.fullName" class="trace-dep">
+                                                            <div class="trace-dep__name">{{ dep.name }}</div>
+                                                            <div class="trace-dep__table">{{ dep.table }}</div>
+
+                                                            <!-- Nested Dependencies (Base Measures) -->
+                                                            <div v-if="dep.dependencies && dep.dependencies.length > 0" class="trace-base-deps">
+                                                                <div class="trace-deps__header">⬇️ Base:</div>
+                                                                <div v-for="baseDep in dep.dependencies" :key="baseDep.fullName" class="trace-base-measure">
+                                                                    <div class="trace-base-measure__name">{{ baseDep.name }}</div>
+                                                                    <div class="trace-base-measure__table">{{ baseDep.table }}</div>
+                                                                    <span class="badge badge-success badge--tiny">Base Measure</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Base Measure Indicator -->
+                                                <div v-else class="trace-measure__base">
+                                                    <span class="badge badge-success badge--small">🟢 Base Measure</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Summary -->
+                                    <div v-if="currentVisualAnalysis.summary" class="trace-summary">
+                                        <h4 class="trace-summary__title">📋 Summary</h4>
+                                        <div class="trace-summary__grid">
+                                            <div class="trace-summary__item">
+                                                <div class="trace-summary__label">Total Measures</div>
+                                                <div class="trace-summary__value">{{ currentVisualAnalysis.summary.totalMeasures }}</div>
+                                            </div>
+                                            <div class="trace-summary__item">
+                                                <div class="trace-summary__label">Direct Dependencies</div>
+                                                <div class="trace-summary__value">{{ currentVisualAnalysis.summary.directDeps }}</div>
+                                            </div>
+                                            <div class="trace-summary__item">
+                                                <div class="trace-summary__label">Base Measures</div>
+                                                <div class="trace-summary__value">{{ currentVisualAnalysis.summary.baseMeasures }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else class="card">
+                            <div class="card__body">
+                                <p class="empty-state">Select a page and visual from the left to trace measure dependencies</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Measure Info Modal -->
+                <div v-if="showMeasureModal" class="modal-overlay" @click.self="closeMeasureModal">
+                    <div class="modal">
+                        <div class="modal__header">
+                            <div>
+                                <h2 class="modal__title">{{ selectedMeasureForModal?.name }}</h2>
+                                <p class="modal__subtitle">table: {{ selectedMeasureForModal?.table }}</p>
+                            </div>
+                            <button @click="closeMeasureModal" class="modal__close">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="modal__body">
+                            <!-- Expression -->
+                            <div v-if="selectedMeasureForModal?.expression" class="modal-section">
+                                <h3 class="modal-section__title">Expression:</h3>
+                                <div class="code-block">{{ selectedMeasureForModal.expression }}</div>
+                            </div>
+
+                            <!-- References -->
+                            <div v-if="selectedMeasureForModal?.references && selectedMeasureForModal.references.length > 0" class="modal-section">
+                                <h3 class="modal-section__title">References:</h3>
+                                <div class="ref-list">
+                                    <div v-for="ref in selectedMeasureForModal.references" :key="ref" class="ref-item ref-item--uses">
+                                        {{ ref }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Referenced By -->
+                            <div v-if="selectedMeasureForModal?.referencedBy && selectedMeasureForModal.referencedBy.length > 0" class="modal-section">
+                                <h3 class="modal-section__title">Referenced By:</h3>
+                                <div class="ref-list">
+                                    <div v-for="ref in selectedMeasureForModal.referencedBy" :key="ref" class="ref-item ref-item--usedby">
+                                        {{ ref }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Usage Tab -->
+            <div v-show="activeTab === 'usage'" class="tab-content">
+                <!-- Field Parameters Section (Full Width) -->
+                <div class="card">
+                    <div class="card__header">
+                        <h3 class="card__title">Field Parameters</h3>
+                        <div v-if="fieldParametersList.length > 0" class="card__actions">
+                            <button @click="expandAllFieldParams" class="btn btn--small btn--primary">Expand All</button>
+                            <button @click="collapseAllFieldParams" class="btn btn--small btn--secondary">Collapse All</button>
+                        </div>
+                    </div>
+                    <div class="card__body">
+                        <div v-if="fieldParametersList.length > 0" class="alert alert--info">
+                            <strong>Info:</strong> Found {{ fieldParametersList.length }} field parameter(s) in the model.
+                        </div>
+                        <div v-if="fieldParametersList.length > 0" class="scrollable field-params-list">
+                            <div v-for="fp in fieldParametersList" :key="fp.name" class="folder-group">
+                                <div class="folder-header" :class="{collapsed: collapsedFieldParams[fp.name]}" @click="toggleFieldParam(fp.name)">
+                                    <div class="folder-header__info">
+                                        <span class="badge badge-success">{{ fp.name }}</span>
+                                        <span class="field-param-card__table">{{ fp.table }}</span>
+                                        <span class="folder-header__count">({{ fp.columns?.length || 0 }} columns)</span>
+                                    </div>
+                                    <span class="folder-header__icon">▼</span>
+                                </div>
+                                <div v-show="!collapsedFieldParams[fp.name]" class="folder-content">
+                                    <div v-if="fp.columns && fp.columns.length > 0" class="columns-tag-grid">
+                                        <div v-for="col in fp.columns" :key="col" class="column-tag">{{ col }}</div>
+                                    </div>
+                                    <div v-else class="empty-state empty-state--small">No columns referenced</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else class="empty-state">No field parameters found in the model.</div>
+                    </div>
+                </div>
+
+                <!-- Unused Measures and Columns Grid -->
+                <div class="two-column-grid">
+                    <div class="card">
+                        <div class="card__header">
+                            <h3 class="card__title">Unused Measures</h3>
+                            <div v-if="dependencies.unused_measures?.length > 0" class="card__actions">
+                                <button @click="expandAllUnusedMeasures" class="btn btn--small btn--primary">Expand All</button>
+                                <button @click="collapseAllUnusedMeasures" class="btn btn--small btn--secondary">Collapse All</button>
+                            </div>
+                        </div>
+                        <div class="card__body">
+                            <div v-if="dependencies.unused_measures?.length > 0" class="alert alert--warning">
+                                <strong>Warning:</strong> Found {{ dependencies.unused_measures.length }} measures not used anywhere.
+                            </div>
+                            <div v-if="dependencies.unused_measures?.length > 0" class="scrollable">
+                                <!-- Grouped by folder -->
+                                <div v-for="(measures, folderName) in unusedMeasuresByFolder" :key="folderName" class="folder-group">
+                                    <div class="folder-header" :class="{collapsed: collapsedUnusedMeasureFolders[folderName]}" @click="toggleUnusedMeasureFolder(folderName)">
+                                        <div class="folder-header__info">
+                                            <strong>{{ folderName }}</strong>
+                                            <span class="folder-header__count">({{ measures.length }})</span>
+                                        </div>
+                                        <span class="folder-header__icon">▼</span>
+                                    </div>
+                                    <div v-show="!collapsedUnusedMeasureFolders[folderName]" class="folder-content">
+                                        <div v-for="measure in measures" :key="measure" class="unused-item">{{ measure }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-else class="success-state">✓ All measures are in use!</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card__header">
+                            <h3 class="card__title">Unused Columns</h3>
+                            <div v-if="dependencies.unused_columns?.length > 0" class="card__actions">
+                                <button @click="expandAllUnusedColumns" class="btn btn--small btn--primary">Expand All</button>
+                                <button @click="collapseAllUnusedColumns" class="btn btn--small btn--secondary">Collapse All</button>
+                            </div>
+                        </div>
+                        <div class="card__body">
+                            <div v-if="dependencies.unused_columns?.length > 0" class="alert alert--warning">
+                                <strong>Warning:</strong> Found {{ dependencies.unused_columns.length }} columns not used anywhere.
+                            </div>
+                            <div v-if="dependencies.unused_columns?.length > 0" class="scrollable">
+                                <!-- Grouped by table -->
+                                <div v-for="(columns, tableName) in unusedColumnsByTable" :key="tableName" class="folder-group">
+                                    <div class="folder-header" :class="{collapsed: collapsedUnusedColumnTables[tableName]}" @click="toggleUnusedColumnTable(tableName)">
+                                        <div class="folder-header__info">
+                                            <strong>{{ tableName }}</strong>
+                                            <span class="folder-header__count">({{ columns.length }})</span>
+                                        </div>
+                                        <span class="folder-header__icon">▼</span>
+                                    </div>
+                                    <div v-show="!collapsedUnusedColumnTables[tableName]" class="folder-content">
+                                        <div v-for="column in columns" :key="column" class="unused-item">{{ column }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-else class="success-state">✓ All columns are in use!</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Complete Usage Matrix -->
+                <div class="card">
+                    <div class="card__header">
+                        <h3 class="card__title">Complete Usage Matrix</h3>
+                        <div class="card__actions">
+                            <select v-model="usageMatrixFilter" class="usage-filter-select">
+                                <option value="all">Show All</option>
+                                <option value="used">Used Only</option>
+                                <option value="unused">Unused Only</option>
+                            </select>
+                            <button @click="copyUsageMatrix" class="btn btn--small btn--primary">Copy to Clipboard</button>
+                        </div>
+                    </div>
+                    <div class="card__body">
+                        <!-- Measures Matrix - Grouped by Display Folder -->
+                        <div class="usage-matrix-section">
+                            <div class="usage-matrix-header">
+                                <h4 class="usage-matrix-title">Measures ({{ filteredMeasuresMatrix.length }})</h4>
+                                <div class="usage-matrix-actions">
+                                    <button @click="expandAllMeasureFolders" class="btn btn--small btn--secondary">Expand All</button>
+                                    <button @click="collapseAllMeasureFolders" class="btn btn--small btn--secondary">Collapse All</button>
+                                </div>
+                            </div>
+                            <div class="usage-matrix-container">
+                                <div v-for="(measures, folderName) in filteredMeasuresGroupedByFolder" :key="folderName" class="collapsible-group">
+                                    <div class="collapsible-header" :class="{collapsed: collapsedMeasureFolders[folderName]}" @click="toggleMeasureFolder(folderName)">
+                                        <span class="collapsible-icon">{{ collapsedMeasureFolders[folderName] ? '▶' : '▼' }}</span>
+                                        <span class="collapsible-title">{{ folderName || 'No Folder' }}</span>
+                                        <span class="collapsible-count">({{ measures.length }})</span>
+                                        <span class="collapsible-stats">
+                                            <span class="stat-used">{{ measures.filter(m => m.isUsed).length }} used</span>
+                                            <span class="stat-unused">{{ measures.filter(m => !m.isUsed).length }} unused</span>
+                                        </span>
+                                    </div>
+                                    <div v-show="!collapsedMeasureFolders[folderName]" class="collapsible-content">
+                                        <table class="usage-matrix-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Table</th>
+                                                    <th>Measure Name</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="item in measures" :key="item.fullName" :class="{'unused-row': !item.isUsed}">
+                                                    <td>{{ item.table }}</td>
+                                                    <td>{{ item.name }}</td>
+                                                    <td>
+                                                        <span :class="['status-badge', item.isUsed ? 'status-badge--used' : 'status-badge--unused']">
+                                                            {{ item.isUsed ? 'Used' : 'Unused' }}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Columns Matrix - Grouped by Table -->
+                        <div class="usage-matrix-section">
+                            <div class="usage-matrix-header">
+                                <h4 class="usage-matrix-title">Columns ({{ filteredColumnsMatrix.length }})</h4>
+                                <div class="usage-matrix-actions">
+                                    <button @click="expandAllColumnTables" class="btn btn--small btn--secondary">Expand All</button>
+                                    <button @click="collapseAllColumnTables" class="btn btn--small btn--secondary">Collapse All</button>
+                                </div>
+                            </div>
+                            <div class="usage-matrix-container">
+                                <div v-for="(columns, tableName) in filteredColumnsGroupedByTable" :key="tableName" class="collapsible-group">
+                                    <div class="collapsible-header" :class="{collapsed: collapsedColumnTables[tableName]}" @click="toggleColumnTable(tableName)">
+                                        <span class="collapsible-icon">{{ collapsedColumnTables[tableName] ? '▶' : '▼' }}</span>
+                                        <span class="collapsible-title">{{ tableName }}</span>
+                                        <span class="collapsible-count">({{ columns.length }})</span>
+                                        <span class="collapsible-stats">
+                                            <span class="stat-used">{{ columns.filter(c => c.isUsed).length }} used</span>
+                                            <span class="stat-unused">{{ columns.filter(c => !c.isUsed).length }} unused</span>
+                                        </span>
+                                    </div>
+                                    <div v-show="!collapsedColumnTables[tableName]" class="collapsible-content">
+                                        <table class="usage-matrix-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Column Name</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="item in columns" :key="item.fullName" :class="{'unused-row': !item.isUsed}">
+                                                    <td>{{ item.name }}</td>
+                                                    <td>
+                                                        <span :class="['status-badge', item.isUsed ? 'status-badge--used' : 'status-badge--unused']">
+                                                            {{ item.isUsed ? 'Used' : 'Unused' }}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Best Practices Tab -->
+            <div v-show="activeTab === 'best-practices'" class="tab-content">
+                <div class="tab-header">
+                    <h1 class="tab-header__title">Best Practice Analysis</h1>
+                    <p class="tab-header__subtitle">Analysis based on Microsoft Power BI Best Practices</p>
+                </div>
+
+                <!-- BPA Summary Cards -->
+                <div class="metrics-grid metrics-grid--4">
+                    <div class="metric-card">
+                        <div class="metric-card__label">Total Violations</div>
+                        <div class="metric-card__value">{{ bpaTotalViolations }}</div>
+                    </div>
+                    <div class="metric-card metric-card--coral">
+                        <div class="metric-card__label">Errors</div>
+                        <div class="metric-card__value">{{ bpaErrorCount }}</div>
+                    </div>
+                    <div class="metric-card metric-card--rust">
+                        <div class="metric-card__label">Warnings</div>
+                        <div class="metric-card__value">{{ bpaWarningCount }}</div>
+                    </div>
+                    <div class="metric-card metric-card--ocean">
+                        <div class="metric-card__label">Info</div>
+                        <div class="metric-card__value">{{ bpaInfoCount }}</div>
+                    </div>
+                </div>
+
+                <!-- Category Breakdown -->
+                <div class="card">
+                    <div class="card__header">
+                        <h3 class="card__title">Violations by Category</h3>
+                    </div>
+                    <div class="card__body">
+                        <div class="category-breakdown">
+                            <div v-for="(count, category) in bpaCategoryBreakdown" :key="category" class="category-item">
+                                <div class="category-item__name">{{ category }}</div>
+                                <div class="category-item__count">{{ count }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Violations by Object Type -->
+                <div class="card">
+                    <div class="card__header">
+                        <h3 class="card__title">Violations by Object Type</h3>
+                        <div class="card__filters">
+                            <select v-model="bpaSeverityFilter" class="form-select form-select--small">
+                                <option value="all">All Severities</option>
+                                <option value="ERROR">Errors</option>
+                                <option value="WARNING">Warnings</option>
+                                <option value="INFO">Info</option>
+                            </select>
+                            <select v-model="bpaCategoryFilter" class="form-select form-select--small">
+                                <option value="all">All Categories</option>
+                                <option v-for="category in bpaCategories" :key="category" :value="category">{{ category }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card__body">
+                        <!-- Group by Object Type, then by Category (with Maintenance last) -->
+                        <div v-for="objectType in bpaObjectTypes" :key="objectType" class="accordion-group">
+                            <div @click="toggleBpaObjectGroup(objectType)" class="accordion-header">
+                                <div class="accordion-header__left">
+                                    <svg class="accordion-header__icon" :class="{expanded: !collapsedBpaObjectGroups[objectType]}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                    <span class="accordion-header__title">{{ objectType }} ({{ bpaViolationsByObjectType[objectType].length }})</span>
+                                </div>
+                            </div>
+
+                            <div v-show="!collapsedBpaObjectGroups[objectType]" class="accordion-content">
+                                <!-- Violations grouped by category within this object type -->
+                                <div v-for="category in bpaOrderedCategories" :key="category">
+                                    <template v-if="bpaViolationsByObjectAndCategory[objectType] && bpaViolationsByObjectAndCategory[objectType][category]">
+                                        <div @click="toggleBpaCategory(objectType, category)" class="accordion-subheader">
+                                            <svg class="accordion-subheader__icon" :class="{expanded: !collapsedBpaCategories[`${objectType}|${category}`]}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                            </svg>
+                                            <span>{{ category }} ({{ bpaViolationsByObjectAndCategory[objectType][category].length }})</span>
+                                        </div>
+                                        <div v-show="!collapsedBpaCategories[`${objectType}|${category}`]" class="table-container">
+                                            <table class="data-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Severity</th>
+                                                        <th>Rule</th>
+                                                        <th>Object</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr v-for="violation in bpaViolationsByObjectAndCategory[objectType][category]" :key="violation.rule_id + violation.object_name">
+                                                        <td><span :class="bpaSeverityClass(violation.severity)" class="severity-badge">{{ violation.severity }}</span></td>
+                                                        <td>{{ violation.rule_name }}</td>
+                                                        <td>
+                                                            <div class="cell-primary">{{ violation.object_name }}</div>
+                                                            <div v-if="violation.table_name" class="cell-secondary">Table: {{ violation.table_name }}</div>
+                                                        </td>
+                                                        <td>
+                                                            <div>{{ violation.description }}</div>
+                                                            <div v-if="violation.details" class="cell-secondary">{{ violation.details }}</div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div v-if="filteredBpaViolations.length === 0" class="empty-state">No violations found matching your filters</div>
+                    </div>
+                </div>
+
+                <!-- Naming Conventions Section -->
+                <div v-if="enhancedData && enhancedData.analyses && enhancedData.analyses.naming_conventions" class="card">
+                    <div class="card__header">
+                        <h3 class="card__title">Naming Convention Violations</h3>
+                    </div>
+                    <div class="card__body">
+                        <div v-if="namingViolationsCount === 0" class="success-state success-state--large">
+                            <div class="success-state__icon">✅</div>
+                            <h3 class="success-state__title">All naming conventions followed!</h3>
+                            <p class="success-state__text">No violations found</p>
+                        </div>
+
+                        <div v-else>
+                            <!-- Naming Summary -->
+                            <div class="metrics-grid metrics-grid--3">
+                                <div class="metric-card metric-card--coral">
+                                    <div class="metric-card__label">Total Violations</div>
+                                    <div class="metric-card__value">{{ namingViolationsCount }}</div>
+                                </div>
+                                <div class="metric-card metric-card--rust">
+                                    <div class="metric-card__label">Warnings</div>
+                                    <div class="metric-card__value">{{ namingSummary.by_severity?.WARNING || 0 }}</div>
+                                </div>
+                                <div class="metric-card metric-card--ocean">
+                                    <div class="metric-card__label">Info</div>
+                                    <div class="metric-card__value">{{ namingSummary.by_severity?.INFO || 0 }}</div>
+                                </div>
+                            </div>
+
+                            <!-- Filters -->
+                            <div class="filter-row">
+                                <select v-model="namingSeverityFilter" class="form-select form-select--small">
+                                    <option value="all">All Severities</option>
+                                    <option value="WARNING">Warnings</option>
+                                    <option value="INFO">Info</option>
+                                </select>
+                                <select v-model="namingTypeFilter" class="form-select form-select--small">
+                                    <option value="all">All Types</option>
+                                    <option value="missing_prefix">Missing Prefix</option>
+                                    <option value="contains_spaces">Contains Spaces</option>
+                                    <option value="name_too_long">Name Too Long</option>
+                                    <option value="special_characters">Special Characters</option>
+                                </select>
+                            </div>
+
+                            <!-- Violations Table -->
+                            <div class="table-container table-container--scrollable">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Severity</th>
+                                            <th>Type</th>
+                                            <th>Object Type</th>
+                                            <th>Table</th>
+                                            <th>Object</th>
+                                            <th>Issue</th>
+                                            <th>Current Name</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(violation, idx) in filteredNamingViolations" :key="idx">
+                                            <td><span :class="severityBadgeClass(violation.severity)" class="severity-badge">{{ violation.severity }}</span></td>
+                                            <td>{{ violation.type }}</td>
+                                            <td>{{ violation.object_type }}</td>
+                                            <td class="cell-primary">{{ violation.table }}</td>
+                                            <td>{{ violation.object }}</td>
+                                            <td>{{ violation.issue }}</td>
+                                            <td class="cell-mono">{{ violation.current_name }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            <div v-if="filteredNamingViolations.length === 0" class="empty-state">No violations match your filters</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Quality Tab -->
+            <div v-show="activeTab === 'data-quality'" class="tab-content">
+                <div class="tab-header">
+                    <h1 class="tab-header__title">Data Quality Analysis</h1>
+                    <p class="tab-header__subtitle">Data type optimization and cardinality warnings</p>
+                </div>
+
+                <!-- Data Type Summary -->
+                <div class="two-column-grid">
+                    <div class="card">
+                        <div class="card__header">
+                            <h3 class="card__title">Data Type Distribution</h3>
+                        </div>
+                        <div class="card__body">
+                            <div class="distribution-list">
+                                <div v-for="(count, type) in dataTypeSummary" :key="type" class="distribution-item">
+                                    <span class="distribution-item__type">{{ type }}</span>
+                                    <div class="distribution-item__bar">
+                                        <div class="distribution-item__fill" :style="{ width: (count / totalDataTypeCount * 100) + '%' }"></div>
+                                    </div>
+                                    <span class="distribution-item__count">{{ count }}</span>
+                                    <span class="distribution-item__percent">{{ Math.round(count / totalDataTypeCount * 100) }}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card__header">
+                            <h3 class="card__title">Quality Metrics</h3>
+                        </div>
+                        <div class="card__body">
+                            <div class="metrics-stack">
+                                <div class="metric-card metric-card--rust">
+                                    <div class="metric-card__label">Data Type Issues</div>
+                                    <div class="metric-card__value">{{ dataTypeIssues.length }}</div>
+                                </div>
+                                <div class="metric-card metric-card--coral">
+                                    <div class="metric-card__label">High-Impact Issues</div>
+                                    <div class="metric-card__value">{{ dataTypeHighImpactCount }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Type Issues Table -->
+                <div class="card">
+                    <div class="card__header">
+                        <h3 class="card__title">Data Type Optimization Opportunities</h3>
+                        <select v-model="dataTypeImpactFilter" class="form-select form-select--small">
+                            <option value="all">All Impact Levels</option>
+                            <option value="HIGH">High Impact</option>
+                            <option value="MEDIUM">Medium Impact</option>
+                            <option value="LOW">Low Impact</option>
+                        </select>
+                    </div>
+                    <div class="card__body">
+                        <div class="table-container table-container--scrollable">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Table</th>
+                                        <th>Column</th>
+                                        <th>Current Type</th>
+                                        <th>Issue</th>
+                                        <th>Recommendation</th>
+                                        <th>Impact</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="issue in filteredDataTypeIssues" :key="issue.table + issue.column">
+                                        <td class="cell-primary">{{ issue.table }}</td>
+                                        <td>{{ issue.column }}</td>
+                                        <td><code class="code-inline">{{ issue.current_type }}</code></td>
+                                        <td>{{ issue.issue }}</td>
+                                        <td class="cell-link">{{ issue.recommendation }}</td>
+                                        <td><span :class="impactBadgeClass(issue.impact)" class="impact-badge">{{ issue.impact }}</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div v-if="filteredDataTypeIssues.length === 0" class="empty-state">No data type issues found</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cardinality Warnings -->
+                <div class="card" v-if="cardinalityWarnings.length > 0">
+                    <div class="card__header">
+                        <h3 class="card__title">High Cardinality Warnings</h3>
+                    </div>
+                    <div class="card__body">
+                        <div class="alert alert--warning">
+                            <strong>Note:</strong> High cardinality columns can impact performance and memory usage. Consider hiding or pre-aggregating these columns.
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Table</th>
+                                        <th>Column</th>
+                                        <th>Reason</th>
+                                        <th>Is Hidden</th>
+                                        <th>Recommendation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="warning in cardinalityWarnings" :key="warning.table + warning.column">
+                                        <td class="cell-primary">{{ warning.table }}</td>
+                                        <td>{{ warning.column }}</td>
+                                        <td>{{ warning.reason }}</td>
+                                        <td><span :class="warning.is_hidden ? 'status-success' : 'status-error'">{{ warning.is_hidden ? '✓ Yes' : '✗ No' }}</span></td>
+                                        <td class="cell-link">{{ warning.recommendation }}</td>
+                                    </tr>
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Perspectives Tab -->
+            <div v-show="activeTab === 'perspectives'" class="tab-content">
+                <div class="tab-header">
+                    <h1 class="tab-header__title">Perspectives Analysis</h1>
+                    <p class="tab-header__subtitle">Object visibility and perspective usage</p>
+                </div>
+
+                <div v-if="!perspectivesData.has_perspectives" class="card">
+                    <div class="card__body">
+                        <div class="empty-state">
+                            <div class="empty-state__icon">👁️</div>
+                            <h3 class="empty-state__title">No Perspectives Defined</h3>
+                            <p class="empty-state__text">{{ perspectivesData.message }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-else>
+                    <!-- Perspectives Summary -->
+                    <div class="metrics-grid metrics-grid--3">
+                        <div class="metric-card metric-card--ocean">
+                            <div class="metric-card__label">Total Perspectives</div>
+                            <div class="metric-card__value">{{ perspectivesCount }}</div>
+                        </div>
+                        <div class="metric-card metric-card--rust">
+                            <div class="metric-card__label">Unused Perspectives</div>
+                            <div class="metric-card__value">{{ perspectivesData.unused_perspectives?.length || 0 }}</div>
+                        </div>
+                        <div class="metric-card metric-card--sage">
+                            <div class="metric-card__label">Active Perspectives</div>
+                            <div class="metric-card__value">{{ perspectivesCount - (perspectivesData.unused_perspectives?.length || 0) }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Perspectives Details -->
+                    <div class="card">
+                        <div class="card__header">
+                            <h2 class="card__title">Perspective Details</h2>
+                        </div>
+                        <div class="card__body">
+                            <div class="perspective-list">
+                                <div v-for="perspective in perspectivesData.perspectives" :key="perspective.name" class="perspective-item">
+                                    <div class="perspective-item__header">
+                                        <h3 class="perspective-item__name">{{ perspective.name }}</h3>
+                                        <span v-if="perspective.total_objects === 0" class="status-badge status-badge--warning">UNUSED</span>
+                                        <span v-else class="status-badge status-badge--success">ACTIVE</span>
+                                    </div>
+                                    <div class="perspective-item__stats">
+                                        <div class="perspective-stat perspective-stat--ocean">
+                                            <span class="perspective-stat__label">Tables</span>
+                                            <span class="perspective-stat__value">{{ perspective.table_count }}</span>
+                                        </div>
+                                        <div class="perspective-stat perspective-stat--sage">
+                                            <span class="perspective-stat__label">Columns</span>
+                                            <span class="perspective-stat__value">{{ perspective.column_count }}</span>
+                                        </div>
+                                        <div class="perspective-stat perspective-stat--purple">
+                                            <span class="perspective-stat__label">Measures</span>
+                                            <span class="perspective-stat__value">{{ perspective.measure_count }}</span>
+                                        </div>
+                                        <div class="perspective-stat perspective-stat--neutral">
+                                            <span class="perspective-stat__label">Total</span>
+                                            <span class="perspective-stat__value">{{ perspective.total_objects }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                </main>
+            </div>
+        </div>
+
+        <!-- Command Palette -->
+        <div v-if="showCommandPalette" v-cloak class="command-palette" @click.self="showCommandPalette = false">
+            <div class="command-palette__content">
+                <div class="command-palette__input-wrapper">
+                    <input
+                        v-model="commandQuery"
+                        type="text"
+                        placeholder="Type a command..."
+                        class="command-palette__input"
+                        @keydown.esc="showCommandPalette = false"
+                        ref="commandInput"
+                    />
+                </div>
+                <div class="command-palette__results">
+                    <div
+                        v-for="cmd in filteredCommands"
+                        :key="cmd.name"
+                        @click="executeCommand(cmd)"
+                        class="command-palette__item"
+                    >
+                        <div class="command-palette__item-name">{{ cmd.name }}</div>
+                        <div class="command-palette__item-desc">{{ cmd.description }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

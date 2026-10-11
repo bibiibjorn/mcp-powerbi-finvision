@@ -1,0 +1,104 @@
+{
+ "name": "chatgpt_conversation_image_turn",
+ "note": "second turn with an uploaded image (multimodal_text, attachments metadata)",
+ "request": {
+  "method": "POST",
+  "host": "chatgpt.com",
+  "path": "/backend-api/f/conversation",
+  "content_type": "application/json",
+  "body": {
+   "turn_attribution": {
+    "turn_trigger": "composer"
+   },
+   "conversation_id": "00000000-0000-4000-8000-000000000004",
+   "action": "next",
+   "is_do_not_remember": false,
+   "model": "gpt-5-6",
+   "parent_message_id": "00000000-0000-4000-8000-000000000016",
+   "timezone": "Europe/Brussels",
+   "timezone_offset_min": -120,
+   "client_contextual_info": {
+    "app_name": "chatgpt.com",
+    "app_surface": "codex_browser",
+    "has_web_push_capabilities": true,
+    "web_push_notification_permission": "default"
+   },
+   "local_function_names": [
+    "local.continue_in_work"
+   ],
+   "messages": [
+    {
+     "author": {
+      "metadata": {},
+      "name": null,
+      "role": "user"
+     },
+     "channel": null,
+     "content": {
+      "content_type": "multimodal_text",
+      "parts": [
+       {
+        "asset_pointer": "sediment://file_00000000000000000000000000000001",
+        "content_type": "image_asset_pointer",
+        "height": 260,
+        "size_bytes": 13685,
+        "width": 900
+       },
+       "What does this screenshot say?"
+      ]
+     },
+     "create_time": 1791371363.396,
+     "end_turn": null,
+     "id": "00000000-0000-4000-8000-000000000017",
+     "metadata": {
+      "attachments": [
+       {
+        "height": 260,
+        "id": "file_00000000000000000000000000000001",
+        "library_file_id": "libfile_00000000000000000000000000000002",
+        "mime_type": "image/png",
+        "name": "zorblax_customer(1).png",
+        "size": 13685,
+        "width": 900
+       }
+      ]
+     },
+     "recipient": "all",
+     "status": "finished_successfully",
+     "update_time": null,
+     "weight": 1
+    }
+   ],
+   "supported_encodings": [
+    "v1"
+   ],
+   "genui_state_snapshots": [],
+   "client_prepare_state": "success"
+  }
+ },
+ "response": {
+  "status": 200,
+  "content_type": "text/event-stream; charset=utf-8",
+  "content_encoding": "gzip",
+  "chunks": [
+   "event: delta_encoding\ndata: \"v1\"\n\n",
+   "data: {\"type\":\"resume_conversation_token\",\"kind\":\"topic\",\"token\":\"<token>\",\"conversation_id\":\"00000000-0000-4000-8000-000000000004\"}\n\n",
+   "data: {\"type\":\"input_message\",\"input_message\":{\"id\":\"00000000-0000-4000-8000-000000000017\",\"author\":{\"role\":\"user\",\"name\":null,\"metadata\":{}},\"create_time\":1791371363.396,\"update_time\":null,\"content\":{\"content_type\":\"multimodal_text\",\"parts\":[{\"content_type\":\"image_asset_pointer\",\"asset_pointer\":\"sediment://file_00000000000000000000000000000001\",\"size_bytes\":13685,\"width\":900,\"height\":260,\"fovea\":null,\"metadata\":{\"dalle\":null,\"gizmo\":null,\"generation\":null,\"segmentation\":null,\"container_pixel_height\":null,\"container_pixel_width\":null,\"emu_omit_glimpse_image\":null,\"emu_patches_override\":null,\"lpe_keep_patch_ijhw\":null,\"lpe_delta_encoding_channel\":null,\"sanitized\":true,\"asset_pointer_link\":null,\"watermarked_asset_pointer\":null,\"is_no_auth_placeholder\":null}},\"What does this screenshot say?\"]},\"status\":\"finished_successfully\",\"end_turn\":null,\"weight\":1.0,\"metadata\":{\"attachments\":[{\"height\":260,\"id\":\"file_00000000000000000000000000000001\",\"library_file_id\":\"libfile_00000000000000000000000000000002\",\"mime_type\":\"image/png\",\"name\":\"zorblax_customer(1).png\",\"size\":13685,\"width\":900}],\"request_id\":\"00000000-0000-4000-8000-000000000018\",\"message_source\":null,\"turn_exchange_id\":\"00000000-0000-4000-8000-000000000019\",\"working_turn_id\":\"00000000-0000-4000-8000-000000000019\",\"parent_id\":\"00000000-0000-4000-8000-000000000016\"},\"recipient\":\"all\",\"channel\":null},\"conversation_id\":\"00000000-0000-4000-8000-000000000004\"}\n\n",
+   "event: delta\ndata: {\"p\":\"\",\"o\":\"add\",\"v\":{\"message\":{\"id\":\"00000000-0000-4000-8000-000000000020\",\"author\":{\"role\":\"assistant\",\"name\":null,\"metadata\":{}},\"create_time\":null,\"update_time\":null,\"content\":{\"content_type\":\"model_editable_context\",\"model_set_context\":\"\",\"repository\":null,\"repo_summary\":null,\"structured_context\":null},\"status\":\"finished_successfully\",\"end_turn\":null,\"weight\":1.0,\"metadata\":{\"is_visually_hidden_from_conversation\":true,\"resolved_model_slug\":\"gpt-5-6\",\"search_result_groups\":[],\"cot_version\":\"v5\",\"conversation_followup_suggestions_eligible\":true,\"request_id\":\"00000000-0000-4000-8000-000000000018\",\"message_type\":\"next\",\"turn_exchange_id\":\"00000000-0000-4000-8000-000000000019\",\"working_turn_id\":\"00000000-0000-4000-8000-000000000019\",\"model_slug\":\"gpt-5-6\",\"default_model_slug\":\"gpt-5-6\",\"can_save\":false,\"parent_id\":\"00000000-0000-4000-8000-000000000017\",\"model_switcher_deny\":[]},\"recipient\":\"all\",\"channel\":null},\"conversation_id\":\"00000000-0000-4000-8000-000000000004\",\"error\":null,\"error_code\":null},\"c\":0}  \n\n",
+   "event: delta\ndata: {\"v\":{\"message\":{\"id\":\"00000000-0000-4000-8000-000000000021\",\"author\":{\"role\":\"system\",\"name\":null,\"metadata\":{}},\"create_time\":1791371364.26225,\"update_time\":null,\"content\":{\"content_type\":\"text\",\"parts\":[\"\"]},\"status\":\"finished_successfully\",\"end_turn\":null,\"weight\":1.0,\"metadata\":{\"is_visually_hidden_from_conversation\":true,\"resolved_model_slug\":\"gpt-5-6\",\"cot_version\":\"v5\",\"request_id\":\"00000000-0000-4000-8000-000000000018\",\"message_type\":\"next\",\"turn_exchange_id\":\"00000000-0000-4000-8000-000000000019\",\"working_turn_id\":\"00000000-0000-4000-8000-000000000019\",\"model_slug\":\"gpt-5-6\",\"default_model_slug\":\"gpt-5-6\",\"parent_id\":\"00000000-0000-4000-8000-000000000020\",\"model_switcher_deny\":[]},\"recipient\":\"all\",\"channel\":null},\"conversation_id\":\"00000000-0000-4000-8000-000000000004\",\"error\":null,\"error_code\":null},\"c\":1}   \n\n",
+   "event: delta\ndata: {\"v\":{\"message\":{\"id\":\"00000000-0000-4000-8000-000000000022\",\"author\":{\"role\":\"system\",\"name\":null,\"metadata\":{}},\"create_time\":null,\"update_time\":null,\"content\":{\"content_type\":\"text\",\"parts\":[\"\"]},\"status\":\"finished_successfully\",\"end_turn\":null,\"weight\":1.0,\"metadata\":{\"is_visually_hidden_from_conversation\":true,\"resolved_model_slug\":\"gpt-5-6\",\"cot_version\":\"v5\",\"request_id\":\"00000000-0000-4000-8000-000000000018\",\"message_type\":\"next\",\"turn_exchange_id\":\"00000000-0000-4000-8000-000000000019\",\"working_turn_id\":\"00000000-0000-4000-8000-000000000019\",\"model_slug\":\"gpt-5-6\",\"default_model_slug\":\"gpt-5-6\",\"parent_id\":\"00000000-0000-4000-8000-000000000021\",\"model_switcher_deny\":[]},\"recipient\":\"all\",\"channel\":null},\"conversation_id\":\"00000000-0000-4000-8000-000000000004\",\"error\":null,\"error_code\":null},\"c\":2}       \n\n",
+   "event: delta\ndata: {\"v\":{\"message\":{\"id\":\"00000000-0000-4000-8000-000000000023\",\"author\":{\"role\":\"assistant\",\"name\":null,\"metadata\":{}},\"create_time\":1791371364.549689,\"update_time\":null,\"content\":{\"content_type\":\"text\",\"parts\":[\"\"]},\"status\":\"in_progress\",\"end_turn\":null,\"weight\":1.0,\"metadata\":{\"citations\":[],\"story_events\":[],\"resolved_model_slug\":\"gpt-5-6\",\"cot_version\":\"v5\",\"conversation_followup_suggestions_eligible\":false,\"request_id\":\"00000000-0000-4000-8000-000000000018\",\"message_type\":\"next\",\"turn_exchange_id\":\"00000000-0000-4000-8000-000000000019\",\"working_turn_id\":\"00000000-0000-4000-8000-000000000019\",\"model_slug\":\"gpt-5-6\",\"default_model_slug\":\"gpt-5-6\",\"parent_id\":\"00000000-0000-4000-8000-000000000022\",\"model_switcher_deny\":[]},\"recipient\":\"all\",\"channel\":\"final\"},\"conversation_id\":\"00000000-0000-4000-8000-000000000004\",\"error\":null,\"error_code\":null},\"c\":3}      \n\n",
+   "data: {\"type\":\"message_marker\",\"conversation_id\":\"00000000-0000-4000-8000-000000000004\",\"message_id\":\"00000000-0000-4000-8000-000000000023\",\"marker\":\"user_visible_token\",\"event\":\"first\"}\n\n",
+   "data: {\"type\":\"message_marker\",\"conversation_id\":\"00000000-0000-4000-8000-000000000004\",\"message_id\":\"00000000-0000-4000-8000-000000000023\",\"marker\":\"final_channel_token\",\"event\":\"first\"}\n\n",
+   "event: delta\ndata: {\"p\":\"/message/content/parts/0\",\"o\":\"append\",\"v\":\"The screenshot says:\\n\\n**Customer: Zor\"}     \n\n",
+   "event: delta\ndata: {\"v\":\"blax Holdings NV**\\n\\n**Revenue: \"}       \n\n",
+   "event: delta\ndata: {\"p\":\"\",\"o\":\"patch\",\"v\":[{\"p\":\"/message/content/parts/0\",\"o\":\"append\",\"v\":\"1,200**\"},{\"p\":\"/message/status\",\"o\":\"replace\",\"v\":\"finished_successfully\"},{\"p\":\"/message/end_turn\",\"o\":\"replace\",\"v\":true},{\"p\":\"/message/metadata\",\"o\":\"append\",\"v\":{\"is_complete\":true,\"search_result_groups\":[],\"can_save\":true,\"finish_details\":{\"type\":\"stop\",\"stop_tokens\":[200002]}}}]}     \n\n",
+   "data: {\"type\":\"message_marker\",\"conversation_id\":\"00000000-0000-4000-8000-000000000004\",\"message_id\":\"00000000-0000-4000-8000-000000000023\",\"marker\":\"last_token\",\"event\":\"last\"}\n\n",
+   "event: delta\ndata: {\"p\":\"/message/metadata/conversation_followup_suggestions_eligible\",\"o\":\"replace\",\"v\":true}     \n\n",
+   "data: {\"type\":\"server_ste_metadata\",\"metadata\":{\"model_slug\":\"gpt-5-6\",\"turn_use_case\":\"text\"},\"conversation_id\":\"00000000-0000-4000-8000-000000000004\"}\n\n",
+   "data: {\"type\":\"message_stream_complete\",\"conversation_id\":\"00000000-0000-4000-8000-000000000004\"}\n\n",
+   "data: {\"type\":\"conversation_detail_metadata\",\"default_model_slug\":\"gpt-5-6\",\"conversation_id\":\"00000000-0000-4000-8000-000000000004\"}\n\n",
+   "data: [DONE]\n\n"
+  ]
+ }
+}

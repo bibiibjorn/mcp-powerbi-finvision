@@ -1,0 +1,13 @@
+{
+  "visualType": "cardVisual",
+  "roles": {
+    "Data": {
+      "required": true,
+      "multiple": true,
+      "accepts": [
+        "Column",
+        "Measure"
+      ]
+    }
+  }
+}

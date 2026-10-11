@@ -1,0 +1,23 @@
+# Synthetic client names for the masking lab and the masking tests. Every name is invented and
+# obviously fake; none belongs to a real person or company. Format: PREFIX: name (see
+# client_gateway/detectors.py parse_client_list).
+CUS: Zorblax Holdings NV
+CUS: Quillfeather Logistics BV
+CUS: Brambleton Fakeworks SA
+CUS: Nonexistia Capital Partners
+CUS: Wobblesworth Trading NV
+VEN: Plinkerton Supplies BV
+VEN: Gloopmatic Industries NV
+VEN: Fizzlewick Components SA
+VEN: Dingleberry Packaging GmbH
+PER: Quentin Testermans
+PER: Marlowe Fakenstein
+PER: Ottoline Placeholderova
+PER: Barnaby Mockingbird-Test
+PER: Zephyrine Dummyfield
+ORG: Imaginary Estates Group
+ORG: Lorem Ipsum Advisory
+ORG: Hypothetica Foundation
+ENT: Syntheticorp Europe NV
+ENT: Bogus Bankers Ltd
+PCC: Testpilot Family Office

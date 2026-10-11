@@ -1,0 +1,441 @@
+[
+  {
+    "rule_id": "CB001",
+    "category": "performance",
+    "severity": "high",
+    "title": "IF/SWITCH inside iterator expression — callback risk",
+    "description": "IF or SWITCH in the expression argument of an iterator (SUMX, AVERAGEX, …) is usually evaluated row by row by the Formula Engine (CallbackDataID in the storage-engine query). IF.EAGER, or moving the branch outside the iterator, lets the engine push the calculation down. Confirm with a query plan before rewriting — simple branches are sometimes optimised. Iterating a reduced grain (VALUES / DISTINCT / SUMMARIZE / a VAR table) is the canon's remedy and is reported at info only.",
+    "pattern_type": "function_in_context",
+    "match": {
+      "context_functions": [
+        "SUMX",
+        "AVERAGEX",
+        "MINX",
+        "MAXX",
+        "COUNTX",
+        "COUNTAX",
+        "RANKX",
+        "PRODUCTX",
+        "CONCATENATEX",
+        "STDEVX.S",
+        "STDEVX.P",
+        "VARX.S",
+        "VARX.P",
+        "PERCENTILEX.INC",
+        "PERCENTILEX.EXC",
+        "MEDIANX",
+        "GEOMEANX"
+      ],
+      "target": [
+        "IF",
+        "SWITCH"
+      ],
+      "arg_position": "expression",
+      "grain_gate": true
+    },
+    "fix_suggestion": "Use IF.EAGER when both branches are cheap, compute the condition once in a VAR outside the iterator, or split the iterator by the condition with CALCULATE.",
+    "estimated_improvement": "varies — measure with 13_Query_Plan",
+    "references": [
+      {
+        "source": "SQLBI",
+        "url": "https://www.sqlbi.com/articles/optimizing-if-conditions-using-variables/"
+      }
+    ]
+  },
+  {
+    "rule_id": "CB002",
+    "category": "performance",
+    "severity": "high",
+    "title": "IFERROR/ISERROR inside iterator — callback risk",
+    "description": "IFERROR or ISERROR in the expression argument of an iterator forces step-by-step error checking for every row, completely preventing SE optimization. Import-mode advice: in DirectQuery IFERROR folds into the SQL and DIVIDE does not.",
+    "pattern_type": "function_in_context",
+    "match": {
+      "context_functions": [
+        "SUMX",
+        "AVERAGEX",
+        "MINX",
+        "MAXX",
+        "COUNTX",
+        "COUNTAX",
+        "RANKX",
+        "PRODUCTX",
+        "CONCATENATEX",
+        "STDEVX.S",
+        "STDEVX.P",
+        "VARX.S",
+        "VARX.P",
+        "PERCENTILEX.INC",
+        "PERCENTILEX.EXC",
+        "MEDIANX",
+        "GEOMEANX"
+      ],
+      "target": [
+        "IFERROR",
+        "ISERROR"
+      ],
+      "arg_position": "expression"
+    },
+    "fix_suggestion": "Handle the error condition explicitly before the iterator, or use DIVIDE for division errors",
+    "estimated_improvement": "3-10x",
+    "references": [
+      {
+        "source": "Microsoft Learn",
+        "url": "https://learn.microsoft.com/en-us/power-bi/guidance/dax-error-functions"
+      }
+    ],
+    "supersedes": [
+      "CORR_IFERROR_USAGE",
+      "CORR_ISERROR_USAGE"
+    ]
+  },
+  {
+    "rule_id": "CB003",
+    "category": "performance",
+    "severity": "medium",
+    "title": "Nested iterators — O(n*m) callback risk",
+    "description": "An iterator inside another iterator (e.g., SUMX inside SUMX) creates O(n*m) row-by-row evaluation. This scales quadratically with table size.",
+    "pattern_type": "function_in_context",
+    "match": {
+      "context_functions": [
+        "SUMX",
+        "AVERAGEX",
+        "MINX",
+        "MAXX",
+        "COUNTX",
+        "COUNTAX",
+        "RANKX",
+        "PRODUCTX",
+        "CONCATENATEX",
+        "STDEVX.S",
+        "STDEVX.P",
+        "VARX.S",
+        "VARX.P",
+        "PERCENTILEX.INC",
+        "PERCENTILEX.EXC",
+        "MEDIANX",
+        "GEOMEANX"
+      ],
+      "target": [
+        "SUMX",
+        "AVERAGEX",
+        "MINX",
+        "MAXX",
+        "COUNTX",
+        "COUNTAX",
+        "RANKX",
+        "PRODUCTX",
+        "CONCATENATEX",
+        "STDEVX.S",
+        "STDEVX.P",
+        "VARX.S",
+        "VARX.P",
+        "PERCENTILEX.INC",
+        "PERCENTILEX.EXC",
+        "MEDIANX",
+        "GEOMEANX"
+      ],
+      "arg_position": "expression"
+    },
+    "fix_suggestion": "Flatten with SUMMARIZECOLUMNS, or use CALCULATE to avoid the inner iteration",
+    "estimated_improvement": "5-100x",
+    "references": [
+      {
+        "source": "SQLBI",
+        "url": "https://www.sqlbi.com/articles/nested-iterators-performance/"
+      }
+    ],
+    "supersedes": [
+      "PY_NESTED_ITERATOR"
+    ]
+  },
+  {
+    "rule_id": "CB004",
+    "category": "performance",
+    "severity": "medium",
+    "title": "FILTER over a whole model table with a single-column predicate",
+    "description": "FILTER(Table, <predicate on one column>) iterates the expanded table. A column filter (CALCULATE(<expr>, KEEPFILTERS(Table[Col] = x)) or FILTER(VALUES(Table[Col]), …)) scans only that column. Filtering a table variable or a table expression is not flagged.",
+    "pattern_type": "bare_table_arg",
+    "match": {
+      "function": "FILTER",
+      "arg_position": "first_arg",
+      "check": "simple_column_predicate"
+    },
+    "fix_suggestion": "Filter the column instead of the table: KEEPFILTERS(Table[Col] = value) as a CALCULATE filter argument, or FILTER(VALUES(Table[Col]), …).",
+    "references": [
+      {
+        "source": "SQLBI",
+        "url": "https://www.sqlbi.com/articles/filter-columns-not-tables-in-dax/"
+      },
+      {
+        "source": "Microsoft Learn",
+        "url": "https://learn.microsoft.com/en-us/power-bi/guidance/dax-avoid-avoid-filter-as-filter-argument"
+      }
+    ],
+    "rewrite_strategy": "filter_to_column_predicate",
+    "supersedes": [
+      "PERF_SUMX_FILTER",
+      "PERF_COUNTROWS_FILTER",
+      "PY_FILTER_TABLE_NOT_COLUMN"
+    ]
+  },
+  {
+    "rule_id": "CB005",
+    "category": "performance",
+    "severity": "medium",
+    "title": "FORMAT returns text — breaks sorting/aggregation, callbacks inside iterators",
+    "description": "FORMAT converts a value to text. In a measure body this breaks numeric sorting and aggregation (use the Format String / dynamic format string instead); inside an iterator it is evaluated row by row by the Formula Engine. Label / SVG measures that must build text are a legitimate use — suppress with `// lint-disable CB005`.",
+    "pattern_type": "function_usage",
+    "match": {
+      "functions": [
+        "FORMAT"
+      ]
+    },
+    "fix_suggestion": "Use the measure's FormatString property or report-level formatting instead",
+    "estimated_improvement": "2-5x",
+    "references": [
+      {
+        "source": "SQLBI",
+        "url": "https://www.sqlbi.com/articles/format-function-performance-in-dax/"
+      }
+    ],
+    "supersedes": [
+      "PERF_FORMAT_USAGE"
+    ]
+  },
+  {
+    "rule_id": "CB006",
+    "category": "correctness",
+    "severity": "low",
+    "title": "LASTDATE in a scalar comparison — prefer MAX",
+    "description": "In a scalar comparison, LASTDATE returns a single-row table where MAX returns a plain scalar date — simpler and more predictable. Note: as a CALCULATE filter argument (e.g. semi-additive CALCULATE([Balance], LASTDATE('Date'[Date]))) LASTDATE is the CORRECT choice and is not flagged here.",
+    "pattern_type": "function_usage",
+    "match": {
+      "functions": [
+        "LASTDATE"
+      ],
+      "check": "scalar_context"
+    },
+    "fix_suggestion": "When comparing a date scalar, use MAX(DateColumn) instead of LASTDATE(DateColumn). Keep LASTDATE when it is a CALCULATE filter argument (semi-additive measures).",
+    "references": [
+      {
+        "source": "SQLBI",
+        "url": "https://www.sqlbi.com/articles/time-intelligence-in-power-bi-desktop/"
+      }
+    ]
+  },
+  {
+    "rule_id": "CB007",
+    "category": "performance",
+    "severity": "info",
+    "title": "DIVIDE inside iterator expression",
+    "description": "DIVIDE in an iterator expression can prevent storage-engine push-down of the division. Only when the denominator can never be 0 or BLANK (e.g. rows are pre-filtered with Table[Den] <> 0) is the / operator the faster, equivalent choice; otherwise DIVIDE is correct and should stay.",
+    "pattern_type": "function_in_context",
+    "match": {
+      "context_functions": [
+        "SUMX",
+        "AVERAGEX",
+        "MINX",
+        "MAXX",
+        "COUNTX",
+        "COUNTAX",
+        "RANKX",
+        "PRODUCTX",
+        "CONCATENATEX",
+        "STDEVX.S",
+        "STDEVX.P",
+        "VARX.S",
+        "VARX.P",
+        "PERCENTILEX.INC",
+        "PERCENTILEX.EXC",
+        "MEDIANX",
+        "GEOMEANX"
+      ],
+      "target": [
+        "DIVIDE"
+      ],
+      "arg_position": "expression"
+    },
+    "fix_suggestion": "If the denominator is provably non-zero: CALCULATE(SUMX(T, T[A] / T[B]), T[B] <> 0). Otherwise keep DIVIDE.",
+    "supersedes": [
+      "PY_DIVIDE_IN_ITERATOR"
+    ],
+    "references": [
+      {
+        "source": "SQLBI",
+        "url": "https://www.sqlbi.com/articles/divide-vs-divide-operator-in-dax/"
+      }
+    ]
+  },
+  {
+    "rule_id": "CB008",
+    "category": "performance",
+    "severity": "medium",
+    "title": "Rounding function inside iterator expression",
+    "description": "ROUND / ROUNDUP / ROUNDDOWN / CEILING / FLOOR / MROUND inside an iterator over fact rows are evaluated row by row by the Formula Engine (CallbackDataID; SQLBI measured 263x SE CPU on 200M rows). INT / TRUNC are SE-native and the canon's own remedy for IF (INT(col > 0) * x) - they are not flagged. Iterating the distinct values (VALUES / SUMMARIZE / ALL(col) / a VAR) is the remedy and is reported at info only.",
+    "pattern_type": "function_in_context",
+    "match": {
+      "context_functions": [
+        "SUMX",
+        "AVERAGEX",
+        "MINX",
+        "MAXX",
+        "COUNTX",
+        "COUNTAX",
+        "RANKX",
+        "PRODUCTX",
+        "CONCATENATEX",
+        "STDEVX.S",
+        "STDEVX.P",
+        "VARX.S",
+        "VARX.P",
+        "PERCENTILEX.INC",
+        "PERCENTILEX.EXC",
+        "MEDIANX",
+        "GEOMEANX"
+      ],
+      "target": [
+        "ROUND",
+        "ROUNDUP",
+        "ROUNDDOWN",
+        "CEILING",
+        "FLOOR",
+        "MROUND"
+      ],
+      "arg_position": "expression",
+      "grain_gate": true
+    },
+    "fix_suggestion": "Iterate the distinct values being rounded instead of every row: SUMX(SUMMARIZE(T, T[Price]), CALCULATE(SUM(T[Qty])) * ROUND(T[Price], 2)).",
+    "references": [
+      {
+        "source": "SQLBI",
+        "url": "https://www.sqlbi.com/articles/optimizing-callbacks-in-a-sumx-iterator/"
+      }
+    ]
+  },
+  {
+    "rule_id": "CB009",
+    "category": "performance",
+    "severity": "medium",
+    "title": "String function inside iterator expression",
+    "description": "Text functions (LEFT, RIGHT, MID, SUBSTITUTE, REPLACE, CONCATENATE, UPPER, LOWER, TRIM, LEN, FIND, SEARCH, CONTAINSSTRING, REPT) inside an iterator over fact rows force row-by-row Formula Engine evaluation (a non-ASCII column additionally disables the bitmap text index - AP-12). Iterating the distinct values is reported at info only.",
+    "pattern_type": "function_in_context",
+    "match": {
+      "context_functions": [
+        "SUMX",
+        "AVERAGEX",
+        "MINX",
+        "MAXX",
+        "COUNTX",
+        "COUNTAX",
+        "RANKX",
+        "PRODUCTX",
+        "CONCATENATEX",
+        "STDEVX.S",
+        "STDEVX.P",
+        "VARX.S",
+        "VARX.P",
+        "PERCENTILEX.INC",
+        "PERCENTILEX.EXC",
+        "MEDIANX",
+        "GEOMEANX"
+      ],
+      "target": [
+        "LEFT",
+        "RIGHT",
+        "MID",
+        "SUBSTITUTE",
+        "REPLACE",
+        "CONCATENATE",
+        "UPPER",
+        "LOWER",
+        "TRIM",
+        "LEN",
+        "FIND",
+        "SEARCH",
+        "REPT",
+        "CONTAINSSTRING",
+        "CONTAINSSTRINGEXACT"
+      ],
+      "arg_position": "expression",
+      "grain_gate": true
+    },
+    "fix_suggestion": "Move the string logic to a calculated column (or Power Query), or compute it once in a VAR outside the iterator."
+  },
+  {
+    "rule_id": "CB010",
+    "category": "maintainability",
+    "severity": "low",
+    "title": "SELECTEDVALUE / HASONEVALUE inside iterator expression",
+    "description": "SELECTEDVALUE / HASONEVALUE inside an iterator is re-evaluated per row although it usually returns the same value for the whole iteration.",
+    "pattern_type": "function_in_context",
+    "match": {
+      "context_functions": [
+        "SUMX",
+        "AVERAGEX",
+        "MINX",
+        "MAXX",
+        "COUNTX",
+        "COUNTAX",
+        "RANKX",
+        "PRODUCTX",
+        "CONCATENATEX",
+        "STDEVX.S",
+        "STDEVX.P",
+        "VARX.S",
+        "VARX.P",
+        "PERCENTILEX.INC",
+        "PERCENTILEX.EXC",
+        "MEDIANX",
+        "GEOMEANX"
+      ],
+      "target": [
+        "SELECTEDVALUE",
+        "HASONEVALUE"
+      ],
+      "arg_position": "expression"
+    },
+    "fix_suggestion": "Cache it in a VAR before the iterator: VAR _sel = SELECTEDVALUE(T[C]) RETURN SUMX(T, … _sel …)."
+  },
+  {
+    "rule_id": "CB011",
+    "category": "performance",
+    "severity": "medium",
+    "title": "Time-intelligence function inside iterator expression",
+    "description": "DATEADD / DATESYTD / DATESQTD / DATESMTD / DATESBETWEEN / DATESINPERIOD / SAMEPERIODLASTYEAR / PARALLELPERIOD inside an iterator build a new date filter per row.",
+    "pattern_type": "function_in_context",
+    "match": {
+      "context_functions": [
+        "SUMX",
+        "AVERAGEX",
+        "MINX",
+        "MAXX",
+        "COUNTX",
+        "COUNTAX",
+        "RANKX",
+        "PRODUCTX",
+        "CONCATENATEX",
+        "STDEVX.S",
+        "STDEVX.P",
+        "VARX.S",
+        "VARX.P",
+        "PERCENTILEX.INC",
+        "PERCENTILEX.EXC",
+        "MEDIANX",
+        "GEOMEANX"
+      ],
+      "target": [
+        "DATEADD",
+        "DATESYTD",
+        "DATESQTD",
+        "DATESMTD",
+        "DATESBETWEEN",
+        "DATESINPERIOD",
+        "SAMEPERIODLASTYEAR",
+        "PARALLELPERIOD"
+      ],
+      "arg_position": "expression",
+      "grain_gate": true
+    },
+    "fix_suggestion": "Compute the date table once in a VAR before the iterator: VAR _dates = DATEADD(…) RETURN SUMX(T, CALCULATE([M], _dates))."
+  }
+]

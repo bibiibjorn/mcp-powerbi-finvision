@@ -1,0 +1,37 @@
+{
+ "name": "chatgpt_process_upload_stream",
+ "note": "upload processing request (file_name, origination_thread_id) and its NDJSON reply",
+ "request": {
+  "method": "POST",
+  "host": "chatgpt.com",
+  "path": "/backend-api/files/process_upload_stream",
+  "content_type": "application/json",
+  "body": {
+   "entry_surface": "chat_composer",
+   "file_id": "file_00000000000000000000000000000001",
+   "file_name": "zorblax_customer.png",
+   "index_for_retrieval": false,
+   "library_persistence_mode": "opportunistic",
+   "metadata": {
+    "store_in_library": true,
+    "is_project_thread": false,
+    "library_file_info": {
+     "origination_thread_id": "00000000-0000-4000-8000-000000000004",
+     "origination_message_id": "00000000-0000-4000-8000-000000000016"
+    }
+   },
+   "mime_type": "image/png",
+   "use_case": "multimodal"
+  }
+ },
+ "response": {
+  "status": 200,
+  "content_type": "text/event-stream; charset=utf-8",
+  "content_encoding": "",
+  "chunks": [
+   "{\"file_id\":\"file_00000000000000000000000000000001\",\"event\":\"file.processing.started\",\"message\":\"Start processing file: file_00000000000000000000000000000001\",\"progress\":0.0,\"extra\":null}\n",
+   "{\"file_id\":\"file_00000000000000000000000000000001\",\"event\":\"file.processing.file_ready\",\"message\":\"File file_00000000000000000000000000000001 is ready to download\",\"progress\":100.0,\"extra\":null}\n",
+   "{\"file_id\":\"file_00000000000000000000000000000001\",\"event\":\"file.processing.completed\",\"message\":\"Succeeded processing file file_00000000000000000000000000000001\",\"progress\":100.0,\"extra\":{\"metadata_object_id\":\"libfile_00000000000000000000000000000002\",\"library_file_name\":\"zorblax_customer(1).png\",\"mime_type\":\"image/png\"}}\n"
+  ]
+ }
+}

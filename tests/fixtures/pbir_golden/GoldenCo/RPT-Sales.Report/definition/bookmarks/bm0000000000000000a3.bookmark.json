@@ -1,0 +1,21 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Details state",
+  "name": "bm0000000000000000a3",
+  "options": {
+    "applyOnlyToTargetVisuals": true,
+    "targetVisualNames": [
+      "vs01slicerinverted01",
+      "vm01matrixfilters001"
+    ]
+  },
+  "explorationState": {
+    "version": "1.3",
+    "activeSection": "ab02details000000002",
+    "sections": {
+      "ab02details000000002": {
+        "visualContainers": {}
+      }
+    }
+  }
+}
