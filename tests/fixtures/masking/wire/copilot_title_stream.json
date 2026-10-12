@@ -1,0 +1,50 @@
+{
+ "name": "copilot_title_stream",
+ "note": "title request (system + user text); reply streamed with the name split over deltas",
+ "request": {
+  "method": "POST",
+  "host": "api.individual.githubcopilot.com",
+  "path": "/chat/completions",
+  "content_type": "application/json",
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are an expert in crafting pithy titles for chatbot conversations. You are presented with a chat request, and you reply with a brief title that captures the main topic of that request.\nFollow Micro [trimmed]"
+    },
+    {
+     "role": "user",
+     "content": "Please write a brief title for the following request:\n\nOur customer Zorblax Holdings NV had revenue of 1,200. Repeat the customer name once, then spell it with dashes."
+    }
+   ],
+   "model": "gpt-4o-mini-2024-07-18",
+   "temperature": 0.1,
+   "top_p": 1,
+   "max_tokens": 4096,
+   "n": 1,
+   "stream": true
+  }
+ },
+ "response": {
+  "status": 200,
+  "content_type": "text/event-stream",
+  "content_encoding": "",
+  "chunks": [
+   "data: {\"choices\":[],\"created\":0,\"id\":\"\",\"model\":\"gpt-4o-mini-2024-07-18\",\"prompt_filter_results\":[{\"content_filter_results\":{\"hate\":{\"filtered\":false,\"severity\":\"safe\"},\"self_harm\":{\"filtered\":false,\"severity\":\"safe\"},\"sexual\":{\"filtered\":false,\"severity\":\"safe\"},\"violence\":{\"filtered\":false,\"severity\":\"safe\"}},\"prompt_index\":0}]}\n\ndata: {\"choices\":[{\"index\":0,\"content_filter_results\":{},\"delta\":{\"content\":\"\",\"role\":\"assistant\"}}],\"created\":1791370886,\"id\":\"chatcmpl-fake000001\",\"model\":\"gpt-4o-mini-2024-07-18\",\"system_fingerprint\":\"fp_76a3e34f09\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"content_filter_results\":{},\"delta\":{\"content\":\"Z\"}}],\"created\":1791370886,\"id\":\"chatcmpl-fake000001\",\"model\":\"gpt-4o-mini-2024-07-18\",\"system_fingerprint\":\"fp_76a3e34f09\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"content_filter_results\":{},\"delta\":{\"content\":\"or\"}}],\"created\":1791370886,\"id\":\"chatcmpl-fake000001\",\"model\":\"gpt-4o-mini-2024-07-18\",\"system_fingerprint\":\"fp_76a3e34f09\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"content_filter_results\":{},\"delta\":{\"content\":\"bl\"}}],\"created\":1791370886,\"id\":\"chatcmpl-fake000001\",\"model\":\"gpt-4o-mini-2024-07-18\",\"system_fingerprint\":\"fp_76a3e34f09\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"content_filter_results\":{},\"delta\":{\"content\":\"ax\"}}],\"created\":1791370886,\"id\":\"chatcmpl-fake000001\",\"model\":\"gpt-4o-mini-2024-07-18\",\"system_fingerprint\":\"fp_76a3e34f09\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"content_filter_results\":{},\"delta\":{\"content\":\" Holdings\"}}],\"created\":1791370886,\"id\":\"chatcmpl-fake000001\",\"model\":\"gpt-4o-mini-2024-07-18\",\"system_fingerprint\":\"fp_76a3e34f09\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"content_filter_results\":{},\"delta\":{\"content\":\" NV\"}}],\"created\":1791370886,\"id\":\"chatcmpl-fake000001\",\"model\":\"gpt-4o-mini-2024-07-18\",\"system_fingerprint\":\"fp_76a3e34f09\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"content_filter_results\":{},\"delta\":{\"content\":\" -\"}}],\"created\":1791370886,\"id\":\"chatcmpl-fake000001\",\"model\":\"gpt-4o-mini-2024-07-18\",\"system_fingerprint\":\"fp_76a3e34f09\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"content_filter_results\":{},\"delta\":{\"content\":\" Z\"}}],\"created\":1791370886,\"id\":\"chatcmpl-fake000001\",\"model\":\"gpt-4o-mini-2024-07-18\",\"system_fingerprint\":\"fp_76a3e34f09\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"content_filter_results\":{},\"delta\":{\"content\":\"-o\"}}],\"created\":1791370886,\"id\":\"chatcmpl-fake000001\",\"model\":\"gpt-4o-mini-2024-07-18\",\"system_fingerprint\":\"fp_76a3e34f09\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"content_filter_results\":{},\"delta\":{\"content\":\"-r\"}}],\"created\":1791370886,\"id\":\"chatcmpl-fake000001\",\"model\":\"gpt-4o-mini-2024-07-18\",\"system_fingerprint\":\"fp_76a3e34f09\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"content_filter_results\":{},\"delta\":{\"content\":\"-b\"}}],\"created\":1791370886,\"id\":\"chatcmpl-fake000001\",\"model\":\"gpt-4o-mini-2024-07-18\",\"system_fingerprint\":\"fp_76a3e34f09\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"content_filter_results\":{},\"delta\":{\"content\":\"-l\"}}],\"created\":1791370886,\"id\":\"chatcmpl-fake000001\",\"model\":\"gpt-4o-mini-2024-07-18\",\"system_fingerprint\":\"fp_76a3e34f09\"}\n\ndata: {\"choices\":[{\"index\":0,\"content_filter_results\":{},\"delta\":{\"content\":\"-a\"}}],\"created\":1791370886,\"id\":\"chatcmpl-fake000001\",\"model\":\"gpt-4o-mini-2024-07-18\",\"system_fingerprint\":\"fp_76a3e34f09\"}\n\ndata: {\"choices\":[{\"index\":0,\"content_filter_results\":{},\"delta\":{\"content\":\"-x\"}}],\"created\":1791370886,\"id\":\"chatcmpl-fake000001\",\"model\":\"gpt-4o-mini-2024-07-18\",\"system_fingerprint\":\"fp_76a3e34f09\"}\n\n",
+   "data: {\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"content_filter_results\":{},\"delta\":{\"content\":null}}],\"created\":1791370886,\"id\":\"chatcmpl-fake000001\",\"usage\":{\"completion_tokens\":14,\"completion_tokens_details\":{\"accepted_prediction_tokens\":0,\"rejected_prediction_tokens\":0},\"prompt_tokens\":207,\"prompt_tokens_details\":{\"cached_tokens\":0},\"total_tokens\":221},\"model\":\"gpt-4o-mini-2024-07-18\",\"system_fingerprint\":\"fp_76a3e34f09\",\"copilot_usage\":{\"token_details\":[{\"batch_size\":1000000,\"cost_per_batch\":0,\"model\":\"gpt-4o-mini-2024-07-18\",\"token_count\":207,\"token_type\":\"input\"},{\"batch_size\":1000000,\"cost_per_batch\":0,\"model\":\"gpt-4o-mini-2024-07-18\",\"token_count\":0,\"token_type\":\"cache_read\"},{\"batch_size\":1000000,\"cost_per_batch\":0,\"model\":\"gpt-4o-mini-2024-07-18\",\"token_count\":0,\"token_type\":\"cache_write\"},{\"batch_size\":1000000,\"cost_per_batch\":0,\"model\":\"gpt-4o-mini-2024-07-18\",\"token_count\":14,\"token_type\":\"output\"}],\"total_nano_aiu\":0}}\n\n",
+   "data: [DONE]\n\n"
+  ]
+ }
+}

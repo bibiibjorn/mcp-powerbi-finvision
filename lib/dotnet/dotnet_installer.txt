@@ -1,0 +1,134 @@
+# STALE, NOT WIRED UP: this is an old install.ps1 saved as .txt (it downloads AMO 19.81.2). Nothing runs it.
+# The server selects its AMO build at start-up; see README.md in this folder (MCP_PBI_AMO_DIR, amo-<version>/).
+# Proposed for deletion by the 2026-10-03 review (C-13).
+
+# Auto-install .NET assemblies for Power BI MCP Server
+# Downloads ADOMD.NET and AMO from NuGet
+
+$ErrorActionPreference = "Stop"
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+
+Write-Host "==================================================" -ForegroundColor Cyan
+Write-Host "Power BI MCP Server - .NET Assembly Installer" -ForegroundColor Cyan
+Write-Host "==================================================" -ForegroundColor Cyan
+Write-Host ""
+
+# NuGet packages
+$packages = @{
+    "Microsoft.AnalysisServices.AdomdClient.NetCore.retail.amd64" = "19.81.2"
+    "Microsoft.AnalysisServices.retail.amd64" = "19.81.2"
+}
+
+# Check if assemblies already exist
+$existingDlls = @(
+    "Microsoft.AnalysisServices.AdomdClient.dll",
+    "Microsoft.AnalysisServices.Core.dll",
+    "Microsoft.AnalysisServices.Tabular.dll"
+)
+
+$allExist = $true
+foreach ($dll in $existingDlls) {
+    if (-not (Test-Path (Join-Path $scriptDir $dll))) {
+        $allExist = $false
+        break
+    }
+}
+
+if ($allExist) {
+    Write-Host "All required assemblies already present:" -ForegroundColor Green
+    foreach ($dll in $existingDlls) {
+        Write-Host "  ✓ $dll" -ForegroundColor Green
+    }
+    Write-Host ""
+    Write-Host "Run verify_dotnet_assemblies.py to check versions" -ForegroundColor Yellow
+    exit 0
+}
+
+# Create temp directory
+$tempDir = Join-Path $env:TEMP "powerbi-mcp-dotnet"
+if (Test-Path $tempDir) {
+    Remove-Item $tempDir -Recurse -Force
+}
+New-Item -ItemType Directory -Path $tempDir | Out-Null
+
+Write-Host "Downloading packages..." -ForegroundColor Yellow
+
+foreach ($package in $packages.GetEnumerator()) {
+    $packageName = $package.Key
+    $version = $package.Value
+    
+    Write-Host "  Downloading $packageName $version..." -ForegroundColor Gray
+    
+    $nugetUrl = "https://www.nuget.org/api/v2/package/$packageName/$version"
+    $nupkgPath = Join-Path $tempDir "$packageName.$version.nupkg"
+    
+    try {
+        Invoke-WebRequest -Uri $nugetUrl -OutFile $nupkgPath -UseBasicParsing
+    }
+    catch {
+        Write-Host "  ERROR: Failed to download $packageName" -ForegroundColor Red
+        Write-Host "  $_" -ForegroundColor Red
+        continue
+    }
+    
+    # Extract (nupkg is a zip file)
+    $extractPath = Join-Path $tempDir $packageName
+    Expand-Archive -Path $nupkgPath -DestinationPath $extractPath -Force
+    
+    Write-Host "  ✓ Downloaded and extracted" -ForegroundColor Green
+}
+
+Write-Host ""
+Write-Host "Copying assemblies..." -ForegroundColor Yellow
+
+# Map of source paths to find DLLs
+$searchPaths = @(
+    "lib\net472",
+    "lib\netstandard2.0",
+    "lib\net6.0",
+    "runtimes\win\lib\netstandard2.0"
+)
+
+$copiedFiles = @()
+
+foreach ($dll in $existingDlls) {
+    $found = $false
+    
+    foreach ($package in $packages.Keys) {
+        $extractPath = Join-Path $tempDir $package
+        
+        foreach ($searchPath in $searchPaths) {
+            $dllPath = Join-Path $extractPath "$searchPath\$dll"
+            
+            if (Test-Path $dllPath) {
+                Copy-Item $dllPath $scriptDir -Force
+                $copiedFiles += $dll
+                $found = $true
+                Write-Host "  ✓ Copied $dll" -ForegroundColor Green
+                break
+            }
+        }
+        
+        if ($found) { break }
+    }
+    
+    if (-not $found) {
+        Write-Host "  ⚠ Could not find $dll" -ForegroundColor Yellow
+    }
+}
+
+# Cleanup
+Remove-Item $tempDir -Recurse -Force
+
+Write-Host ""
+Write-Host "==================================================" -ForegroundColor Cyan
+Write-Host "Installation Summary" -ForegroundColor Cyan
+Write-Host "==================================================" -ForegroundColor Cyan
+Write-Host ""
+
+if ($copiedFiles.Count -eq $existingDlls.Count) {
+    Write-Host "SUCCESS: All assemblies installed" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "Installed assemblies:" -ForegroundColor White
+    foreach ($dll in $copiedFiles) {
+        Write-Host "  ✓ $dll" -F

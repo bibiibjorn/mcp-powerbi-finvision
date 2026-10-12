@@ -1,0 +1,16 @@
+# Optional client-gateway engines (`pip install -r requirements-optional.txt`). Mirrors the
+# `gateway-ocr` and `gateway-ner` extras of python/pyproject.toml (tests/test_requirements_pyproject_agree.py).
+# The gateway runs without them: Windows.Media.Ocr (requirements.txt) is the primary OCR engine and
+# the dictionary/fuzzy detectors work without NER.
+
+# OPTIONAL second OCR engine (FINVISION_GATEWAY_OCR_ENGINES=winrt,rapidocr). Runs in its own worker
+# process, ~4-5 s per dense 1080p screenshot on CPU. Installs on py3.13 (onnxruntime 1.30).
+rapidocr-onnxruntime>=1.2,<2
+
+# NER for client names in no open model (GLiNER, local, CPU). torch: install the CPU wheel first,
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+# The model (E3-JSI/gliner-multi-pii-domains-v1, ~1 GB) downloads once into the Hugging Face cache.
+gliner>=0.2.29,<0.3
+# ONNX export of the NER model (done once by the worker; ONNX Runtime is already required)
+onnx>=1.17
+onnxscript>=0.1

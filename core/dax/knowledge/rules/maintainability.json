@@ -1,0 +1,108 @@
+[
+  {
+    "rule_id": "MAINT_UNUSED_VAR",
+    "category": "maintainability",
+    "severity": "medium",
+    "title": "Unused variable — VAR defined but never referenced",
+    "description": "A VAR is defined but never used in the RETURN expression or subsequent VARs. Unused variables add noise and may indicate incomplete refactoring.",
+    "pattern_type": "unused_var",
+    "match": {},
+    "fix_suggestion": "Remove the unused VAR or complete the expression that should reference it"
+  },
+  {
+    "rule_id": "MAINT_DEEP_NESTING",
+    "category": "maintainability",
+    "severity": "medium",
+    "title": "Deeply nested functions (>5 levels)",
+    "description": "Function nesting deeper than 5 levels makes the expression hard to read, debug, and maintain. Extract intermediate results into VARs.",
+    "pattern_type": "nesting_depth",
+    "match": {
+      "function": "*",
+      "max_depth": 5
+    },
+    "fix_suggestion": "Extract intermediate expressions into VARs to flatten the nesting",
+    "rewrite_strategy": "variable_extraction"
+  },
+  {
+    "rule_id": "MAINT_REPEATED_MEASURE",
+    "category": "maintainability",
+    "severity": "medium",
+    "title": "Same measure referenced 3+ times in one filter context without VAR",
+    "description": "The same measure reference appears three or more times in the SAME filter context (outside any CALCULATE / iterator, or inside the same one) and the same branch: storing it in a VAR evaluates it once. Column references, references under different CALCULATE filters and references in DIFFERENT branches of an IF / SWITCH are not counted: a VAR there would change the result or defeat short-circuit evaluation (canon rule 3 / AP-10).",
+    "pattern_type": "repeated_reference",
+    "match": {
+      "threshold": 3
+    },
+    "fix_suggestion": "Capture it in a VAR: VAR _value = [Measure] and reference _value instead. If every use sits inside ONE IF/SWITCH branch, declare the VAR INSIDE that branch (IF(cond, VAR _v = [M] RETURN ...)) - a top-level VAR is evaluated eagerly and defeats short-circuit.",
+    "rewrite_strategy": "variable_extraction",
+    "references": [
+      {
+        "source": "SQLBI",
+        "url": "https://www.sqlbi.com/articles/variables-in-dax/"
+      }
+    ],
+    "supersedes": [
+      "PY_MEASURE_REF_WITHOUT_VAR"
+    ]
+  },
+  {
+    "rule_id": "MAINT_NONDESCRIPTIVE_VAR",
+    "category": "maintainability",
+    "severity": "low",
+    "title": "Non-descriptive variable name",
+    "description": "Variable names like V1, V2, A, B, X, Y (single character or character+digit) make the expression hard to understand. Use descriptive names.",
+    "pattern_type": "pattern",
+    "match": {
+      "description": "VAR names that are single character or character+single digit"
+    },
+    "fix_suggestion": "Use descriptive variable names that convey intent, e.g., _totalSales, _currentYear"
+  },
+  {
+    "rule_id": "MAINT_LONG_MEASURE",
+    "category": "maintainability",
+    "severity": "low",
+    "title": "Very long measure expression",
+    "description": "Measures with many tokens are difficult to maintain. Consider breaking into helper measures or using VARs to simplify.",
+    "pattern_type": "pattern",
+    "match": {
+      "description": "Token count exceeds threshold"
+    },
+    "fix_suggestion": "Break into smaller helper measures or use VARs to simplify"
+  },
+  {
+    "rule_id": "MAINT_NO_RETURN",
+    "category": "maintainability",
+    "severity": "info",
+    "title": "VAR block without RETURN keyword",
+    "description": "A VAR is defined but no RETURN keyword follows. While DAX may still evaluate, this usually indicates a structural issue.",
+    "pattern_type": "pattern",
+    "match": {
+      "description": "VAR keyword found without subsequent RETURN"
+    },
+    "fix_suggestion": "Add a RETURN statement after the last VAR definition"
+  },
+  {
+    "rule_id": "MAINT_MULTIPLE_CALCULATE_FILTERS",
+    "category": "maintainability",
+    "severity": "info",
+    "title": "CALCULATE with many filter arguments",
+    "description": "CALCULATE with more than 4 filter arguments becomes hard to read and reason about. Consider extracting filters into VARs or helper measures.",
+    "pattern_type": "pattern",
+    "match": {
+      "description": "CALCULATE with more than 4 comma-separated arguments"
+    },
+    "fix_suggestion": "Extract complex filter conditions into VARs or helper measures"
+  },
+  {
+    "rule_id": "MAINT_REDUNDANT_IF_TRUE_FALSE",
+    "category": "maintainability",
+    "severity": "low",
+    "title": "Redundant IF(condition, TRUE(), FALSE())",
+    "description": "IF(condition, TRUE(), FALSE()) is equivalent to just the condition. The IF wrapper adds no value and reduces readability.",
+    "pattern_type": "pattern",
+    "match": {
+      "description": "IF returning TRUE/FALSE literals"
+    },
+    "fix_suggestion": "Remove the IF wrapper and use the condition directly"
+  }
+]

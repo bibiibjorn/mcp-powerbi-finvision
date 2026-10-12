@@ -1,0 +1,12 @@
+{
+ "name": "chatgpt_upload_put",
+ "note": "raw image PUT to the files host (metadata only: the PNG bytes are not stored)",
+ "request": {
+  "method": "PUT",
+  "host": "files-test.oaiusercontent.com",
+  "path": "/files/00000000-0000-4000-8000-000000000026/raw",
+  "content_type": "image/png",
+  "content_length": 13685,
+  "body": null
+ }
+}

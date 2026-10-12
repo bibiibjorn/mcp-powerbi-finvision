@@ -1,0 +1,38 @@
+/// Measure-only table (visibility gates + derived metrics).
+table 'm Metrics'
+	lineageTag: 5a0c6f3e-0000-4000-8000-000000000004
+
+	/// Visibility gate used as a VISUAL-LEVEL measure filter (filterConfig) -- never "unused".
+	measure 'Show In Slot' = IF(HASONEVALUE('Product Line'[Category]), 1, 0)
+		formatString: 0
+		lineageTag: 5a0c6f3e-0000-4000-8000-000000000501
+
+	/// Non-ASCII measure name (raw UTF-8 in the visual.json that binds it).
+	measure 'Net Δ Value' =
+			VAR _cur = [Total Amount]
+			VAR _prev = CALCULATE([Total Amount], 'Time Calc'[Name] = "PY")
+			RETURN
+			    _cur - _prev
+		lineageTag: 5a0c6f3e-0000-4000-8000-000000000502
+
+		formatStringDefinition = ScaleFormat ("M")
+
+	/// Referenced by nothing -- the "unused measure" control case.
+	measure 'Orphan Metric' = 42
+		lineageTag: 5a0c6f3e-0000-4000-8000-000000000503
+
+	column Value
+		dataType: string
+		isHidden
+		lineageTag: 5a0c6f3e-0000-4000-8000-000000000504
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Value]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'm Metrics' = calculated
+		mode: import
+		source = Row("Value", BLANK())
+
+	annotation PBI_Id = 00000000000000000000000000000004

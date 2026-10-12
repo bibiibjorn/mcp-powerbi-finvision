@@ -1,0 +1,2 @@
+# Keep the golden PBIP byte-exact (CRLF, no trailing newline) like Desktop writes it.
+* -text

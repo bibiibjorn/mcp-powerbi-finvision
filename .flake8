@@ -1,0 +1,14 @@
+[flake8]
+# Black owns layout at --line-length 100; flake8 enforces correctness (F*), the E/W codes black does
+# not fix (E402, E711, E712, E722, E731, E741, W605) and the line length where black can wrap.
+max-line-length = 100
+exclude = .git,.claude,__pycache__,venv,.venv,build,dist,exports,output,logs,lib,.mypy_cache,.pytest_cache,node_modules
+extend-ignore =
+    # black formats slices as `a[x + 1 :]`, which pycodestyle flags.
+    E203,
+    # black breaks lines before binary operators.
+    W503,
+    # black never reflows strings, comments and docstrings, so long literals (DAX/M text, tool
+    # descriptions, JSON schemas, HTML) stay above 100 columns. Tracked, not gated:
+    # `flake8 --select=E501 --extend-ignore= --count` (count recorded in AGENTS.md section 2).
+    E501

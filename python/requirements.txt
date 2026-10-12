@@ -1,0 +1,3 @@
+# Kept only so old instructions that point here still work: one source of truth lives in
+# ../requirements.txt (mirrors python/pyproject.toml).
+-r ../requirements.txt

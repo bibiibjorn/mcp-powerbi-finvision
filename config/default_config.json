@@ -1,0 +1,140 @@
+{
+  "server": {
+    "log_level": "WARNING",
+    "live_workers": 8,
+    "offline_workers": 4,
+    "max_stuck_calls": 4,
+    "idempotency_ttl_s": 600
+  },
+  "performance": {
+    "cache_ttl_seconds": 600,
+    "cache_max_entries": 2000,
+    "cache_max_size_mb": 100,
+    "cache_eviction_policy": "lru",
+    "max_query_timeout": 60,
+    "default_top_n": 1000,
+    "table_mapping_cache_ttl": 600,
+    "dependency_cache_ttl": 600,
+    "measure_snapshot_ttl": 5,
+    "command_timeout_seconds": 55,
+    "reference_index_ttl": 30,
+    "perf_export_max_captures": 30,
+    "perf_export_max_mb": 500
+  },
+  "model_write": {
+    "loop_pause_s": 0.1,
+    "health_check_in_loops": true,
+    "health_timeout_s": 5.0,
+    "verify_renames": true,
+    "catastrophic_refresh_tables": 10,
+    "catastrophic_patch_objects": 50,
+    "journal_enabled": true,
+    "journal_max_bytes": 67108864,
+    "pace_single_writes": true,
+    "pace_window_s": 10,
+    "pace_max_saves": 3,
+    "pace_pause_s": 0.5,
+    "post_write_health": true,
+    "post_write_baseline_ttl_s": 120
+  },
+  "query": {
+    "max_rows_preview": 500,
+    "max_dax_query_length": 50000,
+    "default_page_size": 10,
+    "max_page_size": 200,
+    "max_result_tokens": 25000,
+    "default_dependency_depth": 2,
+    "max_dependency_depth": 5,
+    "describe_table_defaults": {
+      "columns_page_size": 10,
+      "measures_page_size": 10,
+      "relationships_page_size": 50
+    },
+    "max_expression_display_length": 500,
+    "default_info_limit": 10000,
+    "max_info_limit": 10000,
+    "preview_sample_size": 30
+  },
+  "features": {
+    "enable_bpa": true
+  },
+  "bpa": {
+    "max_rules": 120,
+    "severity_at_least": "WARNING",
+    "max_tables": 60,
+    "max_seconds": 45,
+    "per_rule_max_ms": 400,
+    "max_columns_per_rule": 5000,
+    "max_measures_per_rule": 1000,
+    "max_relationships_per_rule": 1000,
+    "adaptive_timeouts": true
+  },
+  "rate_limiting": {
+    "enabled": true,
+    "profile": "balanced",
+    "global_calls_per_second": 30,
+    "global_burst": 60,
+    "tool_limits": {
+      "04_Run_DAX": 10,
+      "06_Analysis_Operations": 1
+    },
+    "tool_bursts": {
+      "04_Run_DAX": 20,
+      "06_Analysis_Operations": 3
+    }
+  },
+  "security": {
+    "read_only_mode": false,
+    "confirm_destructive": false,
+    "allow_data_read": true,
+    "rules": []
+  },
+  "response": {
+    "inline_soft_chars": 60000
+  },
+  "perf_history": {
+    "max_records": 5000
+  },
+  "validation": {
+    "max_relationships_check": null,
+    "warn_on_sampling": true
+  },
+  "tool_timeouts": {
+    "01_Connection": 15,
+    "02_Model_Operations": 300,
+    "02_TMDL_Operations": 180,
+    "03_Batch_Operations": 180,
+    "04_Run_DAX": 60,
+    "04_Query_Operations": 60,
+    "06_Analysis_Operations": 300,
+    "07_PBIP_Operations": 300,
+    "08_Documentation_Word": 300,
+    "09_Debug_Operations": 180,
+    "13_Query_Plan": 120
+  },
+  "debug": {
+    "pbip_freshness_minutes": 5,
+    "vqb_cache_ttl_seconds": 300,
+    "filter_truncation_chars": 50,
+    "variable_truncation_chars": 100,
+    "max_measures_shown": 3,
+    "max_query_result_rows": 100,
+    "audit_max_rows_per_visual": 20
+  },
+  "client_guard": {
+    "gateway_policy": "dimensions",
+    "profile": "generic",
+    "key_rotation_days": 90
+  },
+  "client_gateway": {
+    "default_mode": "off",
+    "mcp_masking": false,
+    "pbi_chats_only": true,
+    "routing": false,
+    "frontend_port": 8891,
+    "authority_wait_s": 30,
+    "fail_mode": "degrade",
+    "authority_degrade_wait_s": 3.0,
+    "port": 8890
+  }
+}

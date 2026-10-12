@@ -1,0 +1,358 @@
+[
+  {
+    "rule_id": "PERF_ADDCOLUMNS_SUMMARIZE",
+    "category": "performance",
+    "severity": "low",
+    "title": "ADDCOLUMNS(SUMMARIZE()) — use SUMMARIZECOLUMNS instead",
+    "description": "ADDCOLUMNS wrapping SUMMARIZE creates an intermediate table then adds columns. SUMMARIZECOLUMNS is a single optimized operation that handles both grouping and aggregation.",
+    "pattern_type": "function_nesting",
+    "match": {
+      "outer": [
+        "ADDCOLUMNS"
+      ],
+      "inner": "SUMMARIZE",
+      "position": "first_arg"
+    },
+    "fix_suggestion": "Replace with SUMMARIZECOLUMNS(group_cols, measure_name, expression)",
+    "estimated_improvement": "2-5x",
+    "references": [
+      {
+        "source": "SQLBI",
+        "url": "https://www.sqlbi.com/articles/best-practices-using-summarizecolumns/"
+      }
+    ],
+    "supersedes": [
+      "PY_ADDCOLUMNS_SUMMARIZE"
+    ]
+  },
+  {
+    "rule_id": "PERF_FILTER_ALL",
+    "category": "performance",
+    "severity": "medium",
+    "title": "FILTER(ALL(Table)) — iterates the whole expanded table",
+    "description": "FILTER(ALL(Table), …) iterates every row of the expanded table (AP-11: a measure predicate here materializes the whole table in the Formula Engine). When the predicate reads only columns of that table (the canon's running-total form, rule 14) the finding is info - FILTER(ALL(Table[Col]), …) is the lighter form. The column form FILTER(ALL(Table[Col]), …) is exactly what a CALCULATE boolean filter expands to and is not flagged.",
+    "pattern_type": "function_nesting",
+    "match": {
+      "outer": [
+        "FILTER"
+      ],
+      "inner": "ALL",
+      "position": "first_arg",
+      "check": "inner_table_form",
+      "severity_when": {
+        "column_only_filter_all": "info"
+      }
+    },
+    "fix_suggestion": "Filter only the columns you need: FILTER(ALL(Table[Col]), …) or a CALCULATE boolean filter.",
+    "estimated_improvement": "depends on table size",
+    "references": [
+      {
+        "source": "SQLBI",
+        "url": "https://www.sqlbi.com/articles/the-definitive-guide-to-the-dax-filter-function/"
+      }
+    ],
+    "supersedes": [
+      "PY_ALL_TABLE_VS_COLUMN"
+    ]
+  },
+  {
+    "rule_id": "PERF_FILTER_ALLSELECTED",
+    "category": "performance",
+    "severity": "medium",
+    "title": "FILTER(ALLSELECTED(Table)) — iterates the whole expanded table",
+    "description": "FILTER(ALLSELECTED(Table), …) iterates every row of the expanded table. The column form FILTER(ALLSELECTED(Table[Col]), …) is not flagged.",
+    "pattern_type": "function_nesting",
+    "match": {
+      "outer": [
+        "FILTER"
+      ],
+      "inner": "ALLSELECTED",
+      "position": "first_arg",
+      "check": "inner_table_form"
+    },
+    "fix_suggestion": "Filter only the columns you need: FILTER(ALLSELECTED(Table[Col]), …).",
+    "estimated_improvement": "depends on table size",
+    "references": [
+      {
+        "source": "SQLBI",
+        "url": "https://www.sqlbi.com/articles/the-definitive-guide-to-the-dax-filter-function/"
+      }
+    ]
+  },
+  {
+    "rule_id": "PERF_NESTED_CALCULATE",
+    "category": "performance",
+    "severity": "low",
+    "title": "Deeply nested CALCULATE (>2 levels)",
+    "description": "More than 2 levels of nested CALCULATE creates complex filter context transitions that are hard to optimize and reason about. Each level adds context-transition overhead.",
+    "pattern_type": "nesting_depth",
+    "match": {
+      "function": "CALCULATE",
+      "max_depth": 2
+    },
+    "fix_suggestion": "Flatten nested CALCULATE by combining filter conditions or extracting into VARs",
+    "estimated_improvement": "1.5-3x",
+    "rewrite_strategy": "flatten_calculate",
+    "references": [
+      {
+        "source": "SQLBI",
+        "url": "https://www.sqlbi.com/articles/context-transition-and-filters-in-calculate/"
+      }
+    ],
+    "supersedes": [
+      "PY_NESTED_CALCULATE"
+    ]
+  },
+  {
+    "rule_id": "PERF_COUNTROWS_VALUES_VS_DISTINCTCOUNT",
+    "category": "performance",
+    "severity": "low",
+    "title": "COUNTROWS(VALUES(col)) — consider DISTINCTCOUNT",
+    "description": "COUNTROWS(VALUES(column)) counts the distinct values of one column and can be written as DISTINCTCOUNT(column). Not flagged when the argument is a table (DISTINCTCOUNT(table) is invalid) or the result is compared to a constant (COUNTROWS(VALUES(col)) = 1 is the HASONEVALUE idiom). DISTINCTCOUNT is SE-bound (DCOUNT does not scale across cores): MS DAX011 says to benchmark it against SUMX(DISTINCT(col), 1).",
+    "pattern_type": "function_nesting",
+    "match": {
+      "outer": [
+        "COUNTROWS"
+      ],
+      "inner": "VALUES",
+      "position": "first_arg",
+      "check": "distinct_column_count"
+    },
+    "fix_suggestion": "Benchmark DISTINCTCOUNT(column) against COUNTROWS(VALUES(column)) / SUMX(DISTINCT(column), 1) in a trace before changing it.",
+    "estimated_improvement": "test-dependent",
+    "rewrite_strategy": "countrows_values_to_distinctcount",
+    "references": [
+      {
+        "source": "Microsoft Learn",
+        "url": "https://learn.microsoft.com/en-us/dax/distinctcount-function-dax"
+      }
+    ]
+  },
+  {
+    "rule_id": "PERF_RELATED_IN_SUMX",
+    "category": "performance",
+    "severity": "info",
+    "title": "RELATED inside iterator",
+    "description": "RELATED inside an iterator is normally resolved by the storage engine as a join and is the idiomatic way to multiply by a dimension attribute. Informational: only worth revisiting on very large tables or limited (cross-source / many-to-many) relationships.",
+    "pattern_type": "function_in_context",
+    "match": {
+      "context_functions": [
+        "SUMX",
+        "AVERAGEX",
+        "MINX",
+        "MAXX",
+        "COUNTX",
+        "COUNTAX",
+        "RANKX",
+        "PRODUCTX",
+        "CONCATENATEX",
+        "STDEVX.S",
+        "STDEVX.P",
+        "VARX.S",
+        "VARX.P",
+        "PERCENTILEX.INC",
+        "PERCENTILEX.EXC",
+        "MEDIANX",
+        "GEOMEANX",
+        "ADDCOLUMNS"
+      ],
+      "target": [
+        "RELATED"
+      ],
+      "arg_position": "expression"
+    },
+    "fix_suggestion": "Consider CALCULATE with RELATEDTABLE or denormalize the column into the fact table",
+    "estimated_improvement": "1.5-3x",
+    "references": [
+      {
+        "source": "SQLBI",
+        "url": "https://www.sqlbi.com/articles/using-related-and-relatedtable-in-dax/"
+      }
+    ],
+    "supersedes": [
+      "PY_RELATED_IN_ITERATOR"
+    ]
+  },
+  {
+    "rule_id": "PERF_LOOKUPVALUE_USAGE",
+    "category": "performance",
+    "severity": "medium",
+    "title": "LOOKUPVALUE — prefer RELATED with physical relationship",
+    "description": "LOOKUPVALUE performs a linear scan. If a relationship exists between the tables, RELATED uses the indexed relationship path and is significantly faster.",
+    "pattern_type": "function_usage",
+    "match": {
+      "functions": [
+        "LOOKUPVALUE"
+      ]
+    },
+    "fix_suggestion": "Create a relationship between the tables and use RELATED(column) instead",
+    "estimated_improvement": "2-10x",
+    "references": [
+      {
+        "source": "SQLBI",
+        "url": "https://www.sqlbi.com/articles/from-sql-to-dax-lookup/"
+      }
+    ]
+  },
+  {
+    "rule_id": "PERF_EARLIER_DEPRECATED",
+    "category": "performance",
+    "severity": "medium",
+    "title": "EARLIER/EARLIEST is discouraged — use VAR",
+    "description": "EARLIER and EARLIEST navigate row contexts by ordinal position (discouraged, not removed; still needed in calculated columns on old models). VAR to capture the current row value is clearer and not position-dependent.",
+    "pattern_type": "function_usage",
+    "match": {
+      "functions": [
+        "EARLIER",
+        "EARLIEST"
+      ]
+    },
+    "fix_suggestion": "Capture the value with VAR _currentValue = [Column] before the inner iterator, then reference _currentValue",
+    "estimated_improvement": "1.5-2x",
+    "references": [
+      {
+        "source": "Microsoft Learn",
+        "url": "https://learn.microsoft.com/en-us/dax/earlier-function-dax"
+      }
+    ]
+  },
+  {
+    "rule_id": "PERF_DENSE_BLANK_CONVERSION",
+    "category": "performance",
+    "severity": "medium",
+    "title": "IF(ISBLANK(x), <constant>, …) converts BLANK to a value",
+    "description": "IF(ISBLANK([x]), 0, [x]) turns BLANK into a value, so every row/cell of the grain becomes non-empty (dense) — more work and more memory. The sparsity-preserving form IF(ISBLANK([x]), BLANK(), …) is not flagged.",
+    "pattern_type": "function_nesting",
+    "match": {
+      "outer": [
+        "IF"
+      ],
+      "inner": "ISBLANK",
+      "position": "first_arg",
+      "check": "isblank_constant_branch"
+    },
+    "fix_suggestion": "Allow BLANK propagation where possible, or use COALESCE([x], 0) only when truly needed",
+    "estimated_improvement": "1.5-3x",
+    "references": [
+      {
+        "source": "SQLBI",
+        "url": "https://www.sqlbi.com/articles/optimizing-if-conditions-using-variables/"
+      }
+    ]
+  },
+  {
+    "rule_id": "PERF_COUNTROWS_DISTINCT",
+    "category": "performance",
+    "severity": "low",
+    "title": "COUNTROWS(DISTINCT()) — use DISTINCTCOUNT instead",
+    "description": "COUNTROWS(DISTINCT(column)) counts the distinct values of one column and can be written as DISTINCTCOUNT(column); benchmark first (MS DAX011). Not flagged for a table argument or a comparison with a constant.",
+    "pattern_type": "function_nesting",
+    "match": {
+      "outer": [
+        "COUNTROWS"
+      ],
+      "inner": "DISTINCT",
+      "position": "first_arg",
+      "check": "distinct_column_count"
+    },
+    "fix_suggestion": "Replace with DISTINCTCOUNT(column)",
+    "estimated_improvement": "test-dependent",
+    "rewrite_strategy": "countrows_distinct_to_distinctcount",
+    "references": [
+      {
+        "source": "Microsoft Learn",
+        "url": "https://learn.microsoft.com/en-us/dax/distinctcount-function-dax"
+      }
+    ]
+  },
+  {
+    "rule_id": "PERF_SELECTEDVALUE_VS_VALUES",
+    "category": "performance",
+    "severity": "low",
+    "title": "VALUES in scalar context — prefer SELECTEDVALUE",
+    "description": "When VALUES is used to get a single value (e.g., in IF or variable assignment), SELECTEDVALUE is more explicit and handles multi-value gracefully with an alternate result.",
+    "pattern_type": "function_usage",
+    "match": {
+      "functions": [
+        "VALUES"
+      ],
+      "check": "scalar_context"
+    },
+    "fix_suggestion": "Use SELECTEDVALUE(column, alternateResult) for clearer intent",
+    "estimated_improvement": "minimal",
+    "references": [
+      {
+        "source": "SQLBI",
+        "url": "https://www.sqlbi.com/articles/using-selectedvalue-in-dax/"
+      }
+    ]
+  },
+  {
+    "rule_id": "PERF_CALCULATETABLE_FILTER",
+    "category": "performance",
+    "severity": "medium",
+    "title": "CALCULATETABLE(FILTER()) — redundant wrapping",
+    "description": "CALCULATETABLE(FILTER(<table>, <column predicate>), …) is redundant: CALCULATETABLE takes the Boolean predicate directly. Not flagged when the predicate reads a measure, another table or a column-set first argument (FILTER(ALL(col), [M] > x) cannot be a Boolean filter).",
+    "pattern_type": "function_nesting",
+    "match": {
+      "outer": [
+        "CALCULATETABLE"
+      ],
+      "inner": "FILTER",
+      "position": "first_arg",
+      "check": "simple_filter_over_table"
+    },
+    "fix_suggestion": "Replace with CALCULATETABLE(Table, filter_condition) without FILTER wrapper",
+    "estimated_improvement": "2-5x",
+    "rewrite_strategy": "calculatetable_filter_to_direct",
+    "references": [
+      {
+        "source": "SQLBI",
+        "url": "https://www.sqlbi.com/articles/the-definitive-guide-to-the-dax-filter-function/"
+      }
+    ]
+  },
+  {
+    "rule_id": "PERF_NATURALLEFTOUTERJOIN",
+    "category": "performance",
+    "severity": "medium",
+    "title": "NATURALLEFTOUTERJOIN forces FE evaluation",
+    "description": "NATURALLEFTOUTERJOIN is fully evaluated in the Formula Engine and cannot be pushed to the Storage Engine. NATURALINNERJOIN over precomputed key sets is the Microsoft-preferred shape (MS DAX021) and is not flagged. Consider SUMMARIZECOLUMNS or model relationships.",
+    "pattern_type": "function_usage",
+    "match": {
+      "functions": [
+        "NATURALLEFTOUTERJOIN"
+      ]
+    },
+    "fix_suggestion": "Use model relationships with SUMMARIZECOLUMNS or CALCULATE where possible",
+    "estimated_improvement": "2-5x",
+    "references": [
+      {
+        "source": "SQLBI",
+        "url": "https://www.sqlbi.com/articles/from-sql-to-dax-join/"
+      }
+    ]
+  },
+  {
+    "rule_id": "PERF_GENERATE_LARGE_TABLE",
+    "category": "performance",
+    "severity": "medium",
+    "title": "GENERATE forces nested iteration in FE",
+    "description": "GENERATE evaluates the second table expression for every row of the first, entirely in the Formula Engine. For large tables, this is extremely slow.",
+    "pattern_type": "function_usage",
+    "match": {
+      "functions": [
+        "GENERATE",
+        "GENERATEALL"
+      ]
+    },
+    "fix_suggestion": "Use SUMMARIZECOLUMNS or model relationships to achieve the same result with SE optimization",
+    "estimated_improvement": "2-10x",
+    "references": [
+      {
+        "source": "SQLBI",
+        "url": "https://www.sqlbi.com/articles/from-sql-to-dax-cross-apply/"
+      }
+    ]
+  }
+]

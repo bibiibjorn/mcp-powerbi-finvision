@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>__MODEL_NAME__ - Bookmark Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --terracotta: #C4A484;
+            --terracotta-dark: #A67B5B;
+            --clay: #E8DDD3;
+            --sand: #F5F1EB;
+            --cream: #FAF8F5;
+            --ink: #2D2418;
+            --charcoal: #4A4238;
+            --stone: #7A7267;
+            --success: #606C38;
+            --warning: #BC6C25;
+            --danger: #9B2C2C;
+            --info: #457B9D;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            color: var(--ink);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--terracotta) 0%, var(--terracotta-dark) 100%);
+            color: white;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid var(--clay);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--clay);
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-card {
+            background: var(--sand);
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--terracotta-dark);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--stone);
+            margin-top: 0.25rem;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .category-navigation { background: #E3F2FD; color: #1565C0; }
+        .category-filter_state { background: #FFF3E0; color: #E65100; }
+        .category-visual_state { background: #E8F5E9; color: #2E7D32; }
+        .category-spotlight { background: #FCE4EC; color: #C2185B; }
+        .category-combined_filter_visual { background: #F3E5F5; color: #7B1FA2; }
+        .category-selection { background: #E0F7FA; color: #00838F; }
+        .category-drill_state { background: #EFEBE9; color: #5D4037; }
+        .category-unknown { background: #ECEFF1; color: #546E7A; }
+
+        .severity-warning { color: var(--warning); }
+        .severity-info { color: var(--info); }
+        .severity-error { color: var(--danger); }
+
+        .bookmark-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .bookmark-table th,
+        .bookmark-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--clay);
+        }
+
+        .bookmark-table th {
+            background: var(--sand);
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--charcoal);
+        }
+
+        .bookmark-table tr:hover {
+            background: var(--sand);
+        }
+
+        .complexity-bar {
+            width: 100px;
+            height: 8px;
+            background: var(--clay);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .complexity-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .complexity-low { background: var(--success); }
+        .complexity-medium { background: var(--warning); }
+        .complexity-high { background: var(--danger); }
+
+        .orphaned-badge {
+            background: #FFEBEE;
+            color: #C62828;
+            padding: 0.125rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+
+        .issue-card {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid;
+        }
+
+        .issue-warning {
+            background: #FFF8E1;
+            border-color: var(--warning);
+        }
+
+        .issue-info {
+            background: #E3F2FD;
+            border-color: var(--info);
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid var(--clay);
+            margin-bottom: 1.5rem;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--stone);
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            color: var(--terracotta-dark);
+        }
+
+        .tab.active {
+            color: var(--terracotta-dark);
+            border-bottom: 3px solid var(--terracotta);
+            margin-bottom: -2px;
+        }
+
+        .detail-section {
+            margin-top: 1rem;
+        }
+
+        .detail-section h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--charcoal);
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-list {
+            list-style: none;
+        }
+
+        .detail-list li {
+            padding: 0.25rem 0;
+            font-size: 0.875rem;
+            color: var(--stone);
+        }
+
+        .filter-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--clay);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: var(--terracotta);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--stone);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <div class="container">
+                <h1 style="font-size: 1.75rem; font-weight: 700;">{{ modelName }} - Bookmark Analysis</h1>
+                <p style="opacity: 0.9; margin-top: 0.5rem;">Generated: {{ formattedTimestamp }}</p>
+            </div>
+        </header>
+
+        <main class="container">
+            <!-- Summary Stats -->
+            <div class="card">
+                <h2 class="card-title">Summary</h2>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">{{ summary.total_bookmarks }}</div>
+                        <div class="stat-label">Total Bookmarks</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">{{ Object.keys(categories).length }}</div>
+                        <div class="stat-label">Categories</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" :class="{'severity-warning': summary.orphaned_count > 0}">
+                            {{ summary.orphaned_count }}
+                        </div>
+                        <div class="stat-label">Orphaned</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">{{ summary.avg_complexity }}</div>
+                        <div class="stat-label">Avg Complexity</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" :class="{'severity-warning': summary.warning_count > 0}">
+                            {{ summary.issue_count }}
+                        </div>
+                        <div class="stat-label">Issues Found</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Distribution -->
+            <div class="card" v-if="Object.keys(categories).length > 0">
+                <h2 class="card-title">Category Distribution</h2>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                    <div v-for="(items, cat) in categories" :key="cat" style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span :class="'category-badge category-' + cat">{{ formatCategory(cat) }}</span>
+                        <span style="font-weight: 600;">{{ items.length }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Issues -->
+            <div class="card" v-if="issues.length > 0">
+                <h2 class="card-title">Issues & Recommendations</h2>
+                <div v-for="issue in issues" :key="issue.type"
+                     :class="'issue-card issue-' + issue.severity">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span v-if="issue.severity === 'warning'" style="font-size: 1.25rem;">⚠️</span>
+                        <span v-else style="font-size: 1.25rem;">ℹ️</span>
+                        <strong>{{ issue.message }}</strong>
+                    </div>
+                    <div v-if="issue.bookmarks" style="margin-top: 0.5rem;">
+                        <span v-for="bm in issue.bookmarks" :key="bm"
+                              style="display: inline-block; background: rgba(0,0,0,0.1); padding: 0.125rem 0.5rem; border-radius: 4px; margin-right: 0.5rem; margin-bottom: 0.25rem; font-size: 0.875rem;">
+                            {{ bm }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab" :class="{active: activeTab === 'all'}" @click="activeTab = 'all'">
+                    All Bookmarks ({{ bookmarks.length }})
+                </button>
+                <button class="tab" :class="{active: activeTab === 'navigation'}" @click="activeTab = 'navigation'">
+                    Navigation
+                </button>
+                <button class="tab" :class="{active: activeTab === 'filters'}" @click="activeTab = 'filters'">
+                    Filter States
+                </button>
+                <button class="tab" :class="{active: activeTab === 'visuals'}" @click="activeTab = 'visuals'">
+                    Visual States
+                </button>
+            </div>
+
+            <!-- Bookmark List -->
+            <div class="card">
+                <input type="text" v-model="searchQuery" placeholder="Search bookmarks..."
+                       class="filter-input">
+
+                <div v-if="filteredBookmarks.length === 0" class="empty-state">
+                    <div class="empty-state-icon">📑</div>
+                    <p>No bookmarks found</p>
+                </div>
+
+                <table v-else class="bookmark-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Complexity</th>
+                            <th>Status</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="bookmark in filteredBookmarks" :key="bookmark.id"
+                            @click="selectedBookmark = bookmark"
+                            style="cursor: pointer;">
+                            <td>
+                                <strong>{{ bookmark.display_name }}</strong>
+                                <div style="font-size: 0.75rem; color: var(--stone);">{{ bookmark.id }}</div>
+                            </td>
+                            <td>
+                                <span :class="'category-badge category-' + bookmark.category">
+                                    {{ formatCategory(bookmark.category) }}
+                                </span>
+                            </td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <div class="complexity-bar">
+                                        <div :class="'complexity-fill ' + getComplexityClass(bookmark.complexity_score)"
+                                             :style="{width: (bookmark.complexity_score * 10) + '%'}"></div>
+                                    </div>
+                                    <span style="font-size: 0.875rem;">{{ bookmark.complexity_score }}/10</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span v-if="bookmark.is_orphaned" class="orphaned-badge">Orphaned</span>
+                                <span v-else style="color: var(--success);">✓ Referenced</span>
+                            </td>
+                            <td>
+                                <span style="font-size: 0.875rem; color: var(--stone);">
+                                    {{ getBookmarkSummary(bookmark) }}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Selected Bookmark Detail -->
+            <div class="card" v-if="selectedBookmark">
+                <h2 class="card-title">
+                    Bookmark Details: {{ selectedBookmark.display_name }}
+                    <button @click="selectedBookmark = null"
+                            style="float: right; background: none; border: none; cursor: pointer; font-size: 1.25rem;">
+                        ✕
+                    </button>
+                </h2>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                    <!-- Basic Info -->
+                    <div class="detail-section">
+                        <h4>Basic Information</h4>
+                        <ul class="detail-list">
+                            <li><strong>ID:</strong> {{ selectedBookmark.id }}</li>
+                            <li><strong>Category:</strong>
+                                <span :class="'category-badge category-' + selectedBookmark.category">
+                                    {{ formatCategory(selectedBookmark.category) }}
+                                </span>
+                            </li>
+                            <li><strong>Complexity:</strong> {{ selectedBookmark.complexity_score }}/10</li>
+                            <li><strong>Status:</strong>
+                                <span :class="{'orphaned-badge': selectedBookmark.is_orphaned}">
+                                    {{ selectedBookmark.is_orphaned ? 'Orphaned' : 'Referenced' }}
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- State Analysis -->
+                    <div class="detail-section">
+                        <h4>State Analysis</h4>
+                        <ul class="detail-list">
+                            <li v-if="selectedBookmark.analysis.has_page_context">
+                                <strong>Page:</strong> {{ selectedBookmark.analysis.page_name }}
+                            </li>
+                            <li v-if="selectedBookmark.analysis.has_visual_states">
+                                <strong>Visuals:</strong> {{ selectedBookmark.analysis.visual_count }} configured
+                                ({{ selectedBookmark.analysis.hidden_visuals.length }} hidden)
+                            </li>
+                            <li v-if="selectedBookmark.analysis.has_filters">
+                                <strong>Filters:</strong> {{ selectedBookmark.analysis.filter_count }} filter(s)
+                            </li>
+                            <li v-if="selectedBookmark.analysis.has_slicer_states">
+                                <strong>Slicer States:</strong> {{ selectedBookmark.analysis.slicer_states.length }}
+                            </li>
+                            <li v-if="selectedBookmark.analysis.has_spotlight">
+                                <strong>Spotlight:</strong> Enabled
+                            </li>
+                            <li v-if="selectedBookmark.analysis.has_drill_state">
+                                <strong>Drill State:</strong> Captured
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Naming Issues -->
+                    <div class="detail-section" v-if="selectedBookmark.naming_issues && selectedBookmark.naming_issues.length > 0">
+                        <h4>Naming Issues</h4>
+                        <ul class="detail-list">
+                            <li v-for="issue in selectedBookmark.naming_issues" :key="issue"
+                                style="color: var(--warning);">
+                                ⚠️ {{ issue }}
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Capture Options -->
+                    <div class="detail-section" v-if="selectedBookmark.analysis.capture_options && selectedBookmark.analysis.capture_options.length > 0">
+                        <h4>Capture Options</h4>
+                        <ul class="detail-list">
+                            <li v-for="opt in selectedBookmark.analysis.capture_options" :key="opt">
+                                ✓ {{ opt }}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer style="text-align: center; padding: 2rem; color: var(--stone); font-size: 0.875rem;">
+            Generated by MCP-PowerBi-Finvision Bookmark Analyzer
+        </footer>
+    </div>
+
+    <script>
+        const analysisData = __DATA_JSON__;
+
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    modelName: analysisData.modelName,
+                    timestamp: analysisData.timestamp,
+                    summary: analysisData.summary || {},
+                    bookmarks: analysisData.bookmarks || [],
+                    categories: analysisData.categories || {},
+                    issues: analysisData.issues || [],
+                    navigation: analysisData.navigation || {},
+                    activeTab: 'all',
+                    searchQuery: '',
+                    selectedBookmark: null
+                };
+            },
+            computed: {
+                formattedTimestamp() {
+                    return new Date(this.timestamp).toLocaleString();
+                },
+                filteredBookmarks() {
+                    let result = this.bookmarks;
+
+                    // Filter by tab
+                    if (this.activeTab === 'navigation') {
+                        result = result.filter(b => b.category === 'navigation');
+                    } else if (this.activeTab === 'filters') {
+                        result = result.filter(b => ['filter_state', 'combined_filter_visual'].includes(b.category));
+                    } else if (this.activeTab === 'visuals') {
+                        result = result.filter(b => ['visual_state', 'spotlight', 'combined_filter_visual'].includes(b.category));
+                    }
+
+                    // Filter by search
+                    if (this.searchQuery) {
+                        const query = this.searchQuery.toLowerCase();
+                        result = result.filter(b =>
+                            b.display_name.toLowerCase().includes(query) ||
+                            b.id.toLowerCase().includes(query) ||
+                            b.category.toLowerCase().includes(query)
+                        );
+                    }
+
+                    return result;
+                }
+            },
+            methods: {
+                formatCategory(cat) {
+                    return cat.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                },
+                getComplexityClass(score) {
+                    if (score <= 3) return 'complexity-low';
+                    if (score <= 6) return 'complexity-medium';
+                    return 'complexity-high';
+                },
+                getBookmarkSummary(bookmark) {
+                    const parts = [];
+                    if (bookmark.analysis.has_page_context) parts.push('Page');
+                    if (bookmark.analysis.has_filters) parts.push(bookmark.analysis.filter_count + ' filters');
+                    if (bookmark.analysis.has_visual_states) parts.push(bookmark.analysis.visual_count + ' visuals');
+                    if (bookmark.analysis.has_slicer_states) parts.push('Slicers');
+                    return parts.join(', ') || 'Basic';
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

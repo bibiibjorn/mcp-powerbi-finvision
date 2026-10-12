@@ -1,0 +1,6 @@
+/// Root folder of the synthetic source files.
+expression p_SourceFolder = "C:\Data\GoldenCo" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 5a0c6f3e-0000-4000-8000-00000000e001
+	queryGroup: Parameters
+
+	annotation PBI_ResultType = Text

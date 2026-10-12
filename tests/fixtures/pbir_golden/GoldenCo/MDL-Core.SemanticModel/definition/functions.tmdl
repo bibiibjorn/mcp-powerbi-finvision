@@ -1,0 +1,11 @@
+/// Divisor for the selected display unit (UDF). Used by formatStringDefinition.
+function ScaleFormat =
+		(unit: string) =>
+		-- K / M / none; any other value falls back to the plain format
+		SWITCH(
+		    unit,
+		    "K", "#,0,.0 K",
+		    "M", "#,0,,.0 M",
+		    "#,0"
+		)
+	lineageTag: 5a0c6f3e-0000-4000-8000-00000000f001

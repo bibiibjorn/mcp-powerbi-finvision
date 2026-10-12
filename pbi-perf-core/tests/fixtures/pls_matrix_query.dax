@@ -1,0 +1,147 @@
+DEFINE
+	VAR __DS0FilterTable = 
+		TREATAS({"Crcy"}, 's_ReportLines'[Display Unit])
+
+	VAR __DS0FilterTable2 = 
+		TREATAS({"Contoso Holding NV"}, 'd_Company'[Company Name])
+
+	VAR __DS0FilterTable3 = 
+		TREATAS({"K"}, 's Scale'[Scale])
+
+	VAR __DS0FilterTable4 = 
+		TREATAS({"Statutory P&L"}, 's_ReportLines'[Report Name])
+
+	VAR __DS0FilterTable5 = 
+		TREATAS({"'d_Profit Center'[PC code]"}, 'sf Slot B (Filters)'[sf Slot B Fields])
+
+	VAR __DS0FilterTable6 = 
+		TREATAS({TRUE}, 'd_Currency_Report'[Is Default])
+
+	VAR __DS0FilterTable7 = 
+		TREATAS({"ACTUAL PY"}, 's_Scenario Comparable_Filter'[Version])
+
+	VAR __DS0FilterTable8 = 
+		TREATAS({"Reported"}, 's_PL_Currency_View'[View])
+
+	VAR __DS0FilterTable9 = 
+		TREATAS({"0"}, 's Decimal'[Decimal])
+
+	VAR __DS0FilterTable10 = 
+		TREATAS({"0.00%"}, 's DecimalPct'[Format])
+
+	VAR __DS0FilterTable11 = 
+		TREATAS({"ACTUAL"}, 'd_Scenario'[Version])
+
+	VAR __DS0FilterTable12 = 
+		TREATAS({"'d_CostCenter'[Cost Center Full]"}, 'sf Slot A (Filters)'[sf Slot A Fields])
+
+	VAR __DS0FilterTable13 = 
+		TREATAS({"Contoso Holding Group"}, 'd_Enterprise'[Enterprise Name])
+
+	VAR __DS0FilterTable14 = 
+		TREATAS({"YTD"}, 's_TimeCalc'[Selection])
+
+	VAR __DS0FilterTable15 = 
+		TREATAS({"Calendar"}, 's_Switch_Calendar_Fiscal'[Selection])
+
+	VAR __DS0FilterTable16 = 
+		TREATAS({"X"}, 's_ReportLines'[Is Top Level])
+
+	VAR __DS0FilterTable17 = 
+		TREATAS({"Comp. Curr"}, 's_Currency_Doc vs Company'[Abbreviation])
+
+	VAR __DS0FilterTable18 = 
+		TREATAS({"OCT 25"}, 's_Period'[Month Year (MMMYY) (inversed sort)])
+
+	VAR __DS0FilterTable19 = 
+		TREATAS(
+			{("Header", "'d_CostCenter'[Cost Center Full]"),
+				("Header", "'d_Profit Center'[PC code]"),
+				("Header", "'d_Company'[Company Code|Name]")},
+			'sf Filter 2'[Category],
+			'sf Filter 2'[sf Filter 2 Fields]
+		)
+
+	VAR __DS0FilterTable20 = 
+		TREATAS(
+			{("General", "'d_GL Account'[GL Account Full]"),
+				("General", "'d_Relation'[Relation Full]"),
+				("General", "'d_Vendor'[VendorName]"),
+				("Header", "'d_CostCenter'[Cost Center Full]")},
+			'sf Filter 1'[Category],
+			'sf Filter 1'[sf Filter 1 Fields]
+		)
+
+	VAR __DS0Core = 
+		SUMMARIZECOLUMNS(
+			's_ReportLines'[Line Name (Indent)],
+			's_ReportLines'[Line Name (Indent) Sort],
+			__DS0FilterTable,
+			__DS0FilterTable2,
+			__DS0FilterTable3,
+			__DS0FilterTable4,
+			__DS0FilterTable5,
+			__DS0FilterTable6,
+			__DS0FilterTable7,
+			__DS0FilterTable8,
+			__DS0FilterTable9,
+			__DS0FilterTable10,
+			__DS0FilterTable11,
+			__DS0FilterTable12,
+			__DS0FilterTable13,
+			__DS0FilterTable14,
+			__DS0FilterTable15,
+			__DS0FilterTable16,
+			__DS0FilterTable17,
+			__DS0FilterTable18,
+			__DS0FilterTable19,
+			__DS0FilterTable20,
+			"PL___TC0_Reported", 'm_Measures'[PL | TC0 Reported],
+			"v_PL___TC0_Reported_FormatString", IGNORE('m_Measures'[_PL | TC0 Reported FormatString]),
+			"PL_____of_Revenue", 'm_Measures'[PL | % of Revenue],
+			"FMT___Var_Bar_SVG", 'm_Measures'[FMT | Var Bar SVG],
+			"LBL___FS_Variance_Signed", 'm_Measures'[LBL | FS Variance Signed],
+			"LBL___FS_Variance_Pct_Signed", 'm_Measures'[LBL | FS Variance Pct Signed],
+			"FMT___Variance_Sign_Color", IGNORE('m_Measures'[FMT | Variance Sign Color])
+		)
+
+	VAR __DS0PrimaryWindowed = 
+		TOPN(
+			501,
+			__DS0Core,
+			's_ReportLines'[Line Name (Indent) Sort],
+			1,
+			's_ReportLines'[Line Name (Indent)],
+			1
+		)
+
+EVALUATE
+	SUMMARIZECOLUMNS(
+		__DS0FilterTable,
+		__DS0FilterTable2,
+		__DS0FilterTable3,
+		__DS0FilterTable4,
+		__DS0FilterTable5,
+		__DS0FilterTable6,
+		__DS0FilterTable7,
+		__DS0FilterTable8,
+		__DS0FilterTable9,
+		__DS0FilterTable10,
+		__DS0FilterTable11,
+		__DS0FilterTable12,
+		__DS0FilterTable13,
+		__DS0FilterTable14,
+		__DS0FilterTable15,
+		__DS0FilterTable16,
+		__DS0FilterTable17,
+		__DS0FilterTable18,
+		__DS0FilterTable19,
+		__DS0FilterTable20,
+		"LBL___PLS_Title_Moved", IGNORE('m_Measures'[LBL | PLS Title Moved])
+	)
+
+EVALUATE
+	__DS0PrimaryWindowed
+
+ORDER BY
+	's_ReportLines'[Line Name (Indent) Sort], 's_ReportLines'[Line Name (Indent)]

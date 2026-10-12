@@ -1,0 +1,37 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.11.0/schema.json",
+  "name": "vb02bookmarknav00001",
+  "position": {
+    "x": 1160,
+    "y": 80,
+    "z": 8000,
+    "height": 80,
+    "width": 100,
+    "tabOrder": 7000
+  },
+  "visual": {
+    "visualType": "bookmarkNavigator",
+    "objects": {
+      "bookmarks": [
+        {
+          "properties": {
+            "bookmarkGroup": {
+              "expr": {
+                "Literal": {
+                  "Value": "'bg00000000000000grp1'"
+                }
+              }
+            },
+            "selectedBookmark": {
+              "expr": {
+                "Literal": {
+                  "Value": "'bm0000000000000000a2'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

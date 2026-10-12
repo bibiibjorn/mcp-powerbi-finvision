@@ -1,0 +1,150 @@
+[project]
+name = "mcp-powerbi-finvision"
+version = "7.21.1"
+description = "Production-ready MCP server for Power BI Desktop analysis"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    {name = "Finvision", email = "info@finvision.com"}
+]
+license = {text = "MIT"}
+
+# Declaration mirrored by ../requirements.txt (tests/test_requirements_pyproject_agree.py keeps them
+# in step). This file is dependency/tooling metadata: the server runs from the repo root
+# (`python src/run_server.py`), it is not installed as a wheel.
+dependencies = [
+    "mcp>=1.28.1,<2.0.0",
+    "pythonnet>=3.0.3,<4.0.0; sys_platform == 'win32'",
+    "requests>=2.33.0,<3.0.0",
+    "urllib3>=2.7.0,<3.0.0",
+    "psutil>=5.9.0,<8.0.0",
+    "pywin32>=306; sys_platform == 'win32'",
+    "pywinauto>=0.6.8,<1.0.0; sys_platform == 'win32'",
+    "python-docx>=0.8.11,<2.0.0",
+    "orjson>=3.9.0,<4.0.0",
+    "tqdm>=4.66.0,<5.0.0",
+    "pillow>=12.3.0,<14.0.0",
+    "numpy>=1.26.0,<3.0.0",
+    "jsonpath-ng>=1.6,<2.0.0",
+    "jsonschema>=4.0.0,<5.0.0",
+    "httpx>=0.27.0,<1.0.0",
+    "msal>=1.28,<2.0.0",
+    "pyahocorasick>=2.1,<3",
+    "rapidfuzz>=3.14,<4",
+    # Client gateway wire adapters (client_gateway/adapters/streams.py): br and zstd streams.
+    "brotli==1.2.0",
+    "zstandard==0.25.0",
+    # Client gateway TLS front end (client_gateway/frontend/): mitmproxy run in-process.
+    "mitmproxy==12.2.3",
+    # Client gateway routing (client_gateway/routing/): the name-constrained local CA.
+    "cryptography>=46,<48",
+    # Public root list for upstream TLS checks (client_gateway/routing/upstream.py).
+    "certifi>=2025.1",
+    # Vendored in-repo sibling package (requirements.txt: `-e ./pbi-perf-core`).
+    "pbi-perf-core @ {root:parent:uri}/pbi-perf-core",
+]
+
+[project.optional-dependencies]
+# Client gateway: Windows.Media.Ocr bindings (primary OCR engine; without them screenshots are withheld).
+gateway = [
+    "winrt-runtime>=3.2,<4; sys_platform == 'win32'",
+    "winrt-Windows.Media.Ocr>=3.2,<4; sys_platform == 'win32'",
+    "winrt-Windows.Graphics.Imaging>=3.2,<4; sys_platform == 'win32'",
+    "winrt-Windows.Storage.Streams>=3.2,<4; sys_platform == 'win32'",
+    "winrt-Windows.Foundation>=3.2,<4; sys_platform == 'win32'",
+    "winrt-Windows.Foundation.Collections>=3.2,<4; sys_platform == 'win32'",
+    "winrt-Windows.Globalization>=3.2,<4; sys_platform == 'win32'",
+]
+# Optional second OCR engine (requirements-optional.txt).
+gateway-ocr = [
+    "rapidocr-onnxruntime>=1.2,<2",
+]
+# Optional NER for client names (requirements-optional.txt).
+gateway-ner = [
+    "gliner>=0.2.29,<0.3",
+    "onnx>=1.17",
+    "onnxscript>=0.1",
+]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=4.1.0",
+    "black>=24.0.0",
+    "mypy>=1.8.0",
+    "flake8>=7.0.0",
+    "pre-commit>=3.6.0",
+    "pip-audit>=2.7.0",
+]
+
+[project.scripts]
+# `cli` is the sync wrapper around the async `main` (src/pbixray_server_enhanced.py).
+pbixray-server = "src.pbixray_server_enhanced:cli"
+# Headless runner over the same dispatcher (python -m src.cli <tool> '<json>'), for CI and hooks.
+finvision = "src.cli:main"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.black]
+line-length = 100
+target-version = ['py310']
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | venv
+  | __pycache__
+  | \.mypy_cache
+  | \.pytest_cache
+  | build
+  | dist
+)/
+'''
+
+# mypy and flake8 are configured at the repo root (mypy.ini, .flake8): mypy only reads a config from
+# the directory it is run in, and the old [tool.mypy] block here never applied from the repo root.
+# black has no root config; run it as `black --line-length 100 ...` (this section serves `python/`).
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-ra -q --strict-markers --cov=core --cov=src --cov-report=html --cov-report=term"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "live_seam: test deliberately reaches a live seam (real Desktop connect/detect, bridge CLI subprocess, non-loopback socket); opts out of the conftest tripwire",
+]
+
+[tool.coverage.run]
+source = ["core", "src", "server"]
+omit = [
+    "*/tests/*",
+    "*/venv/*",
+    "*/__pycache__/*",
+]
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+
+[tool.bandit]
+exclude_dirs = ["tests", "venv", ".venv"]
+skips = ["B101"]  # Skip assert_used in tests

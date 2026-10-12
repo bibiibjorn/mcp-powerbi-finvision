@@ -1,0 +1,8 @@
+{
+  "name": "v002",
+  "position": { "x": 320, "y": 20, "width": 600, "height": 300 },
+  "visual": {
+    "visualType": "columnChart",
+    "query": { "queryState": { "Category": {"projections": []}, "Y": {"projections": []} } }
+  }
+}

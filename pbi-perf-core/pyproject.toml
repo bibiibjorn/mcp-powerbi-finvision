@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pbi-perf-core"
+version = "1.0.0"
+description = "DAX Studio-parity performance analysis core: server timings, query plans, xmSQL, VertiPaq Analyzer, Performance Analyzer. Shared by the Power BI Desktop and Fabric MCP servers."
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
+[tool.setuptools.packages.find]
+include = ["pbi_perf_core*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

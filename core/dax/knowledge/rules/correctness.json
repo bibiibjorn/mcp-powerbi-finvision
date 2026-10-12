@@ -1,0 +1,140 @@
+[
+  {
+    "rule_id": "CORR_DIVISION_WITHOUT_DIVIDE",
+    "category": "correctness",
+    "severity": "medium",
+    "title": "Division operator / without DIVIDE — no BLANK/error handling",
+    "description": "The / operator raises an error (or returns infinity) when the denominator is 0 and does not handle BLANK. DIVIDE returns BLANK (or an alternate result) instead. Not flagged: a constant non-zero denominator ([Sales] / 1000, / (60*60*24), / POWER(10, 6)) and a denominator the enclosing CALCULATE / FILTER already excludes zero from (canon rule 4 exception 2). Inside an iterator the finding is info: DIVIDE is a per-row callback, so keep / only if zero is provably impossible. Import-mode advice: in DirectQuery DIVIDE does not fold to SQL, so check the storage mode first (exception 3).",
+    "pattern_type": "missing_function",
+    "match": {
+      "operator": "/",
+      "missing": "DIVIDE",
+      "exempt_constant_denominator": true
+    },
+    "fix_suggestion": "Replace [x] / [y] with DIVIDE([x], [y]) or DIVIDE([x], [y], 0)",
+    "references": [
+      {
+        "source": "Microsoft Learn",
+        "url": "https://learn.microsoft.com/en-us/power-bi/guidance/dax-divide-function-operator"
+      }
+    ]
+  },
+  {
+    "rule_id": "CORR_SWITCH_NO_DEFAULT",
+    "category": "correctness",
+    "severity": "low",
+    "title": "SWITCH without default/else value",
+    "description": "SWITCH without a default value returns BLANK when no condition matches. This is often unintentional and can cause confusing report behavior.",
+    "pattern_type": "switch_without_default",
+    "match": {},
+    "fix_suggestion": "Add a default value as the last argument to SWITCH, e.g., SWITCH(expr, val1, res1, val2, res2, defaultResult)"
+  },
+  {
+    "rule_id": "CORR_BLANK_PROPAGATION",
+    "category": "correctness",
+    "severity": "low",
+    "title": "Potential BLANK propagation in arithmetic",
+    "description": "`1 - DIVIDE(a, b)` / `1 - a / b` returns 1 when the ratio is BLANK (b is 0 or BLANK), so rows that should be empty show 100 %.",
+    "pattern_type": "pattern",
+    "match": {
+      "description": "A numeric literal immediately followed by '-' and a DIVIDE(...) call or an a / b ratio"
+    },
+    "fix_suggestion": "VAR _ratio = DIVIDE(a, b) RETURN IF(NOT ISBLANK(_ratio), 1 - _ratio)"
+  },
+  {
+    "rule_id": "CORR_IFERROR_USAGE",
+    "category": "correctness",
+    "severity": "medium",
+    "title": "IFERROR forces step-by-step evaluation",
+    "description": "IFERROR must evaluate the expression first and then check for errors, preventing the engine from optimizing the execution plan. Use DIVIDE for division errors, or handle edge cases explicitly. Import-mode advice: in DirectQuery IFERROR folds into the generated SQL and DIVIDE does not, so check the table's storage mode before replacing it (canon rule 4 exception 3 / AP-06).",
+    "pattern_type": "function_usage",
+    "match": {
+      "functions": [
+        "IFERROR"
+      ]
+    },
+    "fix_suggestion": "Replace with DIVIDE for division errors, or use IF with explicit condition checks",
+    "references": [
+      {
+        "source": "Microsoft Learn",
+        "url": "https://learn.microsoft.com/en-us/power-bi/guidance/dax-error-functions"
+      }
+    ]
+  },
+  {
+    "rule_id": "CORR_ISERROR_USAGE",
+    "category": "correctness",
+    "severity": "medium",
+    "title": "ISERROR forces step-by-step evaluation",
+    "description": "ISERROR evaluates the full expression to check for errors, preventing query optimization. Handle specific error conditions explicitly instead. Import-mode advice: in DirectQuery IFERROR folds into the generated SQL and DIVIDE does not, so check the table's storage mode before replacing it (canon rule 4 exception 3 / AP-06).",
+    "pattern_type": "function_usage",
+    "match": {
+      "functions": [
+        "ISERROR"
+      ]
+    },
+    "fix_suggestion": "Check for the specific condition that causes the error (e.g., division by zero, missing relationship) instead of catching all errors",
+    "references": [
+      {
+        "source": "Microsoft Learn",
+        "url": "https://learn.microsoft.com/en-us/power-bi/guidance/dax-error-functions"
+      }
+    ]
+  },
+  {
+    "rule_id": "CORR_SUMMARIZE_INLINE",
+    "category": "correctness",
+    "severity": "high",
+    "title": "SUMMARIZE with inline expressions — use ADDCOLUMNS+SUMMARIZE or SUMMARIZECOLUMNS",
+    "description": "SUMMARIZE with more than 2 arguments likely contains inline aggregation expressions. This deprecated pattern can produce incorrect results when the aggregation references columns not in the groupBy set.",
+    "pattern_type": "function_usage",
+    "match": {
+      "functions": [
+        "SUMMARIZE"
+      ],
+      "check": "more_than_two_args"
+    },
+    "fix_suggestion": "Use ADDCOLUMNS(SUMMARIZE(table, groupByCol), \"Name\", expression) or SUMMARIZECOLUMNS",
+    "references": [
+      {
+        "source": "SQLBI",
+        "url": "https://www.sqlbi.com/articles/best-practices-using-summarizecolumns/"
+      }
+    ]
+  },
+  {
+    "rule_id": "CORR_INTERSECT_VS_TREATAS",
+    "category": "correctness",
+    "severity": "low",
+    "title": "INTERSECT — consider TREATAS for virtual relationships",
+    "description": "INTERSECT materializes both tables. When used for filtering, TREATAS creates a virtual relationship without materialization, which is more efficient and clearer in intent.",
+    "pattern_type": "function_usage",
+    "match": {
+      "functions": [
+        "INTERSECT"
+      ]
+    },
+    "fix_suggestion": "If used for filtering, replace with TREATAS(VALUES(col), targetTable[col])",
+    "references": [
+      {
+        "source": "SQLBI",
+        "url": "https://www.sqlbi.com/articles/propagate-filters-using-treatas-in-dax/"
+      }
+    ],
+    "supersedes": [
+      "PY_INTERSECT_VS_TREATAS"
+    ]
+  },
+  {
+    "rule_id": "CORR_FIXED_FILTER_IN_CALCULATE",
+    "category": "correctness",
+    "severity": "info",
+    "title": "Hardcoded date literal in CALCULATE",
+    "description": "A hard-coded date literal in a CALCULATE filter (Date[Year] = 2024, Date[Date] >= DATE(2024,1,1)) goes stale when the data moves on. Literal predicates on non-date columns (a country, an amount threshold, a fixed currency) are normal and are not flagged.",
+    "pattern_type": "pattern",
+    "match": {
+      "description": "CALCULATE with a hard-coded date / year literal in a filter"
+    },
+    "fix_suggestion": "Use a slicer, a relative date expression (MAX(Date[Date]), TODAY()) or a disconnected parameter table for the period."
+  }
+]

@@ -1,0 +1,804 @@
+{
+  "version": "2026-10-03",
+  "source": "pbi-model-audit/references/audit-categories.md + ai-copilot-readiness.md",
+  "citation": "audit-categories.md:<ID>",
+  "statuses": {
+    "static": "at least one rule / topology finding implements the check",
+    "requires_live": "needs a trace, a runtime query or a service setting",
+    "manual": "no machine check: judgement or data outside the TMSL",
+    "engine_enforced": "the engine refuses the state; nothing to scan"
+  },
+  "checks": [
+    {
+      "id": "CR1",
+      "family": "CR",
+      "title": "Bidirectional relationship on a path RLS reaches",
+      "severity": "blocker",
+      "status": "static",
+      "rules": [
+        "AUDIT_BIDI_ON_RLS_PATH",
+        "AVOID_USING_MANY-TO-MANY_RELATIONSHIPS_ON_TABLES_USED_FOR_DYNAMIC_ROW_LEVEL_SECURITY"
+      ]
+    },
+    {
+      "id": "CR2",
+      "family": "CR",
+      "title": "Circular dependency between tables",
+      "severity": "blocker",
+      "status": "engine_enforced",
+      "note": "TOM refuses to save a circular dependency; nothing to scan."
+    },
+    {
+      "id": "CR3",
+      "family": "CR",
+      "title": "Column with an Unknown data type",
+      "severity": "blocker",
+      "status": "static",
+      "rules": [
+        "AUDIT_COLUMN_DATATYPE_UNKNOWN"
+      ]
+    },
+    {
+      "id": "CR4",
+      "family": "CR",
+      "title": "Orphaned table (no relationships)",
+      "severity": "blocker",
+      "status": "static",
+      "rules": [],
+      "topology": [
+        "DISCONNECTED_TABLE"
+      ],
+      "note": "Topology DISCONNECTED_TABLE only: calculation groups, field / what-if parameters, measure tables, private tables and tables any DAX expression reads are disconnected by design."
+    },
+    {
+      "id": "CR5",
+      "family": "CR",
+      "title": "RLS filter on a fact table",
+      "severity": "blocker",
+      "status": "static",
+      "rules": [
+        "AUDIT_RLS_ON_FACT_TABLE"
+      ]
+    },
+    {
+      "id": "CR6",
+      "family": "CR",
+      "title": "Inactive relationship used for RLS propagation",
+      "severity": "blocker",
+      "status": "static",
+      "rules": [
+        "AUDIT_RLS_INACTIVE_RELATIONSHIP"
+      ]
+    },
+    {
+      "id": "CR7",
+      "family": "CR",
+      "title": "Native many-to-many without a bridge",
+      "severity": "blocker",
+      "status": "static",
+      "rules": [
+        "AVOID_MANY_TO_MANY",
+        "AVOID_EXCESSIVE_BI-DIRECTIONAL_OR_MANY-TO-MANY_RELATIONSHIPS"
+      ]
+    },
+    {
+      "id": "CR8",
+      "family": "CR",
+      "title": "USERELATIONSHIP combined with RLS",
+      "severity": "blocker",
+      "status": "static",
+      "rules": [
+        "AVOID_THE_USERELATIONSHIP_FUNCTION_AND_RLS_AGAINST_THE_SAME_TABLE",
+        "AUDIT_USERELATIONSHIP_IN_RLS_FILTER"
+      ]
+    },
+    {
+      "id": "CR9",
+      "family": "CR",
+      "title": "Composite (multi-column) relationship keys",
+      "severity": "blocker",
+      "status": "static",
+      "rules": [
+        "AUDIT_COMPOSITE_KEY_RELATIONSHIP"
+      ]
+    },
+    {
+      "id": "CR10",
+      "family": "CR",
+      "title": "Referential-integrity violation (orphan keys in a fact)",
+      "severity": "blocker",
+      "status": "requires_live",
+      "requires_live": true,
+      "requires": "include_runtime",
+      "hand_off": "06 full ruleset=audit include_runtime=true counts orphan fact keys per active relationship; or 04_Run_DAX per relationship"
+    },
+    {
+      "id": "MS1",
+      "family": "MS",
+      "title": "High-cardinality columns with large dictionaries",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "REDUCE_HIGH_CARDINALITY",
+        "REDUCE_USAGE_OF_LONG-LENGTH_COLUMNS_WITH_HIGH_CARDINALITY"
+      ],
+      "requires": "include_vertipaq"
+    },
+    {
+      "id": "MS2",
+      "family": "MS",
+      "title": "Unsplit DateTime column",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "SPLIT_DATE_AND_TIME"
+      ]
+    },
+    {
+      "id": "MS3",
+      "family": "MS",
+      "title": "Auto date/time enabled",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "NO_CALENDAR_AUTO",
+        "REMOVE_AUTO-DATE_TABLE"
+      ]
+    },
+    {
+      "id": "MS4",
+      "family": "MS",
+      "title": "IsAvailableInMDX on hidden / high-cardinality columns",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "SET_IS_AVAILABLE_IN_MDX_FALSE",
+        "ISAVAILABLEINMDX_FALSE_NONATTRIBUTE_COLUMNS"
+      ]
+    },
+    {
+      "id": "MS5",
+      "family": "MS",
+      "title": "Inappropriate data type",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "AVOID_FLOAT_FOR_FINANCIALS",
+        "AVOID_FLOATING_POINT_DATA_TYPES",
+        "SET_DATA_TYPE_CORRECTLY"
+      ]
+    },
+    {
+      "id": "MS6",
+      "family": "MS",
+      "title": "Calculated columns that could be Power Query columns",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "REDUCE_CALCULATED_COLUMNS",
+        "REDUCE_NUMBER_OF_CALCULATED_COLUMNS"
+      ]
+    },
+    {
+      "id": "MS7",
+      "family": "MS",
+      "title": "Unused hidden columns",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "REMOVE_UNUSED_COLUMNS",
+        "UNNECESSARY_COLUMNS"
+      ],
+      "hand_off": "05_Column_Usage_Mapping get_unused_columns_pbip is the authoritative offline check"
+    },
+    {
+      "id": "MS8",
+      "family": "MS",
+      "title": "Unused visible columns",
+      "severity": "nit",
+      "status": "manual",
+      "rules": [],
+      "note": "Both unused-column BPA rules only match HIDDEN columns (R0201 live test 2026-10-03: MS7 and MS8 reported the same hidden column); a visible column's use is in the report, which BPA cannot see.",
+      "hand_off": "05_Column_Usage_Mapping get_unused_columns_pbip (offline, report-aware) is the check for visible columns"
+    },
+    {
+      "id": "MS9",
+      "family": "MS",
+      "title": "Persisted string index on a low-value column",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "STRING_INDEX_ON_LOW_VALUE_COLUMN"
+      ]
+    },
+    {
+      "id": "DR1",
+      "family": "DR",
+      "title": "Fact table without a date filter / incremental refresh",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "INCREMENTAL_REFRESH_PARAMETERS",
+        "LARGE_TABLES_SHOULD_BE_PARTITIONED"
+      ]
+    },
+    {
+      "id": "DR2",
+      "family": "DR",
+      "title": "Columns not needed for reporting or calculation",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "REMOVE_UNUSED_COLUMNS",
+        "UNNECESSARY_COLUMNS"
+      ]
+    },
+    {
+      "id": "DR3",
+      "family": "DR",
+      "title": "Pre-aggregation opportunity",
+      "severity": "nit",
+      "status": "manual",
+      "hand_off": "needs report visuals + row counts: judgement call"
+    },
+    {
+      "id": "DAX1",
+      "family": "DAX",
+      "title": "Filtering a table (not a column) in CALCULATE",
+      "severity": "warning",
+      "status": "manual",
+      "hand_off": "05_DAX_Intelligence lint_model (unified DAX analyzer)"
+    },
+    {
+      "id": "DAX2",
+      "family": "DAX",
+      "title": "Unhandled division by zero",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "USE_DIVIDE_FUNCTION",
+        "USE_THE_DIVIDE_FUNCTION_FOR_DIVISION"
+      ]
+    },
+    {
+      "id": "DAX3",
+      "family": "DAX",
+      "title": "Iterator over a large unfiltered fact table",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "AVOID_UNNECESSARY_ITERATORS",
+        "NO_CALCULATE_OR_CALCULATETABLE",
+        "AVOID_SUMX_FILTER"
+      ]
+    },
+    {
+      "id": "DAX4",
+      "family": "DAX",
+      "title": "Missing KEEPFILTERS around non-equality predicates",
+      "severity": "warning",
+      "status": "manual",
+      "hand_off": "05_DAX_Intelligence lint_model"
+    },
+    {
+      "id": "DAX5",
+      "family": "DAX",
+      "title": "Implicit measures where explicit ones should exist",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "SET_SUMMARIZE_BY_NONE",
+        "SET_DEFAULT_SUMMARIZATION",
+        "NUMERIC_COLUMN_SUMMARIZE_BY",
+        "AUDIT_AI_IMPLICIT_MEASURES"
+      ]
+    },
+    {
+      "id": "DAX6",
+      "family": "DAX",
+      "title": "Report-scoped extension measures that should be model-level",
+      "severity": "warning",
+      "status": "manual",
+      "requires": "pbip",
+      "hand_off": "07_Report_Operations extension measures"
+    },
+    {
+      "id": "DAX7",
+      "family": "DAX",
+      "title": "Duplicate or overlapping measures",
+      "severity": "nit",
+      "status": "static",
+      "rules": [
+        "AVOID_DUPLICATE_MEASURE_NAMES",
+        "AVOID_DUPLICATE_MEASURES"
+      ]
+    },
+    {
+      "id": "DAX8",
+      "family": "DAX",
+      "title": "Directly nested CALCULATE(CALCULATE(...))",
+      "severity": "nit",
+      "status": "static",
+      "rules": [
+        "AVOID_EXCESSIVE_CALCULATE"
+      ]
+    },
+    {
+      "id": "DAX9",
+      "family": "DAX",
+      "title": "ALL(Table) used only as a filter-removal modifier",
+      "severity": "nit",
+      "status": "manual",
+      "hand_off": "05_DAX_Intelligence lint_model"
+    },
+    {
+      "id": "DAX10",
+      "family": "DAX",
+      "title": "TEXTCONTAINS / TEXTSIMILARITY without a full-text index",
+      "severity": "blocker",
+      "status": "static",
+      "rules": [
+        "TEXTCONTAINS_REQUIRES_FULLTEXT_INDEX"
+      ]
+    },
+    {
+      "id": "DAX11",
+      "family": "DAX",
+      "title": "APPROXIMATEDISTINCTCOUNT feeding an exact figure",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "APPROXIMATEDISTINCTCOUNT_IN_MEASURE"
+      ]
+    },
+    {
+      "id": "QP1",
+      "family": "QP",
+      "title": "Over-materialization",
+      "severity": "warning",
+      "status": "requires_live",
+      "requires_live": true,
+      "requires": "trace",
+      "hand_off": "13_Query_Plan capture / 09_Debug_Operations trace=true / 09_Profile"
+    },
+    {
+      "id": "QP2",
+      "family": "QP",
+      "title": "Too-wide datacache",
+      "severity": "warning",
+      "status": "requires_live",
+      "requires_live": true,
+      "requires": "trace",
+      "hand_off": "13_Query_Plan capture / 09_Debug_Operations trace=true / 09_Profile"
+    },
+    {
+      "id": "QP3",
+      "family": "QP",
+      "title": "Low SE parallelism on a slow scan",
+      "severity": "warning",
+      "status": "requires_live",
+      "requires_live": true,
+      "requires": "trace",
+      "hand_off": "13_Query_Plan capture / 09_Debug_Operations trace=true / 09_Profile"
+    },
+    {
+      "id": "QP4",
+      "family": "QP",
+      "title": "Callback present in a hot scan",
+      "severity": "warning",
+      "status": "requires_live",
+      "requires_live": true,
+      "requires": "trace",
+      "hand_off": "13_Query_Plan capture / 09_Debug_Operations trace=true / 09_Profile"
+    },
+    {
+      "id": "QP5",
+      "family": "QP",
+      "title": "Callback inside an RLS role expression",
+      "severity": "blocker",
+      "status": "requires_live",
+      "requires_live": true,
+      "requires": "trace",
+      "hand_off": "13_Query_Plan capture / 09_Debug_Operations trace=true / 09_Profile"
+    },
+    {
+      "id": "QP6",
+      "family": "QP",
+      "title": "DISTINCTCOUNT on a non-key column",
+      "severity": "warning",
+      "status": "requires_live",
+      "requires_live": true,
+      "requires": "trace",
+      "hand_off": "13_Query_Plan capture / 09_Debug_Operations trace=true / 09_Profile"
+    },
+    {
+      "id": "QP7",
+      "family": "QP",
+      "title": "Segment layout",
+      "severity": "warning",
+      "status": "requires_live",
+      "requires_live": true,
+      "requires": "trace",
+      "hand_off": "13_Query_Plan capture / 09_Debug_Operations trace=true / 09_Profile"
+    },
+    {
+      "id": "DOC1",
+      "family": "DOC",
+      "title": "Visible tables without descriptions",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "AI_TABLE_NO_DESCRIPTION",
+        "OBJECTS_WITH_NO_DESCRIPTION"
+      ]
+    },
+    {
+      "id": "DOC2",
+      "family": "DOC",
+      "title": "Visible columns without descriptions",
+      "severity": "nit",
+      "status": "static",
+      "rules": [
+        "AI_COLUMN_NO_DESCRIPTION",
+        "PROVIDE_COLUMN_DESCRIPTIONS"
+      ]
+    },
+    {
+      "id": "DOC3",
+      "family": "DOC",
+      "title": "Visible measures without descriptions",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "ADD_MEASURE_DESCRIPTIONS"
+      ]
+    },
+    {
+      "id": "DOC4",
+      "family": "DOC",
+      "title": "Measures without format strings",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "PROVIDE_FORMAT_STRING",
+        "PROVIDE_FORMAT_STRING_FOR_MEASURES"
+      ]
+    },
+    {
+      "id": "DOC5",
+      "family": "DOC",
+      "title": "Measures not in display folders",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "ORGANIZE_DISPLAY_FOLDERS"
+      ]
+    },
+    {
+      "id": "DOC6",
+      "family": "DOC",
+      "title": "Inconsistent naming conventions",
+      "severity": "nit",
+      "status": "static",
+      "rules": [
+        "CONSISTENCY_NAMING_CONVENTION"
+      ]
+    },
+    {
+      "id": "DES1",
+      "family": "DES",
+      "title": "Fact-to-fact direct relationship",
+      "severity": "blocker",
+      "status": "static",
+      "topology": [
+        "FACT_TO_FACT"
+      ]
+    },
+    {
+      "id": "DES2",
+      "family": "DES",
+      "title": "Snowflake dimension",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "SNOWFLAKE_SCHEMA_ARCHITECTURE"
+      ],
+      "topology": [
+        "SNOWFLAKE_DIMENSION"
+      ]
+    },
+    {
+      "id": "DES3",
+      "family": "DES",
+      "title": "Missing or misconfigured date table",
+      "severity": "blocker",
+      "status": "static",
+      "rules": [
+        "MARK_DATE_TABLE",
+        "CHECK_DATE_TABLE_REQUIREMENTS",
+        "MODEL_SHOULD_HAVE_A_DATE_TABLE"
+      ],
+      "topology": [
+        "MISSING_DATE_TABLE"
+      ]
+    },
+    {
+      "id": "DES4",
+      "family": "DES",
+      "title": "Table with more than 30 visible columns",
+      "severity": "nit",
+      "status": "static",
+      "rules": [
+        "PERF_TABLE_TOO_MANY_COLUMNS"
+      ]
+    },
+    {
+      "id": "DES5",
+      "family": "DES",
+      "title": "Facts relating to one dimension through different keys",
+      "severity": "warning",
+      "status": "manual",
+      "hand_off": "needs the grain of each fact: judgement call"
+    },
+    {
+      "id": "DES6",
+      "family": "DES",
+      "title": "Inactive relationship never activated",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "INACTIVE_RELATIONSHIPS_THAT_ARE_NEVER_ACTIVATED"
+      ]
+    },
+    {
+      "id": "DES7",
+      "family": "DES",
+      "title": "Many-to-many dimension relationship without a bridge",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "AVOID_MANY_TO_MANY"
+      ]
+    },
+    {
+      "id": "DES8",
+      "family": "DES",
+      "title": "Compatibility level below what the features need",
+      "severity": "blocker",
+      "status": "manual",
+      "hand_off": "02_Model_Operations model get_properties (CompatibilityLevel) vs the features in use; a CL raise is irreversible"
+    },
+    {
+      "id": "DES9",
+      "family": "DES",
+      "title": "Bidirectional cross-filtering on a non-RLS path",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "AVOID_BIDIRECTIONAL_RELATIONSHIPS",
+        "AVOID_BI-DIRECTIONAL_RELATIONSHIPS_AGAINST_HIGH-CARDINALITY_COLUMNS"
+      ]
+    },
+    {
+      "id": "DES10",
+      "family": "DES",
+      "title": "Compatibility level vs features in use (Sep 2026 gates)",
+      "severity": "nit",
+      "status": "manual",
+      "hand_off": "02_Model_Operations model get_properties; never recommend a CL raise without saying it is irreversible"
+    },
+    {
+      "id": "DES11",
+      "family": "DES",
+      "title": "Ambiguous relationship paths (extension)",
+      "severity": "blocker",
+      "status": "static",
+      "topology": [
+        "AMBIGUOUS_RELATIONSHIP_PATH"
+      ],
+      "extension": true,
+      "note": "Proposed id, not yet in audit-categories.md: two distinct active filter-propagation paths between two tables."
+    },
+    {
+      "id": "DES12",
+      "family": "DES",
+      "title": "Calculation-group design (extension)",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "CALCGROUP_DUPLICATE_PRECEDENCE",
+        "CALCGROUP_NO_SELECTION_EXPRESSIONS",
+        "CALCITEM_NO_FORMAT_STRING",
+        "AUDIT_CALCITEM_NO_SELECTEDMEASURE",
+        "CALCGROUP_ORDINAL_GAPS",
+        "CALCULATION_GROUPS_WITH_NO_CALCULATION_ITEMS"
+      ],
+      "extension": true,
+      "note": "Proposed id, not yet in audit-categories.md: items without SELECTEDMEASURE(), precedence clashes, empty groups."
+    },
+    {
+      "id": "DES13",
+      "family": "DES",
+      "title": "User-defined function hygiene (extension)",
+      "severity": "nit",
+      "status": "static",
+      "rules": [
+        "UDF_MISSING_DESCRIPTION",
+        "UDF_EXPR_PARAMETER_REUSED",
+        "UDF_NAME_LEAKS_SECURED_OBJECT",
+        "AUDIT_UDF_UNUSED",
+        "AUDIT_UDF_DUPLICATE_BODY"
+      ],
+      "extension": true,
+      "note": "Proposed id, not yet in audit-categories.md. Measures that re-implement a UDF instead of calling it are NOT detected (manual)."
+    },
+    {
+      "id": "DL1",
+      "family": "DL",
+      "title": "Non-unique values on the one side of a Direct Lake relationship",
+      "severity": "blocker",
+      "status": "manual",
+      "applies_when": "direct_lake",
+      "hand_off": "Fabric item metadata (not in the TMSL): fabric skill / Delta table properties"
+    },
+    {
+      "id": "DL2",
+      "family": "DL",
+      "title": "RLS without a fixed-identity cloud connection",
+      "severity": "warning",
+      "status": "manual",
+      "applies_when": "direct_lake",
+      "hand_off": "Fabric item metadata (not in the TMSL): fabric skill / Delta table properties"
+    },
+    {
+      "id": "DL3",
+      "family": "DL",
+      "title": "SQL endpoint views instead of Delta tables",
+      "severity": "warning",
+      "status": "manual",
+      "applies_when": "direct_lake",
+      "hand_off": "Fabric item metadata (not in the TMSL): fabric skill / Delta table properties"
+    },
+    {
+      "id": "DL4",
+      "family": "DL",
+      "title": "Delta table not V-Ordered / OPTIMIZEd, too many small files",
+      "severity": "nit",
+      "status": "manual",
+      "applies_when": "direct_lake",
+      "hand_off": "Fabric item metadata (not in the TMSL): fabric skill / Delta table properties"
+    },
+    {
+      "id": "DL5",
+      "family": "DL",
+      "title": "String column over 32,764 characters",
+      "severity": "blocker",
+      "status": "manual",
+      "applies_when": "direct_lake",
+      "hand_off": "Fabric item metadata (not in the TMSL): fabric skill / Delta table properties"
+    },
+    {
+      "id": "DL6",
+      "family": "DL",
+      "title": "Complex Delta column types (Binary, GUID)",
+      "severity": "blocker",
+      "status": "manual",
+      "applies_when": "direct_lake",
+      "hand_off": "Fabric item metadata (not in the TMSL): fabric skill / Delta table properties"
+    },
+    {
+      "id": "DL7",
+      "family": "DL",
+      "title": "Auto date/time enabled on Direct Lake on SQL endpoint",
+      "severity": "blocker",
+      "status": "manual",
+      "applies_when": "direct_lake",
+      "hand_off": "Fabric item metadata (not in the TMSL): fabric skill / Delta table properties"
+    },
+    {
+      "id": "DL8",
+      "family": "DL",
+      "title": "Calculated columns without Direct Lake on OneLake",
+      "severity": "blocker",
+      "status": "manual",
+      "applies_when": "direct_lake",
+      "hand_off": "Fabric item metadata (not in the TMSL): fabric skill / Delta table properties"
+    },
+    {
+      "id": "AI1",
+      "family": "AI",
+      "title": "Implicit measures on visible columns",
+      "severity": "blocker",
+      "status": "static",
+      "rules": [
+        "AUDIT_AI_IMPLICIT_MEASURES"
+      ],
+      "applies_when": "ai_scope"
+    },
+    {
+      "id": "AI2",
+      "family": "AI",
+      "title": "Report-scoped extension measures",
+      "severity": "blocker",
+      "status": "manual",
+      "requires": "pbip",
+      "applies_when": "ai_scope",
+      "hand_off": "07_Report_Operations extension measures"
+    },
+    {
+      "id": "AI3",
+      "family": "AI",
+      "title": "Missing AI instructions",
+      "severity": "warning",
+      "status": "manual",
+      "applies_when": "ai_scope",
+      "hand_off": "instructions live in Model.ExtendedProperties / the Copilot folder, not reliably in the TMSL"
+    },
+    {
+      "id": "AI4",
+      "family": "AI",
+      "title": "Missing descriptions in the AI schema",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "AI_TABLE_NO_DESCRIPTION",
+        "AI_COLUMN_NO_DESCRIPTION",
+        "ADD_MEASURE_DESCRIPTIONS"
+      ],
+      "applies_when": "ai_scope"
+    },
+    {
+      "id": "AI5",
+      "family": "AI",
+      "title": "Duplicate field names across tables",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "AUDIT_AI_DUPLICATE_FIELD_NAMES"
+      ],
+      "applies_when": "ai_scope"
+    },
+    {
+      "id": "AI6",
+      "family": "AI",
+      "title": "Non-business-friendly naming on visible objects",
+      "severity": "warning",
+      "status": "static",
+      "rules": [
+        "AUDIT_AI_CRYPTIC_NAMES"
+      ],
+      "applies_when": "ai_scope"
+    },
+    {
+      "id": "AI7",
+      "family": "AI",
+      "title": "Missing synonyms for key business terms",
+      "severity": "nit",
+      "status": "static",
+      "rules": [
+        "AI_NO_SYNONYMS"
+      ],
+      "applies_when": "ai_scope"
+    },
+    {
+      "id": "AI8",
+      "family": "AI",
+      "title": "Complex patterns without AI-instruction guidance",
+      "severity": "warning",
+      "status": "manual",
+      "applies_when": "ai_scope",
+      "hand_off": "needs the AI instructions text"
+    },
+    {
+      "id": "AI9",
+      "family": "AI",
+      "title": "Per-model AI-access governance not recorded",
+      "severity": "nit",
+      "status": "requires_live",
+      "requires_live": true,
+      "requires": "service",
+      "applies_when": "ai_scope",
+      "hand_off": "Service setting; not readable over XMLA: ask the model owner"
+    }
+  ]
+}

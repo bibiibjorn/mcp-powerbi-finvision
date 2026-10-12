@@ -1,0 +1,59 @@
+name: Publish Docs
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/docs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Build docs site
+        run: |
+          mkdir -p _site
+          cp -r docs/* _site/ || true
+          cat > _site/index.html << 'HTML'
+          <!doctype html>
+          <meta charset="utf-8"/>
+          <meta name="viewport" content="width=device-width, initial-scale=1"/>
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5/github-markdown.min.css">
+          <article class="markdown-body" style="margin:40px">
+            <h1>MCP-PowerBi-Finvision Docs</h1>
+            <p>Welcome. Start with the guide below.</p>
+            <ul>
+              <li><a href="GUIDE.md">GUIDE.md</a> — the guide: user guide, client masking, tool reference, architecture, PBIR reference (file format + pbir CLI) and the agentic-stack index</li>
+              <li><a href="visual-catalog/INDEX.md">visual-catalog/INDEX.md</a> — per-type visual reference</li>
+              <li><a href="design-principles/INDEX.md">design-principles/INDEX.md</a> — design reasoning layer</li>
+            </ul>
+          </article>
+          HTML
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

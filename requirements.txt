@@ -1,0 +1,56 @@
+# Single install file for the repo root (`pip install -r requirements.txt`).
+# python/pyproject.toml is the declaration this file mirrors (tests/test_requirements_pyproject_agree.py
+# fails when the two drift): [project.dependencies] + the `gateway` extra = the lines below.
+# Optional gateway engines (OCR second engine, NER) live in requirements-optional.txt.
+#
+# mcp v1.x is the maintenance line; v2.x is a breaking rewrite (spec 2026-07-28: handlers as
+# constructor params, mcp-types split, snake_case wire fields) - pin <2 until that migration lands.
+mcp>=1.28.1,<2.0.0
+pythonnet>=3.0.3,<4.0.0; sys_platform == "win32"
+# Security floors (2026-09-22 deep review, K-10): requests 2.33 fixes the
+# predictable-temp-path advisory; urllib3 is reached through requests (daxformatter.com, DaxLib).
+requests>=2.33.0,<3.0.0
+urllib3>=2.7.0,<3.0.0
+psutil>=5.9.0,<8.0.0
+pywin32>=306; sys_platform == "win32"
+pywinauto>=0.6.8,<1.0.0; sys_platform == "win32"
+python-docx>=0.8.11,<2.0.0
+orjson>=3.9.0,<4.0.0
+tqdm>=4.66.0,<5.0.0
+# Pillow opens Desktop screenshots (trusted input); 12.3 carries the heap-OOB / WindowsViewer fixes.
+pillow>=12.3.0,<14.0.0
+# desktop_bridge screenshot cropping and client_gateway/images.py import numpy directly.
+numpy>=1.26.0,<3.0.0
+jsonpath-ng>=1.6,<2.0.0
+jsonschema>=4.0.0,<5.0.0
+httpx>=0.27.0,<1.0.0
+# XM-01: read-only XMLA target reads the MSAL token cache (optional at runtime)
+msal>=1.28,<2.0.0
+# Client masking (core/client_guard/): Aho-Corasick matcher + typo matching of client names
+# (Damerau-Levenshtein, C++).
+pyahocorasick>=2.1,<3
+rapidfuzz>=3.14,<4
+# Client gateway wire adapters (client_gateway/adapters/streams.py): compressed AI-app streams (br, zstd).
+brotli==1.2.0
+zstandard==0.25.0
+# Client gateway TLS front end (client_gateway/frontend/): mitmproxy run in-process, lab only in phase 3a.
+mitmproxy==12.2.3
+# Client gateway routing (client_gateway/routing/): the name-constrained local CA (a mitmproxy dependency,
+# imported directly since phase 3b).
+cryptography>=46,<48
+# Public root list added to the Windows roots for upstream TLS checks (client_gateway/routing/upstream.py;
+# a mitmproxy dependency, imported directly).
+certifi>=2025.1
+# Perf-analysis core (server timings, query plans, xmSQL, VPA), vendored in-repo.
+# Editable so a `git pull` updates it without a reinstall. Path is relative to the repo root.
+-e ./pbi-perf-core
+# Client gateway: screenshot redaction (client_gateway/images.py)
+# Primary OCR engine = Windows.Media.Ocr (built into Windows 10/11, no model download). Without it
+# every screenshot is withheld instead of redacted.
+winrt-runtime>=3.2,<4; sys_platform == "win32"
+winrt-Windows.Media.Ocr>=3.2,<4; sys_platform == "win32"
+winrt-Windows.Graphics.Imaging>=3.2,<4; sys_platform == "win32"
+winrt-Windows.Storage.Streams>=3.2,<4; sys_platform == "win32"
+winrt-Windows.Foundation>=3.2,<4; sys_platform == "win32"
+winrt-Windows.Foundation.Collections>=3.2,<4; sys_platform == "win32"
+winrt-Windows.Globalization>=3.2,<4; sys_platform == "win32"

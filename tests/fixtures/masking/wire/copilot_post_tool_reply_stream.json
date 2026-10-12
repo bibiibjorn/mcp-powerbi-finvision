@@ -1,0 +1,127 @@
+{
+ "name": "copilot_post_tool_reply_stream",
+ "note": "the post-tool reply of a claude model: three pseudonyms of the lab session split over delta.content events, role on every delta, usage on the finish event (display replay)",
+ "request": {
+  "method": "POST",
+  "host": "api.individual.githubcopilot.com",
+  "path": "/chat/completions",
+  "content_type": "application/json",
+  "body": {
+   "messages": [
+    {
+     "role": "system",
+     "content": "You are an expert AI programming assistant, working with a user in the VS Code editor.\nWhen asked for your name, you must respond with \"GitHub Copilot\". When asked about the model you are using, you m [trimmed]",
+     "copilot_cache_control": {
+      "type": "ephemeral"
+     }
+    },
+    {
+     "role": "user",
+     "content": "<environment_info>\nThe user's current OS is: Windows\n</environment_info>\n<workspace_info>\nThere is no workspace currently open.\n</workspace_info>",
+     "copilot_cache_control": {
+      "type": "ephemeral"
+     }
+    },
+    {
+     "role": "user",
+     "content": "<context>\nThe current date is October 7, 2026.\n</context>\n<reminderInstructions>\n[trimmed]\n</reminderInstructions>\n<userRequest>\nUse the lab_customer_revenue tool to list all customers and their revenue, as a table.\n</userRequest>",
+     "copilot_cache_control": {
+      "type": "ephemeral"
+     }
+    },
+    {
+     "role": "assistant",
+     "content": "",
+     "tool_calls": [
+      {
+       "id": "toolu_fake000005",
+       "function": {
+        "name": "mcp_masking-lab_lab_customer_revenue",
+        "arguments": "{}"
+       },
+       "type": "function"
+      }
+     ],
+     "reasoning_opaque": "ZmFrZS1vcGFxdWUtcmVhc29uaW5nLWJsb2I=",
+     "reasoning_text": "The user wants me to use the lab_customer_revenue tool to list all customers and their revenue as a table. Let me call the tool without specifying a customer parameter to get all customers.\n\nLooking at the tool definition:\n```\n\"mcp_masking-lab_lab_customer_revenue\": {\n  \"description\": \"Synthetic lab data: revenue per customer. Pass a customer name to get one customer, or no argument for all customers.\",\n  \"parameters\": {\n    \"properties\": {\n      \"customer\": {\n        \"type\": \"string\"\n      }\n    },\n    \"required\": []\n  }\n}\n```\n\nSo the customer parameter is optional. I should call it without the customer parameter to get all customers."
+    },
+    {
+     "role": "tool",
+     "content": "{\"_fv\":\"fvpbi-0123456789abcdef\",\"success\":true,\"rows\":[{\"Customer\":\"CUS_61729\",\"Revenue\":1200},{\"Customer\":\"CUS_64247\",\"Revenue\":800},{\"Customer\":\"CUS_43438\",\"Revenue\":450}]}",
+     "tool_call_id": "toolu_fake000005",
+     "copilot_cache_control": {
+      "type": "ephemeral"
+     }
+    }
+   ],
+   "model": "claude-haiku-4.5",
+   "temperature": 0,
+   "top_p": 1,
+   "max_tokens": 32000,
+   "tools": [
+    {
+     "function": {
+      "name": "mcp_masking-lab_lab_customer_revenue",
+      "description": "Synthetic lab data: revenue per customer. Pass a customer name to get one customer, or no argument for all customers.",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "customer": {
+         "type": "string"
+        }
+       }
+      }
+     },
+     "type": "function"
+    },
+    {
+     "function": {
+      "name": "create_directory",
+      "description": "Create a new directory structure in the workspace. Will recursively create all directories in the path, like mkdir -p. Y [trimmed]",
+      "parameters": {
+       "type": "object",
+       "properties": {
+        "dirPath": {
+         "type": "string",
+         "description": "The absolute path to the directory to create."
+        }
+       },
+       "required": [
+        "dirPath"
+       ]
+      }
+     },
+     "type": "function"
+    }
+   ],
+   "n": 1,
+   "stream": true,
+   "thinking_budget": 4000
+  }
+ },
+ "response": {
+  "status": 200,
+  "content_type": "text/event-stream",
+  "content_encoding": "",
+  "chunks": [
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":\"Here\",\"role\":\"assistant\"}}],\"created\":1791378015,\"id\":\"msg_fake000006\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":\"'s the customer\",\"role\":\"assistant\"}}],\"created\":1791378016,\"id\":\"msg_fake000006\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":\" revenue data:\",\"role\":\"assistant\"}}],\"created\":1791378016,\"id\":\"msg_fake000006\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":\"\\n\\n|\",\"role\":\"assistant\"}}],\"created\":1791378016,\"id\":\"msg_fake000006\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":\" Customer | Revenue |\",\"role\":\"assistant\"}}],\"created\":1791378016,\"id\":\"msg_fake000006\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":\"\\n|----------|\",\"role\":\"assistant\"}}],\"created\":1791378016,\"id\":\"msg_fake000006\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":\"---------|\\n|\",\"role\":\"assistant\"}}],\"created\":1791378016,\"id\":\"msg_fake000006\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":\" CUS_61\",\"role\":\"assistant\"}}],\"created\":1791378016,\"id\":\"msg_fake000006\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":\"729 | $\",\"role\":\"assistant\"}}],\"created\":1791378016,\"id\":\"msg_fake000006\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":\"1,200 \",\"role\":\"assistant\"}}],\"created\":1791378016,\"id\":\"msg_fake000006\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":\"|\\n| C\",\"role\":\"assistant\"}}],\"created\":1791378016,\"id\":\"msg_fake000006\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":\"US_64247\",\"role\":\"assistant\"}}],\"created\":1791378016,\"id\":\"msg_fake000006\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":\" | $800\",\"role\":\"assistant\"}}],\"created\":1791378016,\"id\":\"msg_fake000006\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":\" |\\n|\",\"role\":\"assistant\"}}],\"created\":1791378016,\"id\":\"msg_fake000006\",\"model\":\"claude-haiku-4.5\"}\n\ndata: {\"choices\":[{\"index\":0,\"delta\":{\"content\":\" CUS_43\",\"role\":\"assistant\"}}],\"created\":1791378016,\"id\":\"msg_fake000006\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":\"438 | $\",\"role\":\"assistant\"}}],\"created\":1791378016,\"id\":\"msg_fake000006\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"index\":0,\"delta\":{\"content\":\"450 |\",\"role\":\"assistant\"}}],\"created\":1791378016,\"id\":\"msg_fake000006\",\"model\":\"claude-haiku-4.5\"}\n\n",
+   "data: {\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"delta\":{\"content\":null}}],\"created\":1791378016,\"id\":\"msg_fake000006\",\"usage\":{\"completion_tokens\":63,\"prompt_tokens\":12342,\"prompt_tokens_details\":{\"cached_tokens\":12036},\"total_tokens\":12405},\"model\":\"claude-haiku-4.5\",\"copilot_usage\":{\"token_details\":[{\"batch_size\":1000000,\"cost_per_batch\":100000000000,\"model\":\"claude-haiku-4.5\",\"token_count\":5,\"token_type\":\"input\"},{\"batch_size\":1000000,\"cost_per_batch\":10000000000,\"model\":\"claude-haiku-4.5\",\"token_count\":12036,\"token_type\":\"cache_read\"},{\"batch_size\":1000000,\"cost_per_batch\":125000000000,\"model\":\"claude-haiku-4.5\",\"token_count\":301,\"token_type\":\"cache_write\"},{\"batch_size\":1000000,\"cost_per_batch\":500000000000,\"model\":\"claude-haiku-4.5\",\"token_count\":63,\"token_type\":\"output\"}],\"total_nano_aiu\":189985000}}\n\n",
+   "data: [DONE]\n\n"
+  ]
+ }
+}

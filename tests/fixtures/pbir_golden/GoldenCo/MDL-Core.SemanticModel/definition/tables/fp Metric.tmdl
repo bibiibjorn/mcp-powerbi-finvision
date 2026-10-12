@@ -1,0 +1,49 @@
+/// Field parameter: swaps the metric on a visual (relatedColumnDetails / groupByColumn shape).
+table 'fp Metric'
+	lineageTag: 5a0c6f3e-0000-4000-8000-000000000006
+
+	/// Display column of the field parameter.
+	column 'fp Metric'
+		lineageTag: 5a0c6f3e-0000-4000-8000-000000000701
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'fp Metric Order'
+
+		relatedColumnDetails
+			groupByColumn: 'fp Metric Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'fp Metric Fields'
+		isHidden
+		lineageTag: 5a0c6f3e-0000-4000-8000-000000000702
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'fp Metric Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'fp Metric Order'
+		isHidden
+		formatString: 0
+		lineageTag: 5a0c6f3e-0000-4000-8000-000000000703
+		summarizeBy: none
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'fp Metric' = calculated
+		mode: import
+		source =
+				{
+				    ("Amount",      NAMEOF('Sales'[Total Amount]),   0),
+				    ("Net Δ Value", NAMEOF('m Metrics'[Net Δ Value]), 1)
+				}
+
+	annotation PBI_Id = 00000000000000000000000000000006

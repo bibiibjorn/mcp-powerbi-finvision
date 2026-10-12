@@ -1,0 +1,39 @@
+/// Calculation group with three items (precedence + ordinal column).
+table 'Time Calc'
+	lineageTag: 5a0c6f3e-0000-4000-8000-000000000005
+
+	calculationGroup
+		precedence: 10
+
+		calculationItem Current = SELECTEDMEASURE()
+
+		/// Year to date.
+		calculationItem YTD =
+				CALCULATE(
+				    SELECTEDMEASURE(),
+				    DATESYTD(Sales[Order Date])
+				)
+
+		calculationItem PY =
+				// prior year: shift the visible dates back one year
+				CALCULATE(SELECTEDMEASURE(), SAMEPERIODLASTYEAR(Sales[Order Date]))
+
+			formatStringDefinition = SELECTEDMEASUREFORMATSTRING()
+
+	column Name
+		dataType: string
+		lineageTag: 5a0c6f3e-0000-4000-8000-000000000601
+		summarizeBy: none
+		sourceColumn: Name
+		sortByColumn: Ordinal
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ordinal
+		dataType: int64
+		formatString: 0
+		lineageTag: 5a0c6f3e-0000-4000-8000-000000000602
+		summarizeBy: sum
+		sourceColumn: Ordinal
+
+		annotation SummarizationSetBy = Automatic

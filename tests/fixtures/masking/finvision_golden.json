@@ -1,0 +1,887 @@
+{
+ "config": {
+  "allow": [
+   "analysis services",
+   "anthropic",
+   "avg",
+   "aws",
+   "azure",
+   "azure devops",
+   "chatgpt",
+   "claude",
+   "claude code",
+   "claude desktop",
+   "copilot",
+   "dax",
+   "dax studio",
+   "deneb",
+   "edpb",
+   "exact online",
+   "excel",
+   "fabric",
+   "finticx",
+   "finvision",
+   "fod financiën",
+   "gdpr",
+   "github",
+   "gliner",
+   "google",
+   "hugging face",
+   "isabel",
+   "itaa",
+   "kbo",
+   "microsoft",
+   "microsoft fabric",
+   "odoo",
+   "onedrive",
+   "openai",
+   "outlook",
+   "performance analyzer",
+   "power bi",
+   "power bi desktop",
+   "power query",
+   "presidio",
+   "python",
+   "sap",
+   "sharepoint",
+   "silverfin",
+   "sql server",
+   "tabular editor",
+   "teams",
+   "vega",
+   "vertipaq",
+   "vs code",
+   "windows"
+  ],
+  "generic_prefixes_subset_ok": true,
+  "list_prefixes": [
+   "CUS",
+   "VEN",
+   "PER",
+   "ORG",
+   "ENT",
+   "PCC"
+  ],
+  "parsed_list": {
+   "ENT": [
+    "An Entity"
+   ],
+   "ORG": [
+    "FAM: Ignored",
+    "Plain Name",
+    "X: y"
+   ],
+   "PCC": [
+    "A Center"
+   ],
+   "VEN": [
+    "A Vendor"
+   ]
+  },
+  "part_prefixes_subset_ok": true,
+  "safe": [
+   [
+    "d_Period",
+    true
+   ],
+   [
+    "Fiscal Calendar",
+    true
+   ],
+   [
+    "s_Anything",
+    true
+   ],
+   [
+    "c_Helper",
+    true
+   ],
+   [
+    "Number Format",
+    true
+   ],
+   [
+    "Report Lines",
+    true
+   ],
+   [
+    "d_Customer",
+    false
+   ],
+   [
+    "d_Vendor Rates",
+    false
+   ],
+   [
+    "Stock Exchange",
+    false
+   ],
+   [
+    "d_Product",
+    false
+   ],
+   [
+    "Candidate",
+    false
+   ],
+   [
+    "Time Entries",
+    false
+   ]
+  ],
+  "safe_patterns": [
+   "^(?:(?:d|dim|dm|f|fact|h|t) )?(?:(?:period|periods|periode|date|dates|datum|calendar|kalender|time|year|years|month|months|quarter|quarters|week|weeks|day|days|fiscal|currency|currencies|valuta|fx|rate|rates|exchange|scenario|scenarios|version|versions|view|views|selector|selection|table|tables)(?: |$))+$",
+   "^(s_|s |sf_|sf |sfp_|c_|m_|fp_)",
+   "^(?:(?:d|dim|dm|f|fact|h|t) )?(?:(?:format|formats|formatting|scale|scales|decimal|decimals|number|numbers|display|unit|units)(?: |$))+$",
+   "^(?:(?:d|dim|dm|f|fact|h|t) )?(?:(?:report|line|lines|tag|map|mapping|dimension|kpi|kpis|setup|settings|config|configuration|layout)(?: |$))+$"
+  ]
+ },
+ "detect": {
+  "dimensions": {
+   "batches": [
+    [
+     "CUS",
+     false,
+     [
+      "Brambleton Fakeworks SA",
+      "Nonexistia Capital Partners",
+      "Quillfeather Logistics BV",
+      "Wobblesworth Trading NV",
+      "Zorblax Holdings NV"
+     ]
+    ],
+    [
+     "DIM",
+     true,
+     [
+      "12 Imaginary Lane Zorblaxville",
+      "7 Fake Street Nonexistia"
+     ]
+    ],
+    [
+     "VEN",
+     false,
+     [
+      "Dingleberry Packaging GmbH",
+      "Fizzlewick Components SA",
+      "Gloopmatic Industries NV",
+      "Plinkerton Supplies BV"
+     ]
+    ],
+    [
+     "PER",
+     false,
+     [
+      "+31 6 12345678",
+      "+32 470 12 34 56",
+      "Barnaby Mockingbird-Test",
+      "Marlowe Fakenstein",
+      "Ottoline Placeholderova",
+      "Quentin Testermans",
+      "Zephyrine Dummyfield"
+     ]
+    ],
+    [
+     "USR",
+     false,
+     [
+      "marlowe@fakenstein.example",
+      "quentin@zorblax.example"
+     ]
+    ],
+    [
+     "FAM",
+     false,
+     [
+      "Bogus Bankers Ltd",
+      "Quillfeather Family",
+      "Syntheticorp Europe NV",
+      "Zorblax Family"
+     ]
+    ],
+    [
+     "ACC",
+     false,
+     [
+      "BE63123456789123",
+      "BE68539007547034"
+     ]
+    ],
+    [
+     "CLI",
+     false,
+     [
+      "00012345625",
+      "00065432141",
+      "0012345625",
+      "0065432141",
+      "Plinky Counterparty Co",
+      "Wobbly Counterparty Co"
+     ]
+    ],
+    [
+     "GLA",
+     false,
+     [
+      "Dummy savings account",
+      "Testbank current account"
+     ]
+    ],
+    [
+     "PCC",
+     false,
+     [
+      "Mock Pilot Hub",
+      "Testpilot Family Office"
+     ]
+    ],
+    [
+     "DIM",
+     false,
+     [
+      "Annual widget invoice",
+      "Flarbnox Premium Widget",
+      "Glimmerstone Basic Widget",
+      "Quarterly gizmo invoice"
+     ]
+    ]
+   ],
+   "counts": {
+    "columns": 20,
+    "masked_columns": 15,
+    "not_ready_columns": 0,
+    "probe_errors": 0,
+    "queries": 26,
+    "ready": 1,
+    "sampled_columns": 0,
+    "skipped_large": 0,
+    "values": 40
+   },
+   "decisions": [
+    [
+     "d_Customer",
+     "Customer Name",
+     true,
+     [
+      "party-column-name"
+     ],
+     "CUS",
+     5
+    ],
+    [
+     "d_Customer",
+     "Address",
+     true,
+     [
+      "dimension",
+      "party-table"
+     ],
+     "DIM",
+     2
+    ],
+    [
+     "d_Vendor",
+     "Vendor",
+     true,
+     [
+      "party-column-name"
+     ],
+     "VEN",
+     4
+    ],
+    [
+     "d_Person",
+     "Full Name",
+     true,
+     [
+      "party-table-name"
+     ],
+     "PER",
+     5
+    ],
+    [
+     "d_Person",
+     "E-mail",
+     true,
+     [
+      "shape",
+      "party-column-name"
+     ],
+     "USR",
+     2
+    ],
+    [
+     "d_Person",
+     "Mobile",
+     true,
+     [
+      "shape"
+     ],
+     "PER",
+     2
+    ],
+    [
+     "d_Family",
+     "Family Name",
+     true,
+     [
+      "party-column-name"
+     ],
+     "FAM",
+     2
+    ],
+    [
+     "d_Entity",
+     "Entity Name",
+     true,
+     [
+      "party-column-name"
+     ],
+     "FAM",
+     2
+    ],
+    [
+     "d_Bank",
+     "IBAN",
+     true,
+     [
+      "shape",
+      "party-column-name"
+     ],
+     "ACC",
+     2
+    ],
+    [
+     "d_Contact",
+     "National Number",
+     true,
+     [
+      "name-hint",
+      "checksum-shape"
+     ],
+     "CLI",
+     4
+    ],
+    [
+     "d_Counterparty",
+     "Name",
+     true,
+     [
+      "party-table-name"
+     ],
+     "CLI",
+     2
+    ],
+    [
+     "d_Account",
+     "Account Name",
+     true,
+     [
+      "dimension"
+     ],
+     "GLA",
+     2
+    ],
+    [
+     "d_Profit Center",
+     "Profit Center Name",
+     true,
+     [
+      "dimension"
+     ],
+     "PCC",
+     2
+    ],
+    [
+     "d_Product",
+     "Product Name",
+     true,
+     [
+      "dimension"
+     ],
+     "DIM",
+     2
+    ],
+    [
+     "f_Sales",
+     "Memo",
+     true,
+     [
+      "dimension"
+     ],
+     "DIM",
+     2
+    ]
+   ]
+  },
+  "identity": {
+   "batches": [
+    [
+     "CUS",
+     false,
+     [
+      "Brambleton Fakeworks SA",
+      "Nonexistia Capital Partners",
+      "Quillfeather Logistics BV",
+      "Wobblesworth Trading NV",
+      "Zorblax Holdings NV"
+     ]
+    ],
+    [
+     "VEN",
+     false,
+     [
+      "Dingleberry Packaging GmbH",
+      "Fizzlewick Components SA",
+      "Gloopmatic Industries NV",
+      "Plinkerton Supplies BV"
+     ]
+    ],
+    [
+     "PER",
+     false,
+     [
+      "+31 6 12345678",
+      "+32 470 12 34 56",
+      "Barnaby Mockingbird-Test",
+      "Marlowe Fakenstein",
+      "Ottoline Placeholderova",
+      "Quentin Testermans",
+      "Zephyrine Dummyfield"
+     ]
+    ],
+    [
+     "USR",
+     false,
+     [
+      "marlowe@fakenstein.example",
+      "quentin@zorblax.example"
+     ]
+    ],
+    [
+     "FAM",
+     false,
+     [
+      "Bogus Bankers Ltd",
+      "Quillfeather Family",
+      "Syntheticorp Europe NV",
+      "Zorblax Family"
+     ]
+    ],
+    [
+     "ACC",
+     false,
+     [
+      "BE63123456789123",
+      "BE68539007547034"
+     ]
+    ],
+    [
+     "CLI",
+     false,
+     [
+      "00012345625",
+      "00065432141",
+      "0012345625",
+      "0065432141",
+      "Plinky Counterparty Co",
+      "Wobbly Counterparty Co"
+     ]
+    ]
+   ],
+   "counts": {
+    "columns": 20,
+    "masked_columns": 10,
+    "not_ready_columns": 0,
+    "probe_errors": 0,
+    "queries": 26,
+    "ready": 1,
+    "sampled_columns": 0,
+    "skipped_large": 0,
+    "values": 30
+   },
+   "decisions": [
+    [
+     "d_Customer",
+     "Customer Name",
+     true,
+     [
+      "party-column-name"
+     ],
+     "CUS",
+     5
+    ],
+    [
+     "d_Vendor",
+     "Vendor",
+     true,
+     [
+      "party-column-name"
+     ],
+     "VEN",
+     4
+    ],
+    [
+     "d_Person",
+     "Full Name",
+     true,
+     [
+      "party-table-name"
+     ],
+     "PER",
+     5
+    ],
+    [
+     "d_Person",
+     "E-mail",
+     true,
+     [
+      "shape",
+      "party-column-name"
+     ],
+     "USR",
+     2
+    ],
+    [
+     "d_Person",
+     "Mobile",
+     true,
+     [
+      "shape"
+     ],
+     "PER",
+     2
+    ],
+    [
+     "d_Family",
+     "Family Name",
+     true,
+     [
+      "party-column-name"
+     ],
+     "FAM",
+     2
+    ],
+    [
+     "d_Entity",
+     "Entity Name",
+     true,
+     [
+      "party-column-name"
+     ],
+     "FAM",
+     2
+    ],
+    [
+     "d_Bank",
+     "IBAN",
+     true,
+     [
+      "shape",
+      "party-column-name"
+     ],
+     "ACC",
+     2
+    ],
+    [
+     "d_Contact",
+     "National Number",
+     true,
+     [
+      "name-hint",
+      "checksum-shape"
+     ],
+     "CLI",
+     4
+    ],
+    [
+     "d_Counterparty",
+     "Name",
+     true,
+     [
+      "party-table-name"
+     ],
+     "CLI",
+     2
+    ]
+   ]
+  }
+ },
+ "engine": {
+  "count": 15,
+  "masked": "CUS_27269 paid VEN_54960; ask PER_11185 (PER_98755), see ENT_42331, PCC_38297, the FAM_93409, CLI_97682, a DIM_28396, Insurance cost, GLA_78375. Mail USR_99402, ACC_63599, CLI_53591, CLI_46188, CLI_89856.",
+  "restored_ok": true
+ },
+ "prefixes": {
+  "dimension": [
+   [
+    "d_Customer",
+    "Name",
+    "DIM"
+   ],
+   [
+    "d_Family",
+    "Family Name",
+    "DIM"
+   ],
+   [
+    "d_Entity",
+    "Entity Label",
+    "ENT"
+   ],
+   [
+    "d_Contact",
+    "Contact Name",
+    "DIM"
+   ],
+   [
+    "d_Counterparty",
+    "Name",
+    "DIM"
+   ],
+   [
+    "d_Vendor",
+    "Supplier Code",
+    "DIM"
+   ],
+   [
+    "d_Company",
+    "Firma",
+    "ENT"
+   ],
+   [
+    "d_Employee",
+    "Voornaam",
+    "DIM"
+   ],
+   [
+    "d_User",
+    "UserPrincipalName",
+    "DIM"
+   ],
+   [
+    "d_Bank",
+    "Bankrekening IBAN",
+    "DIM"
+   ],
+   [
+    "d_Account",
+    "Account Name",
+    "GLA"
+   ],
+   [
+    "d_Profit Center",
+    "Profit Center Name",
+    "PCC"
+   ],
+   [
+    "d_CostCenter",
+    "Cost Center",
+    "PCC"
+   ],
+   [
+    "s_Enterprise_Period",
+    "Month Year",
+    "DIM"
+   ],
+   [
+    "d_Enterprise",
+    "Name",
+    "ENT"
+   ],
+   [
+    "d_Ledger",
+    "GL Account",
+    "GLA"
+   ],
+   [
+    "d_Product",
+    "Product Name",
+    "DIM"
+   ],
+   [
+    "d_Debiteur",
+    "Debiteur Nummer",
+    "DIM"
+   ],
+   [
+    "d_Klant",
+    "Klantnaam",
+    "DIM"
+   ],
+   [
+    "d_Party",
+    "Label",
+    "DIM"
+   ]
+  ],
+  "names": [
+   [
+    "d_Customer",
+    "Name",
+    "CUS"
+   ],
+   [
+    "d_Family",
+    "Family Name",
+    "FAM"
+   ],
+   [
+    "d_Entity",
+    "Entity Label",
+    "FAM"
+   ],
+   [
+    "d_Contact",
+    "Contact Name",
+    "PER"
+   ],
+   [
+    "d_Counterparty",
+    "Name",
+    "CLI"
+   ],
+   [
+    "d_Vendor",
+    "Supplier Code",
+    "VEN"
+   ],
+   [
+    "d_Company",
+    "Firma",
+    "ORG"
+   ],
+   [
+    "d_Employee",
+    "Voornaam",
+    "PER"
+   ],
+   [
+    "d_User",
+    "UserPrincipalName",
+    "USR"
+   ],
+   [
+    "d_Bank",
+    "Bankrekening IBAN",
+    "ACC"
+   ],
+   [
+    "d_Account",
+    "Account Name",
+    "CLI"
+   ],
+   [
+    "d_Profit Center",
+    "Profit Center Name",
+    "CLI"
+   ],
+   [
+    "d_CostCenter",
+    "Cost Center",
+    "CLI"
+   ],
+   [
+    "s_Enterprise_Period",
+    "Month Year",
+    "ORG"
+   ],
+   [
+    "d_Enterprise",
+    "Name",
+    "ORG"
+   ],
+   [
+    "d_Ledger",
+    "GL Account",
+    "CLI"
+   ],
+   [
+    "d_Product",
+    "Product Name",
+    "CLI"
+   ],
+   [
+    "d_Debiteur",
+    "Debiteur Nummer",
+    "CUS"
+   ],
+   [
+    "d_Klant",
+    "Klantnaam",
+    "CUS"
+   ],
+   [
+    "d_Party",
+    "Label",
+    "CLI"
+   ]
+  ]
+ },
+ "shapes": [
+  [
+   "mail quentin@zorblax.example now",
+   [
+    [
+     5,
+     28,
+     "USR"
+    ]
+   ]
+  ],
+  [
+   "iban BE68539007547034 paid",
+   [
+    [
+     5,
+     21,
+     "ACC"
+    ]
+   ]
+  ],
+  [
+   "nrn 00012345625 and 00.01.23-456.25",
+   [
+    [
+     4,
+     15,
+     "CLI"
+    ],
+    [
+     20,
+     35,
+     "CLI"
+    ]
+   ]
+  ],
+  [
+   "kbo be 0012.345.625 registered",
+   [
+    [
+     4,
+     19,
+     "CLI"
+    ]
+   ]
+  ],
+  [
+   "call +32 470 12 34 56 or +31 6 12345678",
+   [
+    [
+     5,
+     21,
+     "CLI"
+    ],
+    [
+     25,
+     39,
+     "CLI"
+    ]
+   ]
+  ],
+  [
+   "not shapes: 12345678901 and 0123.456.789 and a@b",
+   []
+  ]
+ ]
+}

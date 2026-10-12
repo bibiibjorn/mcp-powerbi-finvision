@@ -1,0 +1,78 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+# IMPORTANT: venv/ is included in the package (not excluded)
+# Comment out the line below to include venv in the package
+# venv/
+env/
+ENV/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Git
+.git/
+.gitignore
+.gitattributes
+.github/
+
+# Claude Code
+.claude/
+
+# Logs and exports (generated at runtime)
+logs/
+*.log
+exports/
+
+# Tests
+tests/
+test_*.py
+*_test.py
+
+# Development scripts (not needed in production)
+scripts/
+
+# Development tools (tools/bridge_lib.mjs is a runtime helper of 17_Desktop_Bridge include_model=true)
+tools/*
+!tools/bridge_lib.mjs
+
+# MSBuild intermediates / symbols of the C# trace runner
+core/infrastructure/dax_executor/obj/
+*.pdb
+
+# Build artifacts
+*.egg-info/
+dist/
+build/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+
+# Development and unnecessary files
+claude-goblin/
+INSTALLATION_GUIDE.md
+.github/
+.vscode/
+setup.ps1
+pyproject.toml
+
+# Previous packages and backups
+# *.mcpb (commented out - we create the package in dist/ folder)
+manifest.json.backup
+dist/

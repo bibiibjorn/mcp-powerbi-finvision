@@ -1,0 +1,638 @@
+{
+  "name": "Power BI Best Practices - Comprehensive Rules",
+  "description": "Complete set of best practice rules for Power BI models based on Microsoft official guidelines, Tabular Editor BPA, and community standards",
+  "version": "3.0",
+  "author": "Based on Microsoft, Tabular Editor, and Power BI community standards",
+  "rules": [
+    {
+      "ID": "AVOID_BIDIRECTIONAL_RELATIONSHIPS",
+      "Name": "Avoid bi-directional relationships",
+      "Category": "Performance",
+      "Description": "Bi-directional cross-filtering can create ambiguous query paths and significantly impact performance. Use single-direction relationships whenever possible.",
+      "Severity": 2,
+      "Scope": "Relationship",
+      "Expression": "CrossFilteringBehavior == \"BothDirections\"",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "AVOID_MANY_TO_MANY",
+      "Name": "Avoid many-to-many relationships",
+      "Category": "Performance",
+      "Description": "Many-to-many relationships can cause severe performance issues and unexpected results. Use bridge tables with two one-to-many relationships instead.",
+      "Severity": 3,
+      "Scope": "Relationship",
+      "Expression": "FromCardinality == \"Many\" and ToCardinality == \"Many\"",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "REMOVE_UNUSED_COLUMNS",
+      "Name": "Remove unreferenced hidden columns",
+      "Category": "Maintenance",
+      "Description": "Hidden column that no DAX expression, relationship, sort-by or hierarchy uses. Report (visual) usage is not visible to BPA: confirm with 05_Column_Usage_Mapping get_unused_columns_pbip before deleting.",
+      "Severity": 1,
+      "Scope": "DataColumn, CalculatedColumn",
+      "Expression": "(IsHidden or Table.IsHidden) and ReferencedBy.Count == 0 and not UsedInRelationships.Any() and not UsedInSortBy.Any() and not UsedInHierarchies.Any() and not (Table.Measures.Count() > 0 and Table.Columns.Count() == 1)",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "REMOVE_UNUSED_MEASURES",
+      "Name": "Remove unreferenced hidden measures",
+      "Category": "Maintenance",
+      "Description": "Hidden measure that no other DAX expression references. Report (visual) usage is not visible to BPA: confirm with 07_Report_Operations measure_usage before deleting.",
+      "Severity": 1,
+      "Scope": "Measure",
+      "Expression": "(IsHidden or Table.IsHidden) and ReferencedBy.Count == 0 and not Name.ToUpper().Contains(\"TEST\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "USE_DIVIDE_FUNCTION",
+      "Name": "Use DIVIDE function instead of division operator",
+      "Category": "DAX Expressions",
+      "Description": "Division with / by a column or measure: use DIVIDE (BLANK-safe). Exempt: a constant denominator, a denominator pre-filtered to non-zero inside an iterator, and DirectQuery-only measures (decided by the shared DAX analyzer, rule CORR_DIVISION_WITHOUT_DIVIDE).",
+      "Severity": 2,
+      "Scope": "Measure",
+      "Expression": "DaxLint.Fires(Expression, \"low\", \"CORR_DIVISION_WITHOUT_DIVIDE\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "AVOID_EXCESSIVE_CALCULATE",
+      "Name": "Avoid excessive use of CALCULATE",
+      "Category": "DAX Expressions",
+      "Description": "Multiple nested CALCULATE functions can be simplified for better readability and may impact performance. Consider restructuring the measure.",
+      "Severity": 1,
+      "Scope": "Measure",
+      "Expression": "DaxLint.CountFunction(Expression, \"CALCULATE\") > 3",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "AVOID_SUMX_FILTER",
+      "Name": "Avoid SUMX(FILTER(...)) pattern",
+      "Category": "Performance",
+      "Description": "SUMX(FILTER(...)) is inefficient. Use CALCULATE with filter arguments instead for significantly better performance.",
+      "Severity": 2,
+      "Scope": "Measure",
+      "Expression": "RegEx.IsMatch(Expression, \"SUMX\\s*\\(\\s*FILTER\", \"(?i)\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "AVOID_AVERAGEX_FILTER",
+      "Name": "Avoid AVERAGEX(FILTER(...)) pattern",
+      "Category": "Performance",
+      "Description": "AVERAGEX(FILTER(...)) is inefficient. Use CALCULATE with filter arguments instead.",
+      "Severity": 2,
+      "Scope": "Measure",
+      "Expression": "RegEx.IsMatch(Expression, \"AVERAGEX\\s*\\(\\s*FILTER\", \"(?i)\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "SET_IS_AVAILABLE_IN_MDX_FALSE",
+      "Name": "Set IsAvailableInMdx to false on non-attribute columns",
+      "Category": "Metadata",
+      "Description": "Hidden column not used for sorting, hierarchies or variations: set IsAvailableInMDX = false to skip building its attribute hierarchy.",
+      "Severity": 1,
+      "Scope": "DataColumn, CalculatedColumn",
+      "Expression": "IsAvailableInMDX and (IsHidden or Table.IsHidden) and not UsedInSortBy.Any() and not UsedInHierarchies.Any() and not UsedInVariations.Any() and SortByColumn == null",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "PROVIDE_FORMAT_STRING",
+      "Name": "Provide format string for measures",
+      "Category": "Formatting",
+      "Description": "All measures should have a format string defined for consistent display across all visuals and reports.",
+      "Severity": 1,
+      "Scope": "Measure",
+      "Expression": "not IsHidden and not Table.IsHidden and string.IsNullOrWhiteSpace(FormatString) and string.IsNullOrWhiteSpace(FormatStringExpression)",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "ADD_MEASURE_DESCRIPTIONS",
+      "Name": "Add descriptions to measures",
+      "Category": "Maintenance",
+      "Description": "Measures should have descriptions to help report creators and users understand their purpose and calculation logic.",
+      "Severity": 1,
+      "Scope": "Measure",
+      "Expression": "not IsHidden and not Table.IsHidden and string.IsNullOrWhiteSpace(Description) and not Name.ToUpper().Contains(\"TEST\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "HIDE_FOREIGN_KEYS",
+      "Name": "Hide foreign key columns",
+      "Category": "Metadata",
+      "Description": "Foreign key columns used only in relationships should be hidden from report view to reduce clutter.",
+      "Severity": 1,
+      "Scope": "DataColumn, CalculatedColumn",
+      "Expression": "not IsHidden and UsedInRelationships.Any(FromColumn.Name == current.Name and FromTable.Name == current.Table.Name and FromCardinality == \"Many\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "MARK_DATE_TABLE",
+      "Name": "Mark date tables as date tables",
+      "Category": "Time Intelligence",
+      "Description": "A date / calendar table should be marked as a date table (or carry a Calendar object, which needs no marked classic date table) so time intelligence works.",
+      "Severity": 2,
+      "Scope": "Table, CalculatedTable",
+      "Expression": "DataCategory <> \"Time\" and Calendars.Count == 0 and RegEx.IsMatch(Name, \"^(Dim[ _]?)?(Date|Calendar)s?$|^(Date|Calendar)[ _]?Dim$\", \"(?i)\") and Columns.Any(DataType == \"DateTime\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "AVOID_CALCULATED_COLUMNS_IN_RELATIONSHIPS",
+      "Name": "Avoid using calculated columns in relationships",
+      "Category": "Performance",
+      "Description": "Calculated columns in relationships can cause severe performance issues during refresh. Use source data columns or M transformations instead.",
+      "Severity": 2,
+      "Scope": "CalculatedColumn",
+      "Expression": "UsedInRelationships.Any()",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "REDUCE_HIGH_CARDINALITY",
+      "Name": "Hide high cardinality columns",
+      "Category": "Performance",
+      "Description": "Visible column with more than 1M distinct values (requires Vertipaq_Cardinality annotations - run 06 full with include_vertipaq=true).",
+      "Severity": 1,
+      "Scope": "DataColumn",
+      "Expression": "not IsHidden and GetAnnotation(\"Vertipaq_Cardinality\") <> null and Convert.ToInt64(GetAnnotation(\"Vertipaq_Cardinality\")) > 1000000",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "USE_VAR_FOR_COMPLEX_EXPRESSIONS",
+      "Name": "Use variables (VAR) for complex expressions",
+      "Category": "DAX Expressions",
+      "Description": "Complex measures should use VAR for better readability, easier debugging, and potentially better performance through query plan optimization.",
+      "Severity": 1,
+      "Scope": "Measure",
+      "Expression": "not RegEx.IsMatch(Expression, \"\\bVAR\\b\", \"(?i)\") and (Expression.Length > 300 or RegEx.Matches(Expression, \"\\(\").Count > 5)",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "AVOID_FLOAT_FOR_FINANCIALS",
+      "Name": "Avoid Float/Double for financial calculations",
+      "Category": "Data Types",
+      "Description": "Float (Double) data type can cause precision issues in financial calculations. Use Decimal (Currency) or Fixed Decimal type instead.",
+      "Severity": 2,
+      "Scope": "DataColumn",
+      "Expression": "DataType == \"Double\" and RegEx.IsMatch(Name, \"(Amount|Price|Cost|Revenue|Profit|Balance|Payment|Invoice)\", \"(?i)\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "NO_EMPTY_PARTITIONS",
+      "Name": "Remove empty partitions",
+      "Category": "Maintenance",
+      "Description": "Tables should not have empty partitions as they serve no purpose and can cause confusion during development.",
+      "Severity": 2,
+      "Scope": "Partition",
+      "Expression": "(SourceType.ToString() == \"M\" or SourceType.ToString() == \"Query\") and string.IsNullOrWhiteSpace(Query)",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "SET_DATA_CATEGORY_GEO",
+      "Name": "Set data category for geographic columns",
+      "Category": "Metadata",
+      "Description": "Geographic columns should have appropriate data categories set (City, Country, Continent, etc.) to enable map visuals and geocoding.",
+      "Severity": 1,
+      "Scope": "DataColumn",
+      "Expression": "string.IsNullOrWhiteSpace(DataCategory) and RegEx.IsMatch(Name, \"(City|Country|State|Region|Continent|Latitude|Longitude|PostalCode|Zip)\", \"(?i)\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "ORGANIZE_DISPLAY_FOLDERS",
+      "Name": "Organize measures in display folders",
+      "Category": "Metadata",
+      "Description": "Measures should be organized in display folders for better discoverability. Tables with more than 10 measures should use folder organization.",
+      "Severity": 1,
+      "Scope": "Measure",
+      "Expression": "string.IsNullOrWhiteSpace(DisplayFolder) and Table.Measures.Count > 10",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "AVOID_UNNECESSARY_ITERATORS",
+      "Name": "Avoid unnecessary iterator functions",
+      "Category": "Performance",
+      "Description": "SUMX/AVERAGEX/MINX/MAXX(Table, Table[Col]) over the column's own table is the plain aggregate (same query plan): readability only. A measure iteration such as SUMX(Customer, [Sales]) is NOT replaceable by SUM.",
+      "Severity": 1,
+      "Scope": "Measure",
+      "Expression": "DaxLint.Fires(Expression, \"info\", \"PY_UNNECESSARY_ITERATOR\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "NO_CALCULATE_OR_CALCULATETABLE",
+      "Name": "Iterator over a whole table with a measure / CALCULATE per row",
+      "Category": "Performance",
+      "Description": "SUMX/AVERAGEX/... over a whole table that evaluates a measure or CALCULATE per row filters every column of the expanded table per row. Iterate the key (SUMX(VALUES(T[Key]), ...)) - which is not flagged (shared DAX analyzer, rule PERF_EXPANDED_TABLE_ITERATOR).",
+      "Severity": 2,
+      "Scope": "Measure",
+      "Expression": "DaxLint.Fires(Expression, \"low\", \"PERF_EXPANDED_TABLE_ITERATOR\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "AVOID_COUNTROWS_FILTER_ALL",
+      "Name": "Use COUNTROWS instead of COUNTROWS(FILTER(ALL(...)))",
+      "Category": "Performance",
+      "Description": "COUNTROWS(FILTER(ALL(...))) is inefficient. Use CALCULATE(COUNTROWS(...), ALL(...)) for better performance.",
+      "Severity": 2,
+      "Scope": "Measure",
+      "Expression": "RegEx.IsMatch(Expression, \"COUNTROWS\\s*\\(\\s*FILTER\\s*\\(\\s*ALL\", \"(?i)\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "PROVIDE_SORT_BY_COLUMN",
+      "Name": "Set Sort By Column for month names",
+      "Category": "Metadata",
+      "Description": "Month name columns should have Sort By Column set to month number for correct chronological sorting in visuals.",
+      "Severity": 2,
+      "Scope": "DataColumn",
+      "Expression": "string.IsNullOrWhiteSpace(SortByColumn) and RegEx.IsMatch(Name, \"(Month.*Name|MonthName|Month)\", \"(?i)\") and DataType == \"String\"",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "AVOID_IFERROR_ISERROR",
+      "Name": "Avoid using IFERROR and ISERROR",
+      "Category": "DAX Expressions",
+      "Description": "IFERROR / ISERROR force step-by-step evaluation (Import models). In DirectQuery they fold to SQL and DIVIDE does not, so the advice is not applied there; IFERROR around XIRR/XNPV is unavoidable (shared DAX analyzer decides).",
+      "Severity": 2,
+      "Scope": "Measure",
+      "Expression": "DaxLint.Fires(Expression, \"low\", \"CORR_IFERROR_USAGE\", \"CORR_ISERROR_USAGE\", \"CB002\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "REDUCE_CALCULATED_COLUMNS",
+      "Name": "Model has many calculated columns",
+      "Category": "Performance",
+      "Description": "More than 10 calculated columns in the model. Calculated columns are computed at refresh and compress worse than source columns; move the logic to Power Query or the source.",
+      "Severity": 1,
+      "Scope": "Model",
+      "Expression": "AllColumns.Where(Type.ToString() == \"Calculated\").Count() > 10",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "AVOID_CALCULATED_COLUMNS_AGGREGATIONS",
+      "Name": "Don't use aggregation functions in calculated columns",
+      "Category": "Performance",
+      "Description": "A calculated column that aggregates evaluates the aggregation over the whole table unless it is wrapped in CALCULATE (context transition). Heuristic: review whether the column should be a measure.",
+      "Severity": 2,
+      "Scope": "CalculatedColumn",
+      "Expression": "DaxLint.HasFunction(Expression, \"SUM\", \"AVERAGE\", \"MIN\", \"MAX\", \"COUNT\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "NO_CALENDAR_AUTO",
+      "Name": "Disable Auto Date/Time",
+      "Category": "Performance",
+      "Description": "Auto Date/Time creates hidden date tables for every date column, significantly increasing model size. Use explicit date tables instead.",
+      "Severity": 2,
+      "Scope": "Model",
+      "Expression": "Model.Tables.Any(IsHidden and Name.StartsWith(\"LocalDateTable_\"))",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "SET_SUMMARIZE_BY_NONE",
+      "Name": "Set Summarize By to None for non-numeric columns",
+      "Category": "Metadata",
+      "Description": "Text and boolean columns should have Summarize By set to None to prevent accidental aggregation in visuals.",
+      "Severity": 1,
+      "Scope": "DataColumn",
+      "Expression": "DataType == \"String\" and SummarizeBy <> \"None\" and SummarizeBy <> \"Default\"",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "AVOID_WHITESPACE_IN_NAMES",
+      "Name": "Avoid leading/trailing whitespace in names",
+      "Category": "Maintenance",
+      "Description": "Leading or trailing whitespace in object names can cause issues and confusion. Trim all names.",
+      "Severity": 2,
+      "Scope": "Table, DataColumn, CalculatedColumn, Measure",
+      "Expression": "Name <> Name.Trim()",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "AVOID_DUPLICATE_MEASURE_NAMES",
+      "Name": "Avoid duplicate measure names across tables",
+      "Category": "Maintenance",
+      "Description": "Measures with the same name in different tables can cause confusion and DAX errors. Use unique names or prefixes.",
+      "Severity": 2,
+      "Scope": "Measure",
+      "Expression": "Model.AllMeasures.Where(Name == current.Name).Count > 1",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "NO_LEGACY_RELATIONSHIPS",
+      "Name": "Inactive relationship never activated by USERELATIONSHIP",
+      "Category": "Maintenance",
+      "Description": "Inactive relationship that no measure or calculation item activates with USERELATIONSHIP - it is dead weight or a mistake.",
+      "Severity": 1,
+      "Scope": "Relationship",
+      "Expression": "IsActive == false and not Model.AllMeasures.Any(RegEx.IsMatch(Expression, \"(?i)USERELATIONSHIP\\s*\\([^)]*'?\" + RegEx.Escape(current.FromTable.Name) + \"'?\\s*\\[\" + RegEx.Escape(current.FromColumn.Name) + \"\\]\")) and not Model.AllCalculationItems.Any(RegEx.IsMatch(Expression, \"(?i)USERELATIONSHIP\\s*\\([^)]*'?\" + RegEx.Escape(current.FromTable.Name) + \"'?\\s*\\[\" + RegEx.Escape(current.FromColumn.Name) + \"\\]\"))",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "PROVIDE_COLUMN_DESCRIPTIONS",
+      "Name": "Provide descriptions for complex calculated columns",
+      "Category": "Maintenance",
+      "Description": "Calculated columns with complex expressions should have descriptions explaining their purpose and logic.",
+      "Severity": 1,
+      "Scope": "CalculatedColumn",
+      "Expression": "string.IsNullOrWhiteSpace(Description) and Expression.Length > 100",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "AVOID_ISBLANK_WITH_LOGICAL",
+      "Name": "Avoid ISBLANK with && or ||",
+      "Category": "DAX Expressions",
+      "Description": "Using ISBLANK with logical operators can be simplified. Use COALESCE or handle BLANK directly for better performance.",
+      "Severity": 1,
+      "Scope": "Measure",
+      "Expression": "RegEx.IsMatch(Expression, \"ISBLANK\\s*\\([^)]+\\)\\s*(&&|\\|\\|)\", \"(?i)\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "AVOID_NESTED_FILTERS",
+      "Name": "Avoid nested FILTER functions",
+      "Category": "Performance",
+      "Description": "Nested FILTER functions create Cartesian products and severely impact performance. Combine filter conditions with && or use CALCULATE with multiple filters.",
+      "Severity": 2,
+      "Scope": "Measure",
+      "Expression": "RegEx.IsMatch(Expression, \"FILTER\\s*\\(\\s*FILTER\", \"(?i)\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "PROVIDE_PERSPECTIVE",
+      "Name": "Use perspectives for complex models",
+      "Category": "Metadata",
+      "Description": "Complex models with many objects should use perspectives to organize objects for different user roles or use cases.",
+      "Severity": 1,
+      "Scope": "Model",
+      "Expression": "Model.Tables.Count > 20 and Model.Perspectives.Count == 0",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "AVOID_ALL_SELECTEDVALUE",
+      "Name": "Don't use ALL with SELECTEDVALUE",
+      "Category": "DAX Expressions",
+      "Description": "Using ALL() with SELECTEDVALUE is redundant. SELECTEDVALUE already handles filter context.",
+      "Severity": 1,
+      "Scope": "Measure",
+      "Expression": "RegEx.IsMatch(Expression, \"SELECTEDVALUE\\s*\\(\\s*ALL\\s*\\(\", \"(?i)\")",
+      "CompatibilityLevel": 1400
+    },
+    {
+      "ID": "USE_ALLSELECTED_CAREFULLY",
+      "Name": "Be careful with ALLSELECTED",
+      "Category": "DAX Expressions",
+      "Description": "ALLSELECTED behavior depends on where filters are applied (visual, page, report). Document its usage and test thoroughly.",
+      "Severity": 1,
+      "Scope": "Measure",
+      "Expression": "RegEx.IsMatch(Expression, \"ALLSELECTED\", \"(?i)\") and string.IsNullOrWhiteSpace(Description)",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "AVOID_ISEMPTY",
+      "Name": "Use ISBLANK instead of ISEMPTY",
+      "Category": "DAX Expressions",
+      "Description": "For scalar values, ISBLANK is more efficient than ISEMPTY. Reserve ISEMPTY for table expressions only.",
+      "Severity": 1,
+      "Scope": "Measure",
+      "Expression": "RegEx.IsMatch(Expression, \"ISEMPTY\\s*\\(\\s*\\[\", \"(?i)\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "SET_DEFAULT_SUMMARIZATION",
+      "Name": "Set appropriate default summarization",
+      "Category": "Metadata",
+      "Description": "Numeric columns should have appropriate default summarization (Sum, Average, None) set based on their semantic meaning.",
+      "Severity": 1,
+      "Scope": "DataColumn",
+      "Expression": "(DataType == \"Int64\" or DataType == \"Double\" or DataType == \"Decimal\") and SummarizeBy == \"Sum\" and RegEx.IsMatch(Name, \"(ID|Key|Rank|Number|Count|Year|Month|Day)\", \"(?i)\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "AVOID_UNICODE_WHITESPACE",
+      "Name": "Avoid Unicode whitespace in expressions",
+      "Category": "Maintenance",
+      "Description": "Unicode whitespace characters (non-breaking spaces, etc.) can cause hard-to-debug issues. Use regular spaces only.",
+      "Severity": 2,
+      "Scope": "Measure, CalculatedColumn",
+      "Expression": "RegEx.IsMatch(Expression, \"[\\u00A0\\u1680\\u2000-\\u200B\\u202F\\u205F\\u3000]\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "USE_APPROPRIATE_RELATIONSHIP_CARDINALITY",
+      "Name": "Dimension on the many side of a fact relationship",
+      "Category": "Data Model",
+      "Description": "Many-to-one relationships should have the 'many' side on the fact table and the 'one' side on the dimension table.",
+      "Severity": 2,
+      "Scope": "Relationship",
+      "Expression": "FromCardinality == \"Many\" and RegEx.IsMatch(FromTable.Name, \"^Dim\", \"(?i)\") and RegEx.IsMatch(ToTable.Name, \"^Fact\", \"(?i)\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "FACT_TABLE_COLUMNS_HIDDEN",
+      "Name": "Hide unnecessary fact table columns",
+      "Category": "Metadata",
+      "Description": "Fact table foreign keys and technical columns should be hidden. Only measures and business-relevant columns should be visible.",
+      "Severity": 1,
+      "Scope": "DataColumn",
+      "Expression": "not IsHidden and Table.Name.Contains(\"Fact\") and (RegEx.IsMatch(Name, \"(ID|Key|FK)$\", \"(?i)\") or DataType == \"DateTime\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "DIMENSION_KEY_HIDDEN",
+      "Name": "Hide dimension surrogate keys",
+      "Category": "Metadata",
+      "Description": "Dimension table surrogate keys used only for relationships should be hidden from report view.",
+      "Severity": 1,
+      "Scope": "DataColumn",
+      "Expression": "not IsHidden and Table.Name.Contains(\"Dim\") and RegEx.IsMatch(Name, \"Key$|ID$\", \"(?i)\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "AVOID_COLUMNS_WITH_NO_DATA",
+      "Name": "Remove columns with no data",
+      "Category": "Maintenance",
+      "Description": "Column whose VertiPaq cardinality is 0 (requires Vertipaq_Cardinality annotations - run 06 full with include_vertipaq=true).",
+      "Severity": 1,
+      "Scope": "DataColumn",
+      "Expression": "GetAnnotation(\"Vertipaq_Cardinality\") <> null and Convert.ToInt64(GetAnnotation(\"Vertipaq_Cardinality\")) == 0",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "USE_ISFILTERED_CORRECTLY",
+      "Name": "Prefer SELECTEDVALUE over HASONEVALUE+VALUES",
+      "Category": "DAX Expressions",
+      "Description": "The pattern IF(HASONEVALUE(...), VALUES(...)) can be replaced with SELECTEDVALUE for better readability and performance.",
+      "Severity": 1,
+      "Scope": "Measure",
+      "Expression": "RegEx.IsMatch(Expression, \"IF\\s*\\(\\s*HASONEVALUE\\s*\\([^)]+\\)\\s*,\\s*VALUES\\s*\\(\", \"(?i)\")",
+      "CompatibilityLevel": 1400
+    },
+    {
+      "ID": "AVOID_CROSSJOIN",
+      "Name": "Avoid CROSSJOIN for large tables",
+      "Category": "Performance",
+      "Description": "CROSSJOIN creates Cartesian products and can cause memory issues with large tables. Use GENERATE or relationship-based filtering instead.",
+      "Severity": 2,
+      "Scope": "Measure",
+      "Expression": "RegEx.IsMatch(Expression, \"CROSSJOIN\", \"(?i)\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "SET_DATA_TYPE_CORRECTLY",
+      "Name": "Verify data types are appropriate",
+      "Category": "Data Types",
+      "Description": "Columns should use the most appropriate data type. For example, whole numbers should use Int64, not Double.",
+      "Severity": 1,
+      "Scope": "DataColumn",
+      "Expression": "DataType == \"Double\" and RegEx.IsMatch(Name, \"(Count|Quantity|Rank|Number)$\", \"(?i)\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "AVOID_ADDCOLUMNS_IN_MEASURES",
+      "Name": "Minimize ADDCOLUMNS in measures",
+      "Category": "Performance",
+      "Description": "ADDCOLUMNS can be memory-intensive for large tables. Consider if the calculation can be done in the source query or as a calculated column.",
+      "Severity": 1,
+      "Scope": "Measure",
+      "Expression": "RegEx.IsMatch(Expression, \"ADDCOLUMNS\\s*\\(\\s*ALL\", \"(?i)\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "AVOID_FORMAT_FUNCTION",
+      "Name": "Avoid FORMAT() in measures and calculated columns",
+      "Category": "Performance",
+      "Description": "FORMAT function converts to text and can be slow for large datasets. Use format strings on measures when possible, or consider doing formatting in Power Query.",
+      "Severity": 1,
+      "Scope": "Measure, CalculatedColumn",
+      "Expression": "DaxLint.HasFunction(Expression, \"FORMAT\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "AVOID_NON_OPTIMIZED_FUNCTIONS",
+      "Name": "Avoid non-optimized functions when alternatives exist",
+      "Category": "Performance",
+      "Description": "Some DAX functions like FIND, SEARCH, SUBSTITUTE are not optimized. Consider doing string transformations in Power Query instead.",
+      "Severity": 1,
+      "Scope": "CalculatedColumn",
+      "Expression": "RegEx.IsMatch(Expression, \"(FIND|SEARCH|SUBSTITUTE|REPLACE|MID|LEFT|RIGHT|LEN|EXACT)\\s*\\(\", \"(?i)\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "CHECK_DATE_TABLE_REQUIREMENTS",
+      "Name": "Date table should meet all requirements",
+      "Category": "Time Intelligence",
+      "Description": "Date tables must be continuous (no gaps), include all dates in the data, and be marked as a date table. They should also have year, month, and quarter columns.",
+      "Severity": 2,
+      "Scope": "Table",
+      "Expression": "DataCategory == \"Time\" and Calendars.Count == 0 and not (Columns.Any(RegEx.IsMatch(Name, \"Year\", \"(?i)\")) and Columns.Any(RegEx.IsMatch(Name, \"Month\", \"(?i)\")))",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "USE_RELATED_CORRECTLY",
+      "Name": "Verify RELATED direction",
+      "Category": "DAX Expressions",
+      "Description": "RELATED traverses many-to-one relationships. RELATEDTABLE traverses one-to-many. Verify the relationship direction is correct.",
+      "Severity": 2,
+      "Scope": "CalculatedColumn",
+      "Expression": "RegEx.IsMatch(Expression, \"RELATED\\s*\\(\", \"(?i)\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "INCREMENTAL_REFRESH_PARAMETERS",
+      "Name": "Use incremental refresh for large tables",
+      "Category": "Performance",
+      "Description": "Fact tables with millions of rows should use incremental refresh to reduce refresh time and resource usage.",
+      "Severity": 1,
+      "Scope": "Table",
+      "Expression": "Name.Contains(\"Fact\") and Partitions.Any(SourceType.ToString() == \"M\") and not Partitions.Any(Query.Contains(\"RangeStart\"))",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "AGGREGATIONS_FOR_LARGE_TABLES",
+      "Name": "Consider aggregations for large fact tables",
+      "Category": "Performance",
+      "Description": "Fact table above 10M rows without any aggregation table (requires Vertipaq_RowCount annotations - run 06 full with include_vertipaq=true).",
+      "Severity": 1,
+      "Scope": "Table",
+      "Expression": "Name.Contains(\"Fact\") and GetAnnotation(\"Vertipaq_RowCount\") <> null and Convert.ToInt64(GetAnnotation(\"Vertipaq_RowCount\")) > 10000000 and not Model.AllColumns.Any(AlternateOf != null)",
+      "CompatibilityLevel": 1400
+    },
+    {
+      "ID": "RLS_PERFORMANCE",
+      "Name": "Optimize Row-Level Security for performance",
+      "Category": "Security",
+      "Description": "RLS filter on this table uses row-by-row lookups (LOOKUPVALUE/FILTER/CONTAINS/PATHCONTAINS); prefer simple column predicates on a security dimension.",
+      "Severity": 2,
+      "Scope": "Table",
+      "Expression": "RowLevelSecurity.Any(it <> null and RegEx.IsMatch(it, \"(?i)\\b(LOOKUPVALUE|FILTER|CONTAINS|PATHCONTAINS|CONTAINSSTRING)\\s*\\(\"))",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "AVOID_NOW_TODAY_IN_MEASURES",
+      "Name": "Avoid NOW() and TODAY() in measures for performance",
+      "Category": "Performance",
+      "Description": "NOW() and TODAY() in measures prevent query plan caching. Consider creating a parameter or calculated column instead.",
+      "Severity": 1,
+      "Scope": "Measure",
+      "Expression": "RegEx.IsMatch(Expression, \"(NOW|TODAY)\\s*\\(\", \"(?i)\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "USE_SWITCH_INSTEAD_NESTED_IF",
+      "Name": "Use SWITCH instead of nested IF",
+      "Category": "DAX Expressions",
+      "Description": "Multiple nested IF statements are hard to read and maintain. Use SWITCH for better readability when checking multiple conditions on the same expression.",
+      "Severity": 1,
+      "Scope": "Measure, CalculatedColumn",
+      "Expression": "RegEx.Matches(Expression, \"\\bIF\\s*\\(\", \"(?i)\").Count > 3 and not RegEx.IsMatch(Expression, \"SWITCH\", \"(?i)\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "AVOID_TOPN_IN_MEASURES",
+      "Name": "Use TOPN carefully in measures",
+      "Category": "Performance",
+      "Description": "TOPN in measures can be expensive for large tables. Consider if the filtering can be done at the visual level instead.",
+      "Severity": 1,
+      "Scope": "Measure",
+      "Expression": "RegEx.IsMatch(Expression, \"TOPN\\s*\\(\", \"(?i)\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "CONSISTENCY_NAMING_CONVENTION",
+      "Name": "Use consistent naming conventions",
+      "Category": "Maintenance",
+      "Description": "Tables and columns should follow consistent naming conventions (PascalCase, camelCase, or snake_case) throughout the model.",
+      "Severity": 1,
+      "Scope": "Table, DataColumn, CalculatedColumn, Measure",
+      "Expression": "Name.Contains(\" \") and Name.Contains(\"_\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "TEXTCONTAINS_REQUIRES_FULLTEXT_INDEX",
+      "Name": "TEXTCONTAINS / TEXTSIMILARITY on a column without a full-text index",
+      "Category": "Error Prevention",
+      "Description": "TEXTCONTAINS and TEXTSIMILARITY fail at run time unless the column they search has a persisted full-text index. Set fullTextIndexingBehavior to Full (built at refresh) or Explicit (built by a refresh of type indexes) on the column (String columns, compatibility level 1708+; 02_Model_Operations object_type=column operation=update full_text_indexing_behavior=full). Only Import / Dual / Direct Lake tables can carry the index. Checked: measures and calculated columns that pass 'Table'[Column] as the first argument.",
+      "Severity": 3,
+      "Scope": "DataColumn, CalculatedColumn, CalculatedTableColumn",
+      "Expression": "DataType == \"String\" and FullTextIndexingBehavior <> \"Full\" and FullTextIndexingBehavior <> \"Explicit\" and (ReferencedBy.AllMeasures.Any(RegEx.IsMatch(Expression, \"(?i)\\bTEXT(CONTAINS|SIMILARITY)\\s*\\(\\s*'?\" + RegEx.Escape(current.Table.Name) + \"'?\\s*\\[\" + RegEx.Escape(current.Name) + \"\\]\")) or ReferencedBy.AllColumns.Any(RegEx.IsMatch(Expression, \"(?i)\\bTEXT(CONTAINS|SIMILARITY)\\s*\\(\\s*'?\" + RegEx.Escape(current.Table.Name) + \"'?\\s*\\[\" + RegEx.Escape(current.Name) + \"\\]\")))",
+      "CompatibilityLevel": 1708
+    },
+    {
+      "ID": "APPROXIMATEDISTINCTCOUNT_IN_MEASURE",
+      "Name": "APPROXIMATEDISTINCTCOUNT is approximate",
+      "Category": "DAX Expressions",
+      "Description": "APPROXIMATEDISTINCTCOUNT (HyperLogLog) is off by about 1.6 percent. Never use it for exact, financial or reconciled counts; it can also be slower and use more memory than DISTINCTCOUNT on low-cardinality columns or with many groups. Keep it only where an estimate is acceptable and label the measure as such.",
+      "Severity": 2,
+      "Scope": "Measure, CalculationItem",
+      "Expression": "RegEx.IsMatch(Expression, \"(?i)\\bAPPROXIMATEDISTINCTCOUNT\\s*\\(\")",
+      "CompatibilityLevel": 1200
+    },
+    {
+      "ID": "STRING_INDEX_ON_LOW_VALUE_COLUMN",
+      "Name": "Persisted string index on a key, relationship or low-cardinality column",
+      "Category": "Performance",
+      "Description": "stringIndexingBehavior Full or Explicit builds and stores an index at refresh, costing model size and refresh time. It pays off only on columns people text-search (CONTAINSSTRING, SEARCH, text slicers). Key columns, relationship columns and columns with fewer than 100 distinct values (needs Vertipaq_Cardinality; run 06 full with include_vertipaq=true) are rarely searched: set the behavior back to Auto.",
+      "Severity": 1,
+      "Scope": "DataColumn, CalculatedColumn",
+      "Expression": "DataType == \"String\" and (StringIndexingBehavior == \"Full\" or StringIndexingBehavior == \"Explicit\") and (UsedInRelationships.Any() or IsKey or (GetAnnotation(\"Vertipaq_Cardinality\") <> null and Convert.ToInt64(GetAnnotation(\"Vertipaq_Cardinality\")) < 100))",
+      "CompatibilityLevel": 1707
+    }
+  ]
+}

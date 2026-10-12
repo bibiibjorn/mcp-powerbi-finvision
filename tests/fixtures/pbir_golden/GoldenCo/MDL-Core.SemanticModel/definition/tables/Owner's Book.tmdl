@@ -1,0 +1,28 @@
+/// Owner dimension (table name with an APOSTROPHE, escaped as '' in TMDL).
+table 'Owner''s Book'
+	lineageTag: 5a0c6f3e-0000-4000-8000-000000000003
+
+	column 'Owner Key'
+		dataType: int64
+		formatString: 0
+		lineageTag: 5a0c6f3e-0000-4000-8000-000000000401
+		summarizeBy: none
+		sourceColumn: Owner Key
+
+		annotation SummarizationSetBy = Automatic
+
+	column Owner
+		dataType: string
+		lineageTag: 5a0c6f3e-0000-4000-8000-000000000402
+		summarizeBy: none
+		sourceColumn: Owner
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Owner''s Book' = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(p_SourceFolder & "\owners.csv"), [Delimiter=","])
+				in
+				    Table.PromoteHeaders(Source)
